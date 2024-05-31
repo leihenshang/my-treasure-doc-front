@@ -39,3 +39,5 @@ node_modules
 file
 
 dist
+
+yarn-error.log
