@@ -7,14 +7,14 @@
         :collapsed="collapsed" @collapse="collapsed = true" @expand="collapsed = false">
         <h3>treasure_doc</h3>
         <!-- user menu -->
-        <n-menu v-model:value="activeKey" mode="horizontal" :options="horizontalMenuOptions" @update:value="topMenuUpdate"
-          :icon-size="18" ref="topMenuRef" />
+        <n-menu v-model:value="activeKey" mode="horizontal" :options="horizontalMenuOptions"
+          @update:value="topMenuUpdate" :icon-size="18" ref="topMenuRef" />
         <n-menu class="menu-menu" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
           :options="menuOptions" :indent="24" :render-label="renderMenuLabel" :default-value="route.path"
           :render-icon="renderMenuIcon" />
-          <n-divider />
+        <n-divider />
         <n-tree block-line :data="data" :default-expanded-keys="defaultExpandedKeys" :checkable="false" expand-on-click
-          :selectable="false" />
+          :selectable="false" :on-load="handleLoad" />
       </n-layout-sider>
       <!-- right sidebar -->
       <n-layout class="right">
@@ -40,9 +40,6 @@ import {
 } from '@vicons/ionicons5'
 import { myHttp } from '@/api/myAxios';
 import { router } from '@/router';
-import { repeat } from 'seemly'
-
-
 
 const route = useRoute();
 const topMenuRef = ref(null)
@@ -50,29 +47,6 @@ const message = useMessage()
 const data = ref<Array<any>>([])
 const defaultExpandedKeys = ref(['40', '41'])
 
-console.log(data.value)
-
-function renderSuffix({ option }: { option: TreeOption }) {
-  return h(
-    NButton,
-    { text: true, type: 'primary' },
-    { default: () => `Suffix-${option.level}` }
-  )
-}
-
-function renderPrefix({ option }: { option: TreeOption }) {
-  return h(
-    NButton,
-    { text: true, type: 'primary' },
-    { default: () => `Prefix-${option.level}` }
-  )
-}
-
-
-
-function renderLabel({ option }: { option: TreeOption }) {
-  return `${option.label} :)`
-}
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) })
@@ -201,11 +175,11 @@ function getDocGroupTree(isAll: Number = 0, pId: Number = 0, withDoc: Number = 1
         key: e.id,
         children: [],
         suffix: () =>
-        h(
-          NButton,
-          { text: true, type: 'primary' },
-          { default: () => 'Suffix' }
-        ),
+          h(
+            NButton,
+            { text: true, type: 'primary' },
+            { default: () => 'Suffix' }
+          ),
       })
     }
 
@@ -217,6 +191,36 @@ function getDocGroupTree(isAll: Number = 0, pId: Number = 0, withDoc: Number = 1
 onMounted(() => {
   getDocGroupTree()
 })
+
+function handleLoad(node: TreeOption) {
+  console.log('bbbf')
+  return new Promise<void>((resolve) => {
+          setTimeout(() => {
+            node.children = [
+              {
+                label: nextLabel(node.label),
+                key: node.key + nextLabel(node.label),
+                isLeaf: false
+              }
+            ]
+            resolve()
+          }, 1000)
+})
+}
+
+
+function nextLabel (currentLabel?: string): string {
+  if (!currentLabel) return 'Out of Tao, One is born'
+  if (currentLabel === 'Out of Tao, One is born') return 'Out of One, Two'
+  if (currentLabel === 'Out of One, Two') return 'Out of Two, Three'
+  if (currentLabel === 'Out of Two, Three') {
+    return 'Out of Three, the created universe'
+  }
+  if (currentLabel === 'Out of Three, the created universe') {
+    return 'Out of Tao, One is born'
+  }
+  return ''
+}
 
 </script>
 
@@ -259,6 +263,7 @@ onMounted(() => {
         }
 
       }
+
       .n-tree {
         margin-left: 15px
       }
