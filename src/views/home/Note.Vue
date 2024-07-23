@@ -61,7 +61,7 @@
         </template>
     </n-modal>
 </template>
-<script  lang="ts" setup>
+<script lang="ts" setup>
 import { ref, reactive, onMounted, h, nextTick, computed } from 'vue'
 import { myHttp } from "@/api/myAxios";
 import { NButton, useMessage } from 'naive-ui'
@@ -131,6 +131,7 @@ const router = useRouter()
 const data = ref([])
 const loading = ref(true)
 const pagination = reactive({
+    itemCount: 0,
     page: 1,
     pageCount: 1,
     pageSize: 10,
@@ -348,7 +349,7 @@ function doCreateGroup(groupObj: Group) {
 }
 
 </script>
-  
+
 <style scoped lang='scss'>
 $grey-color: #8A8F8D;
 $grey-background: #eff0f0;

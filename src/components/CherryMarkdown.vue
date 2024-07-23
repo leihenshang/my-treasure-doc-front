@@ -2,13 +2,13 @@
     <div id="markdown-container">
     </div>
 </template>
+
 <script lang="ts" setup>
 import Cherry from 'cherry-markdown/dist/cherry-markdown.core'
 import 'cherry-markdown/dist/cherry-markdown.min.css'
 import { onMounted, ref, watch } from 'vue'
 import { myHttp } from "@/api/myAxios";
 import { useMessage } from 'naive-ui';
-
 
 const message = useMessage()
 let editor: any
@@ -23,8 +23,8 @@ const emit = defineEmits<{
 const docContent = ref<string | undefined>(props.content)
 
 watch(() => props.content, async (newD, oldD) => {
-    if ( newD != oldD) {
-        editor.setMarkdown(newD,1)
+    if (newD != oldD) {
+        editor.setMarkdown(newD, 1)
     }
 })
 
@@ -85,8 +85,7 @@ function newEditor() {
         }
     });
 }
-
-
-
 </script>
+
+
 <style lang=""></style>
