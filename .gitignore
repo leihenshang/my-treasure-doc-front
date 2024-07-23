@@ -41,3 +41,5 @@ file
 dist
 
 yarn-error.log
+
+.vscode
