@@ -63,7 +63,7 @@
 </template>
 <script lang="ts" setup>
 import { ref, reactive, onMounted, h, nextTick, computed } from 'vue'
-import { myHttp } from "@/api/myAxios";
+import myHttp from "@/api/myAxios";
 import { NButton, useMessage } from 'naive-ui'
 import { useRouter, RouterLink } from 'vue-router';
 import SvgIcon from '@/components/public/SvgIcon.vue';

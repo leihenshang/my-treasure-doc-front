@@ -4,7 +4,7 @@ export type UserInfo = {
     updatedAt?: string,
     deletedAt?: string,
     nickname?: string,
-    account?: string,
+    account: string,
     email?: string,
     password?: string,
     userType?: number,

@@ -1,97 +1,47 @@
-import axios from 'axios'
+import axios, { AxiosInstance } from 'axios'
 import { useUserInfoStore } from '@/stores/user/userinfo'
+import { HttpClient, MyResponse } from "@/api/types"
+import { REQUEST_TIMEOUT } from '@/constants'
+import { CONTENT_TYPE } from '@/constants'
+import service from './service'
+import { AxiosConfig, IResponse } from "./types"
 
-const userStore = useUserInfoStore()
-
-interface DefaultOptions {
-    reqHandleFunc: Function,
-    reqErrorFunc: Function,
-    resHandleFunc: Function,
-    resErrorFunc: Function
-}
-
-const defaultOptions: DefaultOptions = {
-    // request interceptor handler
-    reqHandleFunc: (config: any) => config,
-    reqErrorFunc: (error: any) => Promise.reject(error),
-    // response interceptor handler
-    resHandleFunc: (response: any) => response,
-    resErrorFunc: (error: any) => Promise.reject(error)
-}
-
-const options = {}
-
-const initOptions: Object = {
-    ...defaultOptions,
-    ...options
-}
-
-const myAxios = axios.create(initOptions)
-
-// Add a request interceptor
-myAxios.interceptors.request.use(
-    config => initOptions.reqHandleFunc(config),
-    error => initOptions.reqErrorFunc(error)
-)
-// Add a response interceptor
-myAxios.interceptors.response.use(
-    response => initOptions.resHandleFunc(response),
-    error => initOptions.resErrorFunc(error)
-)
-
-interface MyHttp {
-    get: Function,
-    post: Function,
-    postForm: Function,
-}
-
-const myHttp: MyHttp = {
-    get: (url: string, data: any, options: any) => {
-        let axiosOpt = {
-            ...options,
-            ...{
-                method: 'get',
-                url: url,
-                params: data,
-                headers: {
-                    'X-Token': userStore.userinfo.token
-                }
-            }
+const request = (option: AxiosConfig) => {
+    const { url, method, params, data, headers, responseType } = option
+    const userStore = useUserInfoStore()
+    const token = userStore.getToken
+    return service.request({
+        url: url,
+        method,
+        params,
+        data,
+        responseType: responseType,
+        headers: {
+            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+            'Content-Type': CONTENT_TYPE,
+            [token ?? 'X-Token']: token ?? '',
+            ...headers
         }
-        return myAxios(axiosOpt)
+    })
+}
+
+export default {
+    get: <T = any>(option: AxiosConfig) => {
+        return request({ method: 'get', ...option }) as Promise<T>
     },
-    post: (url: string, data: any, options: any) => {
-        let axiosOpt = {
-            ...options,
-            ...{
-                method: 'post',
-                url: url,
-                data: data,
-                headers: {
-                    'X-Token': userStore.userinfo.token
-                }
-            }
-        }
-        return myAxios(axiosOpt)
+    post: <T = any>(option: AxiosConfig) => {
+        return request({ method: 'post', ...option }) as Promise<IResponse<T>>
+      },
+    delete: <T = any>(option: AxiosConfig) => {
+        return request({ method: 'delete', ...option }) as Promise<IResponse<T>>
     },
-    postForm: (url: string, file: File) => {
-        let axiosOpt = {
-            ...options,
-            ...{
-                method: 'post',
-                url: url,
-                data: { file },
-                headers: {
-                    'X-Token': userStore.userinfo.token,
-                    'Content-Type': 'multipart/form-data'
-                }
-            }
-        }
-        return myAxios(axiosOpt)
+    put: <T = any>(option: AxiosConfig) => {
+        return request({ method: 'put', ...option }) as Promise<IResponse<T>>
+    },
+    cancelRequest: (url: string | string[]) => {
+        return service.cancelRequest(url)
+    },
+    cancelAllRequest: () => {
+        return service.cancelAllRequest()
     }
-}
-
-export {
-    myAxios,
-    myHttp
 }

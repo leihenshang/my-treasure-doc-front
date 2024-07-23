@@ -8,7 +8,7 @@ interface StoreUserInfo {
 export const useUserInfoStore = defineStore('userinfo', {
     state: (): StoreUserInfo => {
         return {
-            userInfo: { id: 0 }
+            userInfo: { id: 0, account: "" }
         }
     },
     actions: {
@@ -17,6 +17,7 @@ export const useUserInfoStore = defineStore('userinfo', {
         }
     },
     getters: {
-        userId: (state) => state.userInfo.id
+        userId: (state) => state.userInfo.id,
+        getToken: (state) => state.userInfo.token
     }
 })

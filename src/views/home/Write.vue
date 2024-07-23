@@ -13,7 +13,7 @@
 import Cherry from 'cherry-markdown/dist/cherry-markdown.core'
 import 'cherry-markdown/dist/cherry-markdown.min.css'
 import { onMounted, ref, watch, onBeforeMount } from 'vue'
-import { myHttp } from "../../api/myAxios";
+import myHttp from "@/api/myAxios";
 import { useMessage } from 'naive-ui';
 import { useRoute } from 'vue-router';
 import CherryMarkdown from '@/components/CherryMarkdown.vue';

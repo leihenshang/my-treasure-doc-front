@@ -6,8 +6,8 @@
     <div class="log-in">
       <h3>登陆</h3>
       <n-form :model="userInfo" ref="formRef" label-placement="left" class="long-in-form" size="large">
-        <n-form-item path="username" :rule="getRules('用户名')">
-          <n-input v-model:value="userInfo.username" autofocus clearable placeholder="用户名" ref="usernameInput" />
+        <n-form-item path="account" :rule="getRules('用户名')">
+          <n-input v-model:value="userInfo.account" autofocus clearable placeholder="用户名" ref="usernameInput" />
         </n-form-item>
         <n-form-item path="password" :rule="getRules('密码')">
           <n-input v-model:value="userInfo.password" type="password" clearable placeholder="密码" />
@@ -24,67 +24,49 @@
 </template>
 
 <script lang="ts" setup>
-import { FormInst, } from 'naive-ui';
+import { FormInst, useMessage, NInput } from 'naive-ui';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useMessage } from 'naive-ui';
-import { useUserInfoStore } from "../stores/user/userinfo";
-import { myHttp } from "../api/myAxios";
+import { useUserInfoStore } from "@/stores/user/userinfo";
+import myHttp from "@/api/myAxios";
 import { UserInfo } from '@/stores/user/types'
+import { MyResponse } from "@/api/types"
 
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
 const router = useRouter()
-const storeUserinfo = useUserInfoStore()
-
-interface user {
-  username: string,
-  password: string
-}
-
-const userInfo = ref<user>({
-  username: '',
-  password: ''
+const storeUserInfo = useUserInfoStore()
+const userInfo = ref<LoginUser>({
+  account: '',
+  password: '',
+  verifyCode: '123456'
 });
+const usernameInput = ref<InstanceType<typeof NInput> | null>(null)
 
-const usernameInput = ref(null as any)
 
 const longIn = (e: MouseEvent) => {
   e.preventDefault()
   formRef.value?.validate((errors) => {
     if (!errors) {
       message.loading("登录...")
-
-      myHttp.post('api/user/login', {
-        account: userInfo.value.username,
-        password: userInfo.value.password,
-        verifyCode: "123456"
-      }).then((response: any) => {
-        //todo save user information to vuex or state management?
+      myHttp.post({ url: 'api/user/login', data: userInfo }).then((response) => {
         message.destroyAll()
-        console.log(response)
-        if (!response) {
-          message.error("响应数据错误！")
-          return
-        }
-
-        if (response?.data?.code) {
+        if (response?.data.code > 0) {
           message.error("登录失败:" + response?.data?.msg)
           localStorage.removeItem('userInfo')
           if (usernameInput.value) {
             (usernameInput.value.focus)()
           }
-
           return
         }
 
         // local storage
         localStorage.setItem('userInfo', JSON.stringify(response?.data?.data))
-        storeUserinfo.updateUserinfo(response?.data?.data as UserInfo)
+        storeUserInfo.updateUserinfo(response?.data?.data as UserInfo)
         message.success("登录成功")
         router.push({ name: 'HomePage' })
       }).catch((err: any) => {
-        console.log(err)
+        message.error(JSON.stringify(err))
       })
     }
   }).catch((err: any) => {

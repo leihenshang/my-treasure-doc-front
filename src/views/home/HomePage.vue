@@ -38,7 +38,7 @@ import {
   ArrowForwardCircleSharp,
   AppsSharp
 } from '@vicons/ionicons5'
-import { myHttp } from '@/api/myAxios';
+import myHttp from '@/api/myAxios';
 import { router } from '@/router';
 
 const route = useRoute();
