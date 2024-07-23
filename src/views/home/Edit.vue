@@ -42,8 +42,11 @@ function contentUpdate(content: string) {
 
 
 function getDoc(id: number) {
-    myHttp.post('api/doc/detail', {
-        id: Number(id)
+    myHttp.post({
+        url: 'api/doc/detail',
+        data: {
+            id: Number(id)
+        }
     }).then((response: any) => {
         //todo save user information to vuex or state management?
         message.destroyAll()
@@ -70,7 +73,7 @@ function updateDoc(doc: any) {
         return
     }
 
-    myHttp.post('api/doc/update', { ...document.value }).then((response: any) => {
+    myHttp.post({ url: 'api/doc/update', data: document.value }).then((response: any) => {
         //todo save user information to vuex or state management?
         message.destroyAll()
         // console.log(response)
