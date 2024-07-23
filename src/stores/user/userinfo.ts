@@ -1,34 +1,22 @@
-import {defineStore} from 'pinia'
+import { defineStore } from 'pinia'
+import { UserInfo } from '@/stores/user/types'
 
-export const useUserinfoStore = defineStore('userinfo',{
-    state:() => {
+interface StoreUserInfo {
+    userInfo: UserInfo
+}
+
+export const useUserInfoStore = defineStore('userinfo', {
+    state: (): StoreUserInfo => {
         return {
-           userinfo: {
-            id : 0,
-            createdAt : "",
-            updatedAt : "",
-            deletedAt : null,
-            nickname : "",
-            account : "",
-            email : "",
-            password : "",
-            userType : 0,
-            userStatus : 0,
-            mobile : "",
-            avatar : "",
-            bio : "",
-            token : "",
-            tokenExpire : "",
-            lastLoginIp : "",
-            lastLoginTime : ""}
+            userInfo: { id: 0 }
         }
     },
     actions: {
-        updateUserinfo(newUserinfo) {
-            this.userinfo = newUserinfo
+        updateUserinfo(newUserinfo: UserInfo) {
+            this.userInfo = newUserinfo
         }
     },
     getters: {
-        userId:(state) => state.userinfo.id
+        userId: (state) => state.userInfo.id
     }
 })

@@ -1,5 +1,6 @@
 import { createWebHashHistory, createRouter } from 'vue-router';
-import { useUserinfoStore } from "./stores/user/userinfo";
+import { useUserInfoStore } from "./stores/user/userinfo";
+import { UserInfo } from '@/stores/user/types'
 
 
 const router = createRouter({
@@ -23,23 +24,14 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from) => {
-  let isAuthenticated = false
-
-
-  type TypeUserInfo = {
-    id: number
-  }
-
-  const storeUserinfo = useUserinfoStore()
+  let isAuthenticated: boolean = false
+  const storeUserinfo = useUserInfoStore()
   if (storeUserinfo.userId > 0) {
     isAuthenticated = true
-
-    // use local storage user info
   } else {
     let localUserInfo: string | null = localStorage.getItem('userInfo')
-    let userInfo: TypeUserInfo = { id: 0 }
     if (localUserInfo) {
-      userInfo = JSON.parse(localUserInfo)
+      let userInfo: UserInfo = JSON.parse(localUserInfo)
       if (userInfo && userInfo.id > 0) {
         storeUserinfo.updateUserinfo(userInfo)
         isAuthenticated = true
@@ -50,7 +42,7 @@ router.beforeEach(async (to, from) => {
   if (
     // 检查用户是否已登录
     !isAuthenticated &&
-    // ❗️ 避免无限重定向
+    // !避免无限重定向
     to.name !== 'LogIn'
   ) {
     // 将用户重定向到登录页面

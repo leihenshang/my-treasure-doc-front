@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { useUserinfoStore } from '@/stores/user/userinfo'
+import { useUserInfoStore } from '@/stores/user/userinfo'
 
-const userStore = useUserinfoStore()
+const userStore = useUserInfoStore()
 
 interface DefaultOptions {
     reqHandleFunc: Function,

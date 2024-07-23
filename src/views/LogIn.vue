@@ -28,14 +28,14 @@ import { FormInst, } from 'naive-ui';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMessage } from 'naive-ui';
-import { useUserinfoStore } from "../stores/user/userinfo";
+import { useUserInfoStore } from "../stores/user/userinfo";
 import { myHttp } from "../api/myAxios";
-
+import { UserInfo } from '@/stores/user/types'
 
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
 const router = useRouter()
-const storeUserinfo = useUserinfoStore()
+const storeUserinfo = useUserInfoStore()
 
 interface user {
   username: string,
@@ -80,7 +80,7 @@ const longIn = (e: MouseEvent) => {
 
         // local storage
         localStorage.setItem('userInfo', JSON.stringify(response?.data?.data))
-        storeUserinfo.updateUserinfo(response?.data?.data)
+        storeUserinfo.updateUserinfo(response?.data?.data as UserInfo)
         message.success("登录成功")
         router.push({ name: 'HomePage' })
       }).catch((err: any) => {
