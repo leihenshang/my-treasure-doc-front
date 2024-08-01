@@ -6,19 +6,18 @@
         <SvgIcon icon-name="add" @click="changeGroup('add')"></SvgIcon>
       </div>
       <ul class="list">
-        <li v-for="item in groupList" :key="item.id"
-            :class="{'selectedCollection':selectedCollectionId === item.id}"
-            @click="viewCollectionList(item.id)">
+        <li v-for="item in groupList" :key="item.id" :class="{ 'selectedCollection': selectedCollectionId === item.id }"
+          @click="viewCollectionList(item.id)">
           <p class="title">
             <span>{{ item.title }}</span>
             <n-popselect :options="[]" trigger="hover">
               <div>
-                <SvgIcon icon-name="more" v-if="item.type!=='all'"></SvgIcon>
+                <SvgIcon icon-name="more" v-if="item.type !== 'all'"></SvgIcon>
               </div>
               <template #empty>
                 <ul class="handle-pop-select-options">
-                  <li @click="changeGroup('update',item)">编辑</li>
-                  <li @click="changeGroup('delete',item)">删除</li>
+                  <li @click="changeGroup('update', item)">编辑</li>
+                  <li @click="changeGroup('delete', item)">删除</li>
                 </ul>
               </template>
             </n-popselect>
@@ -39,13 +38,13 @@
           <SvgIcon icon-name="filter"></SvgIcon>
         </div>
       </div>
-      <n-data-table :columns="columns" :data="data" :pagination="pagination" :bordered="false"/>
+      <n-data-table :columns="columns" :data="data" :pagination="pagination" :bordered="false" />
     </div>
   </div>
   <n-modal v-model:show="showModal" preset="dialog" title="Dialog" :show-icon="false" class="modal-dialog"
-           :mask-closable=false style="position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
+    :mask-closable=false style="position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
     <template #header>
-      <div>{{ groupHandleType === 'add'?'新增分组':'编辑分组' }}</div>
+      <div>{{ groupHandleType === 'add' ? '新增分组' : '编辑分组' }}</div>
     </template>
     <div class="dialog-content">
       <label>分组名称</label>
@@ -59,15 +58,15 @@
 </template>
 
 <script lang="ts">
-import {h, defineComponent, computed, ref,Component} from 'vue';
-import {NButton, useMessage, DataTableColumns} from 'naive-ui';
+import { h, defineComponent, computed, ref, Component, onMounted } from 'vue';
+import { NButton, useMessage, DataTableColumns } from 'naive-ui';
 import SvgIcon from '../../components/public/SvgIcon.vue';
 import CollectionHandle from '../../components/collection/CollectionHandle.vue'
 
 type Song = {
   name: string
   belong: string
-  time:string
+  time: string
 }
 type search = {
   data1?: string
@@ -80,7 +79,7 @@ type Group = {
   count: number | string
 }
 
-const createColumns = ({play}: { play: (row: Song) => void }): DataTableColumns<Song> => {
+const createColumns = ({ play }: { play: (row: Song) => void }): DataTableColumns<Song> => {
   return [
     {
       title: '名称',
@@ -96,12 +95,12 @@ const createColumns = ({play}: { play: (row: Song) => void }): DataTableColumns<
       key: 'actions',
       render(row) {
         return h(
-            CollectionHandle,
-            {
-              // iconName:'collected',
-              // onClick: () => play(row),
-              'onUpdate:addGroup':()=>play(row)
-            },
+          CollectionHandle,
+          {
+            // iconName:'collected',
+            // onClick: () => play(row),
+            'onUpdate:addGroup': () => play(row)
+          },
         );
       }
     }
@@ -109,37 +108,37 @@ const createColumns = ({play}: { play: (row: Song) => void }): DataTableColumns<
 };
 
 const data: Song[] = [
-  {name: 'Wonderwall', belong: 'Wonderwall',time:'2021-01-29 14:32'},
-  {name: 'Don\'t Look Back in Anger', belong: 'Don\'t Look Back in Anger',time:'2021-01-29 14:32'},
-  {name: 'Champagne Supernova', belong: 'Champagne Supernova',time:'2021-01-29 14:32'}
+  { name: 'Wonderwall', belong: 'Wonderwall', time: '2021-01-29 14:32' },
+  { name: 'Don\'t Look Back in Anger', belong: 'Don\'t Look Back in Anger', time: '2021-01-29 14:32' },
+  { name: 'Champagne Supernova', belong: 'Champagne Supernova', time: '2021-01-29 14:32' }
 ];
 
 export default {
   name: 'Collection',
-  components: {SvgIcon,CollectionHandle},
+  components: { SvgIcon, CollectionHandle },
   setup() {
-    const groupList: Group[] = [{title: '全部', type: 'all', count: 100, id: '1'}
-      , {title: 'javaScript', type: '', count: 50, id: '2'}, {title: '好看的花花们', type: '', count: 50, id: '3'},];
+    const groupList: Group[] = [{ title: '全部', type: 'all', count: 100, id: '1' }
+      , { title: 'javaScript', type: '', count: 50, id: '2' }, { title: '好看的花花们', type: '', count: 50, id: '3' },];
     const searchData = ref<search>({});
     const selectedCollectionId = ref('1');
     const showModal = ref(false);
     const newGroupName = ref('');
     const updateGroup = ref({});
     const groupHandleType = ref('');
-//选中收藏的某个分类，并保存分类的id
+    //选中收藏的某个分类，并保存分类的id
     const viewCollectionList = (collectionId: string) => {
       selectedCollectionId.value = collectionId;
     };
-//左侧收藏分类的编辑删除操作
+    //左侧收藏分类的编辑删除操作
     const changeGroup = (type: string, group?: Group) => {
       groupHandleType.value = type
       if (type === 'update') {
         updateGroup.value = group || {};
         newGroupName.value = group?.title || '';
         showModal.value = true;
-      } else if (type === 'delete')  {
+      } else if (type === 'delete') {
         //调用删除接口后，再次调用分组接口刷新页面的分组信息
-      }else if (type === 'add')  {
+      } else if (type === 'add') {
         newGroupName.value = ''
         showModal.value = true;
       }
@@ -151,11 +150,11 @@ export default {
       showModal.value = false;
     };
 
-//获取右侧表格的标题
+    //获取右侧表格的标题
     const selectedGroupName = computed(() => {
       return groupList.filter((item) => item.id === selectedCollectionId.value)[0]?.title;
     });
-//渲染右侧表格
+    //渲染右侧表格
     const message = useMessage();
     return {
       groupHandleType,
@@ -181,13 +180,13 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-
 $grey-color: #8A8F8D;
 $grey-background: #eff0f0;
+
 .handle-pop-select-options {
   min-width: 104px;
 
-  > li {
+  >li {
     padding: 8px 16px;
     cursor: pointer;
 
@@ -207,26 +206,26 @@ $grey-background: #eff0f0;
     justify-content: space-between;
     align-items: center;
 
-    > .icon {
+    >.icon {
       color: #000000;
       cursor: pointer;
     }
   }
 
-  > .left {
+  >.left {
     width: 204px;
     padding: 20px 12px;
     border-right: 1px solid #f4f5f5;
 
-    > .title {
+    >.title {
       margin-bottom: 20px;
 
-      > .icon {
+      >.icon {
         margin-right: 12px;
       }
     }
 
-    > .list > li {
+    >.list>li {
       padding: 10px;
       border-radius: 8px;
       margin-bottom: 4px;
@@ -240,11 +239,11 @@ $grey-background: #eff0f0;
         background: $grey-background
       }
 
-      > .title {
+      >.title {
         color: #585A5A;
       }
 
-      > .content {
+      >.content {
         font-size: 12px;
         color: $grey-color;
         margin-top: 1em;
@@ -252,11 +251,11 @@ $grey-background: #eff0f0;
     }
   }
 
-  > .right {
+  >.right {
     width: calc(100% - 204px);
     padding: 10px 24px 20px;
 
-    > .title {
+    >.title {
       display: flex;
       color: #262626;
       padding: 10px 0;
@@ -266,14 +265,15 @@ $grey-background: #eff0f0;
         font-size: 16px;
       }
 
-      > .search {
+      >.search {
         display: flex;
         align-items: center;
 
-        > .n-input {
+        >.n-input {
           background: #fafafa;
 
-          &::v-deep(.n-input__border), &::v-deep(.n-input__state-border) {
+          &::v-deep(.n-input__border),
+          &::v-deep(.n-input__state-border) {
             display: none;
           }
 
@@ -282,7 +282,7 @@ $grey-background: #eff0f0;
           }
         }
 
-        > .icon {
+        >.icon {
           color: #585A5A;
           font-size: 18px;
           margin-left: 4px;
@@ -293,7 +293,7 @@ $grey-background: #eff0f0;
 }
 
 .dialog-content {
-  > label {
+  >label {
     display: inline-flex;
     margin-bottom: 4px;
   }

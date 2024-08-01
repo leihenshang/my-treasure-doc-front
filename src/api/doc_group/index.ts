@@ -1,0 +1,111 @@
+import myHttp from "@/api/treasure_axios"
+import { TreasureResponse, TreasureResponseList, PaginationWithSort } from "@/types/treasure_response"
+import { DocGroup } from "@/types/resource"
+
+export  function getGroupList(pagination: PaginationWithSort = new PaginationWithSort()): Promise<TreasureResponseList<DocGroup>> {
+    return new Promise<TreasureResponseList<DocGroup>>((resolve:any,reject:any)=> {
+        myHttp.get<TreasureResponse<DocGroup>>({
+            url: '/api/doc-group/list', params: {
+                page: pagination.page,
+                pageSize: pagination.pageSize,
+                orderBy: pagination.orderBy,
+            }
+        }).then((response:any) => {
+            if (response?.code) {
+                reject(response?.msg)
+            }
+       
+            const resp: TreasureResponseList<DocGroup> = new TreasureResponseList()
+            resp.list = response?.data?.list
+            resp.pagination = response?.data?.pagination
+            resolve(resp)
+        })
+    
+    })
+}
+
+export  function getDocGroupTree(pid: number = 0 ,withChildren:boolean = false): Promise<TreasureResponse<DocGroup>> {
+    return new Promise<TreasureResponse<DocGroup>>((resolve:any,reject:any)=> {
+        myHttp.get<TreasureResponse<DocGroup>>({
+            url: '/api/doc-group/tree', params: {
+             pid,withChildren
+            }
+        }).then((response:any) => {
+            if (response?.code) {
+                reject(response?.msg)
+            }
+       
+            const resp: TreasureResponse<DocGroup> = new TreasureResponse()
+            resp.data = response?.data
+            resolve(resp)
+        })
+    
+    })
+}
+
+
+// export async function doUpdateGroup(groupObj: DocGroup) {
+//     myHttp.post({
+//         url: '/api/doc-group/update', data: {
+//             ...groupObj
+//         }
+//     }).then((response: any) => {
+//         if (!response) {
+//             message.error("更新分组数据失败！")
+//             return
+//         }
+
+//         if (response?.data?.code) {
+//             message.error(response?.data?.msg)
+//             return
+//         }
+
+//     }).catch((err: any) => {
+//         console.log(err)
+//     })
+// }
+
+// export async function doDelGroup(groupObj: DocGroup) {
+//     myHttp.post({
+//         url: '/api/doc-group/delete', data: {
+//             ...groupObj
+//         }
+//     }).then((response: any) => {
+//         if (!response) {
+//             message.error("删除分组数据失败！")
+//             return
+//         }
+
+//         if (response?.data?.code) {
+//             message.error(response?.data?.msg)
+//             return
+//         }
+
+//     }).catch((err: any) => {
+//         console.log(err)
+//     })
+// }
+
+// export async function doCreateGroup(groupObj: DocGroup) {
+//     myHttp.post({
+//         url: '/api/doc-group/create', data: {
+//             ...groupObj
+//         }
+//     }).then((response: any) => {
+//         if (!response) {
+//             message.error("创建分组数据失败！")
+//             return
+//         }
+
+//         if (response?.data?.code) {
+//             message.error(response?.data?.msg)
+//             return
+//         }
+//         getGroupList(groupPagination.value).then((res) => {
+//             groupList.value = [groupList.value[0]]
+//             groupList.value.push(...res.list)
+//         })
+//     }).catch((err: any) => {
+//         console.log(err)
+//     })
+// }

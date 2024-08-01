@@ -1,4 +1,4 @@
-import { AxiosResponse, InternalAxiosRequestConfig } from './types'
+import { AxiosResponse, InternalAxiosRequestConfig } from '../types/treasure_request'
 import { TRANSFORM_REQUEST_DATA } from '@/constants'
 import qs from 'qs'
 

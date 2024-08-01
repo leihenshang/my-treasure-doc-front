@@ -1,17 +1,14 @@
-import axios, { AxiosInstance } from 'axios'
 import { useUserInfoStore } from '@/stores/user/userinfo'
-import { HttpClient, MyResponse } from "@/api/types"
-import { REQUEST_TIMEOUT } from '@/constants'
 import { CONTENT_TYPE } from '@/constants'
 import service from './service'
-import { AxiosConfig, IResponse } from "./types"
+import { AxiosConfig, IResponse } from "../types/treasure_request"
 
 const request = (option: AxiosConfig) => {
     const { url, method, params, data, headers, responseType } = option
     const userStore = useUserInfoStore()
     const token = userStore.getToken
     return service.request({
-        url: url,
+        url,
         method,
         params,
         data,

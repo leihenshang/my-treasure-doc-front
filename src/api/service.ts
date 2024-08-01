@@ -1,14 +1,11 @@
 import axios, { AxiosError } from 'axios'
 import { defaultRequestInterceptors, defaultResponseInterceptors } from './config'
 
-import { AxiosInstance, InternalAxiosRequestConfig, RequestConfig, AxiosResponse } from './types'
+import { AxiosInstance, InternalAxiosRequestConfig, RequestConfig, AxiosResponse } from '../types/treasure_request'
 import { FormInst, useMessage, NInput } from 'naive-ui';
 import { REQUEST_TIMEOUT } from '@/constants'
 
 export const PATH_URL = import.meta.env.VITE_API_BASE_PATH
-
-const message = useMessage()
-
 const abortControllerMap: Map<string, AbortController> = new Map()
 
 const axiosInstance: AxiosInstance = axios.create({
@@ -31,7 +28,6 @@ axiosInstance.interceptors.response.use(
     return res
   },
   (error: AxiosError) => {
-    message.error(error.response?.data?.message || error.message)
     if (error.response?.status === 401) {
       // const userStore = useUserStoreWithOut()
       // userStore.logout()
@@ -49,15 +45,12 @@ const service = {
       if (config.interceptors?.requestInterceptors) {
         config = config.interceptors.requestInterceptors(config as any)
       }
-
-      axiosInstance
-        .request(config)
-        .then((res) => {
-          resolve(res)
-        })
-        .catch((err: any) => {
-          reject(err)
-        })
+      // console.log(config)
+      axiosInstance.request(config).then((res) => {
+        resolve(res)
+      }).catch((err: any) => {
+        reject(err)
+      })
     })
   },
   cancelRequest: (url: string | string[]) => {

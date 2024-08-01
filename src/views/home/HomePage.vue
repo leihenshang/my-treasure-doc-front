@@ -1,29 +1,3 @@
-<template>
-  <div class="homePage-wrapper">
-    <!-- <Header></Header> -->
-    <n-layout has-sider class="menu-layout">
-      <!-- left sidebar -->
-      <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="64" :width="280"
-        :collapsed="collapsed" @collapse="collapsed = true" @expand="collapsed = false">
-        <h3>treasure_doc</h3>
-        <!-- user menu -->
-        <n-menu v-model:value="activeKey" mode="horizontal" :options="horizontalMenuOptions"
-          @update:value="topMenuUpdate" :icon-size="18" ref="topMenuRef" />
-        <n-menu class="menu-menu" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
-          :options="menuOptions" :indent="24" :render-label="renderMenuLabel" :default-value="route.path"
-          :render-icon="renderMenuIcon" />
-        <n-divider />
-        <n-tree block-line :data="data" :default-expanded-keys="defaultExpandedKeys" :checkable="false" expand-on-click
-          :selectable="false" :on-load="handleLoad" />
-      </n-layout-sider>
-      <!-- right sidebar -->
-      <n-layout class="right">
-        <router-view></router-view>
-      </n-layout>
-    </n-layout>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { h, ref, Component, onMounted } from 'vue';
 import { MenuOption, TreeOption, useMessage, NButton, } from 'naive-ui';
@@ -35,16 +9,17 @@ import {
   Pencil as Pen,
   SearchSharp as Search,
   MailOpen,
-  ArrowForwardCircleSharp,
-  AppsSharp
+  ArrowForwardCircleSharp
 } from '@vicons/ionicons5'
-import myHttp from '@/api/myAxios';
+import myHttp from '@/api/treasure_axios';
 import { router } from '@/router';
+import { getDocGroupTree } from "@/api/doc_group"
+import { DocGroup } from '@/types/resource';
 
 const route = useRoute();
 const topMenuRef = ref(null)
 const message = useMessage()
-const data = ref<Array<any>>([])
+const treeData = ref<Array<any>>([])
 const defaultExpandedKeys = ref(['40', '41'])
 
 
@@ -69,7 +44,7 @@ const horizontalMenuOptions: MenuOption[] = [
         RouterLink,
         {
           to: {
-            name: 'Write',
+            name: 'Editor',
           }
         }
       )
@@ -121,7 +96,7 @@ function topMenuUpdate(key: string, item: MenuOption): void {
     console.log(topMenuRef)
   }
   if (key == 'login-out') {
-    myHttp.post('/api/user/logout', {}).then(() => {
+    myHttp.post({ url: '/api/user/logout', data: {} }).then(() => {
       router.push("/LogIn")
     })
   }
@@ -151,26 +126,10 @@ function renderMenuIcon(option: MenuOption) {
 }
 
 
-function getDocGroupTree(isAll: Number = 0, pId: Number = 0, withDoc: Number = 1) {
-  myHttp.get('/api/doc-group/tree', {
-    isAll,
-    pId,
-    withDoc
-  }).then((response: any) => {
-    if (!response) {
-      message.error("获取分组数据失败！")
-      return
-    }
-
-    if (response?.data?.code) {
-      message.error(response?.data?.msg)
-      return
-    }
-
-    console.log(response.data)
-    data.value = [];
-    for (const e of response.data?.data) {
-      data.value.push({
+onMounted(() => {
+  getDocGroupTree(0, true).then((response) => {
+    for (const e of response.data as Array<DocGroup>) {
+      treeData.value.push({
         label: e.title,
         key: e.id,
         children: [],
@@ -178,54 +137,46 @@ function getDocGroupTree(isAll: Number = 0, pId: Number = 0, withDoc: Number = 1
           h(
             NButton,
             { text: true, type: 'primary' },
-            { default: () => 'Suffix' }
+            { default: () => '+' }
           ),
       })
     }
-
   }).catch((err: any) => {
-    console.log(err)
+    message.error(JSON.stringify(err))
   })
-}
-
-onMounted(() => {
-  getDocGroupTree()
 })
 
-function handleLoad(node: TreeOption) {
-  console.log('bbbf')
-  return new Promise<void>((resolve) => {
-          setTimeout(() => {
-            node.children = [
-              {
-                label: nextLabel(node.label),
-                key: node.key + nextLabel(node.label),
-                isLeaf: false
-              }
-            ]
-            resolve()
-          }, 1000)
-})
-}
-
-
-function nextLabel (currentLabel?: string): string {
-  if (!currentLabel) return 'Out of Tao, One is born'
-  if (currentLabel === 'Out of Tao, One is born') return 'Out of One, Two'
-  if (currentLabel === 'Out of One, Two') return 'Out of Two, Three'
-  if (currentLabel === 'Out of Two, Three') {
-    return 'Out of Three, the created universe'
-  }
-  if (currentLabel === 'Out of Three, the created universe') {
-    return 'Out of Tao, One is born'
-  }
-  return ''
-}
 
 </script>
 
+<template>
+  <div class="homePage-wrapper">
+    <!-- <Header></Header> -->
+    <n-layout has-sider class="menu-layout">
+      <!-- left sidebar -->
+      <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="64" :width="280"
+        :collapsed="collapsed" @collapse="collapsed = true" @expand="collapsed = false">
+        <h3>treasure-doc</h3>
+        <!-- user menu -->
+        <n-menu v-model:value="activeKey" mode="horizontal" :options="horizontalMenuOptions"
+          @update:value="topMenuUpdate" :icon-size="18" ref="topMenuRef" />
+        <!-- <n-menu class="menu-menu" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
+          :options="menuOptions" :indent="24" :render-label="renderMenuLabel" :default-value="route.path"
+          :render-icon="renderMenuIcon" /> -->
+        <!-- <n-divider /> -->
+        <n-tree block-line :data="treeData" :default-expanded-keys="defaultExpandedKeys" :checkable="false"
+          expand-on-click :selectable="false" />
+      </n-layout-sider>
+      <!-- right sidebar -->
+      <n-layout class="right">
+        <router-view></router-view>
+      </n-layout>
+    </n-layout>
+  </div>
+</template>
+
 <style scoped lang='scss'>
-@import "../../assets/style/helper";
+@import "@/assets/style/helper";
 
 .homePage-wrapper {
   height: 100%;
@@ -237,35 +188,31 @@ function nextLabel (currentLabel?: string): string {
       background: $menuBackground;
 
       h3 {
-        text-align: left;
-        padding-left: 10%;
-        height: 40px;
-        line-height: 40px;
-        // color: rgb(115, 171, 231);
-        font-size: 18px;
+        text-align: center;
+        height: 50px;
+        line-height: 50px;
+        color: rgb(191, 141, 15);
+        font-size: 16px;
+        border-color: black;
+        border-width: 1px;
+        border-style: dashed;
+        margin: 5px;
       }
 
       .menu-menu ::v-deep(.n-menu-item.n-menu-item--selected) {
         .n-menu-item-content {
-
           .n-menu-item-content__icon,
           .n-menu-item-content-header {
             color: darken($mainColor, 0.5);
           }
         }
-
         .n-menu-item>.n-menu-item-content:hover {
-
           .n-menu-item-content__icon,
           .n-menu-item-content-header {
             color: darken($mainColor, 0.5);
           }
         }
 
-      }
-
-      .n-tree {
-        margin-left: 15px
       }
     }
   }

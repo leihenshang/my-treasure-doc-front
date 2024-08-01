@@ -12,7 +12,7 @@
 <script lang="ts" setup>
 import 'cherry-markdown/dist/cherry-markdown.min.css'
 import { onMounted, ref, watch } from 'vue'
-import myHttp from "@/api/myAxios";
+import myHttp from "@/api/treasure_axios";
 import { useMessage } from 'naive-ui';
 import { useRoute, RouterLink } from 'vue-router';
 import CherryMarkdown from '@/components/CherryMarkdown.vue';

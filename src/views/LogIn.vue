@@ -28,15 +28,16 @@ import { FormInst, useMessage, NInput } from 'naive-ui';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserInfoStore } from "@/stores/user/userinfo";
-import myHttp from "@/api/myAxios";
+import myHttp from "@/api/treasure_axios";
 import { UserInfo } from '@/stores/user/types'
-import { MyResponse } from "@/api/types"
+import { LoginUser } from "@/types/resource"
 
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
 const router = useRouter()
 const storeUserInfo = useUserInfoStore()
 const userInfo = ref<LoginUser>({
+  id: 0,
   account: '',
   password: '',
   verifyCode: '123456'
@@ -46,6 +47,8 @@ const usernameInput = ref<InstanceType<typeof NInput> | null>(null)
 
 const longIn = (e: MouseEvent) => {
   e.preventDefault()
+  router.push({ name: 'HomePage' })
+  return
   formRef.value?.validate((errors) => {
     if (!errors) {
       message.loading("登录...")
