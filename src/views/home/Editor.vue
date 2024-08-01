@@ -54,7 +54,6 @@ function getDefaultTitle(suffix: string = "-速记") {
 
 watch(docInstance, async (newDoc) => {
     if (newDoc.id > 0) {
-        // message.info(JSON.stringify(newDoc))
         await updateDoc(newDoc).catch(err => {
             message.error(err)
         })
@@ -67,7 +66,6 @@ watch(docInstance, async (newDoc) => {
 
     }
 }, { deep: true, immediate: true })
-
 </script>
 
 

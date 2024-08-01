@@ -41,6 +41,7 @@ import myHttp from '@/api/treasure_axios';
 import { router } from '@/router';
 import { getDocGroupTree } from "@/api/doc_group"
 import { DocGroup } from '@/types/resource';
+import { ArrowBack, Refresh, Menu } from '@vicons/ionicons5'
 
 const route = useRoute();
 const topMenuRef = ref(null)
@@ -164,7 +165,7 @@ onMounted(() => {
           h(
             NButton,
             { text: true, type: 'primary' },
-            { default: () => '+' }
+            { default: () => "+" }
           ),
       })
     }
