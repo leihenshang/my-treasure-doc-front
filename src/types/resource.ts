@@ -13,6 +13,7 @@ export interface Doc extends BaseResource {
 
 export interface DocGroup extends BaseResource {
     title: string,
+    childrenCount?: number,
     children?: Array<DocGroup>
 }
 

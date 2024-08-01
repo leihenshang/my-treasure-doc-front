@@ -1,3 +1,29 @@
+<template>
+  <div class="homePage-wrapper">
+    <!-- <Header></Header> -->
+    <n-layout has-sider class="menu-layout">
+      <!-- left sidebar -->
+      <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="64" :width="280"
+        :collapsed="collapsed" @collapse="collapsed = true" @expand="collapsed = false">
+        <h3>treasure-doc</h3>
+        <!-- user menu -->
+        <n-menu v-model:value="activeKey" mode="horizontal" :options="horizontalMenuOptions"
+          @update:value="topMenuUpdate" :icon-size="18" ref="topMenuRef" />
+        <!-- <n-menu class="menu-menu" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
+          :options="menuOptions" :indent="24" :render-label="renderMenuLabel" :default-value="route.path"
+          :render-icon="renderMenuIcon" /> -->
+        <!-- <n-divider /> -->
+        <n-tree block-line :data="treeData" :default-expanded-keys="defaultExpandedKeys" :checkable="false"
+          :on-load="handleLoad" expand-on-click :selectable="false" />
+      </n-layout-sider>
+      <!-- right sidebar -->
+      <n-layout class="right">
+        <router-view></router-view>
+      </n-layout>
+    </n-layout>
+  </div>
+</template>
+
 <script lang="ts" setup>
 import { h, ref, Component, onMounted } from 'vue';
 import { MenuOption, TreeOption, useMessage, NButton, } from 'naive-ui';
@@ -130,9 +156,10 @@ onMounted(() => {
   getDocGroupTree(0, true).then((response) => {
     for (const e of response.data as Array<DocGroup>) {
       treeData.value.push({
-        label: e.title,
+        label: genTreeLab(e),
         key: e.id,
-        children: [],
+        isLeaf: false,
+        id: e.id,
         suffix: () =>
           h(
             NButton,
@@ -141,39 +168,48 @@ onMounted(() => {
           ),
       })
     }
-  }).catch((err: any) => {
-    message.error(JSON.stringify(err))
+  }).catch((err) => {
+    message.error(err)
   })
 })
+
+function handleLoad(node: TreeOption) {
+  return new Promise<void>((resolve, reject) => {
+    getDocGroupTree(node.key as number, false).then((response) => {
+      if (!response?.data || (response.data as Array<DocGroup>).length == 0) {
+        reject()
+      }
+      let arr: any = new Array<any>((response.data as Array<DocGroup>).length)
+      for (const e of response.data as Array<DocGroup>) {
+        arr.push({
+          label: genTreeLab(e),
+          key: e.id,
+          isLeaf: false,
+          suffix: () =>
+            h(
+              NButton,
+              { text: true, type: 'primary' },
+              { default: () => '+' }
+            ),
+        })
+
+      }
+      node.children = arr
+      resolve()
+    }).catch((err) => {
+      message.error(err)
+    })
+  })
+
+}
+
+function genTreeLab(g: DocGroup): string {
+  return `${g.title}(${g.childrenCount})`
+}
 
 
 </script>
 
-<template>
-  <div class="homePage-wrapper">
-    <!-- <Header></Header> -->
-    <n-layout has-sider class="menu-layout">
-      <!-- left sidebar -->
-      <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="64" :width="280"
-        :collapsed="collapsed" @collapse="collapsed = true" @expand="collapsed = false">
-        <h3>treasure-doc</h3>
-        <!-- user menu -->
-        <n-menu v-model:value="activeKey" mode="horizontal" :options="horizontalMenuOptions"
-          @update:value="topMenuUpdate" :icon-size="18" ref="topMenuRef" />
-        <!-- <n-menu class="menu-menu" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
-          :options="menuOptions" :indent="24" :render-label="renderMenuLabel" :default-value="route.path"
-          :render-icon="renderMenuIcon" /> -->
-        <!-- <n-divider /> -->
-        <n-tree block-line :data="treeData" :default-expanded-keys="defaultExpandedKeys" :checkable="false"
-          expand-on-click :selectable="false" />
-      </n-layout-sider>
-      <!-- right sidebar -->
-      <n-layout class="right">
-        <router-view></router-view>
-      </n-layout>
-    </n-layout>
-  </div>
-</template>
 
 <style scoped lang='scss'>
 @import "@/assets/style/helper";
@@ -201,12 +237,15 @@ onMounted(() => {
 
       .menu-menu ::v-deep(.n-menu-item.n-menu-item--selected) {
         .n-menu-item-content {
+
           .n-menu-item-content__icon,
           .n-menu-item-content-header {
             color: darken($mainColor, 0.5);
           }
         }
+
         .n-menu-item>.n-menu-item-content:hover {
+
           .n-menu-item-content__icon,
           .n-menu-item-content-header {
             color: darken($mainColor, 0.5);
