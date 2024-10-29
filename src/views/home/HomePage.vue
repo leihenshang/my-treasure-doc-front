@@ -13,8 +13,7 @@
           :options="menuOptions" :indent="24" :render-label="renderMenuLabel" :default-value="route.path"
           :render-icon="renderMenuIcon" /> -->
         <!-- <n-divider /> -->
-        <n-tree block-line :data="treeData" :default-expanded-keys="defaultExpandedKeys" :checkable="false"
-          :on-load="handleLoad" expand-on-click :selectable="false" />
+        <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps" />
       </n-layout-sider>
       <!-- right sidebar -->
       <n-layout class="right">
@@ -27,7 +26,7 @@
 <script lang="ts" setup>
 import { h, ref, Component, onMounted } from 'vue';
 import { MenuOption, TreeOption, useMessage, NButton, } from 'naive-ui';
-import { useRoute, RouterLink } from 'vue-router';
+import { useRouter, RouterLink } from 'vue-router';
 import SvgIcon from '../../components/public/SvgIcon.vue';
 import { NIcon } from 'naive-ui';
 import {
@@ -38,17 +37,14 @@ import {
   ArrowForwardCircleSharp
 } from '@vicons/ionicons5'
 import myHttp from '@/api/treasure_axios';
-import { router } from '@/router';
 import { getDocGroupTree } from "@/api/doc_group"
 import { DocGroup } from '@/types/resource';
-import { ArrowBack, Refresh, Menu } from '@vicons/ionicons5'
+import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, CreateOutline } from '@vicons/ionicons5'
 
-const route = useRoute();
+const router = useRouter();
 const topMenuRef = ref(null)
 const message = useMessage()
 const treeData = ref<Array<any>>([])
-const defaultExpandedKeys = ref(['40', '41'])
-
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) })
@@ -72,6 +68,7 @@ const horizontalMenuOptions: MenuOption[] = [
         {
           to: {
             name: 'Editor',
+            params: { id: 0 }
           }
         }
       )
@@ -156,56 +153,90 @@ function renderMenuIcon(option: MenuOption) {
 onMounted(() => {
   getDocGroupTree(0, true).then((response) => {
     for (const e of response.data as Array<DocGroup>) {
-      treeData.value.push({
-        label: genTreeLab(e),
-        key: e.id,
-        isLeaf: false,
-        id: e.id,
-        suffix: () =>
-          h(
-            NButton,
-            { text: true, type: 'primary' },
-            { default: () => "+" }
-          ),
-      })
+      treeData.value.push(newTreeItem(e))
     }
   }).catch((err) => {
     message.error(err)
   })
 })
 
+function newTreeItem(d: DocGroup) {
+  return {
+    label: genTreeLab(d),
+    key: d.id,
+    isLeaf: docIsLeaf(d.groupType),
+    id: d.id,
+    suffix: () => getSuffixIcon(d.groupType),
+    prefix: () => getPrefixIcon(d.groupType),
+    docObj: d
+  }
+}
+
+function getSuffixIcon(groupType: string) {
+  switch (groupType) {
+    case "doc":
+      return
+    default:
+      return h(NIcon, null, { default: () => h(CreateOutline) })
+  }
+}
+
+function getPrefixIcon(groupType: string) {
+  switch (groupType) {
+    case "doc":
+      return h(NIcon, { color: "#0e7a0d" }, { default: () => h(DocumentTextOutline) })
+    default:
+      return h(NIcon, { color: "#FCB334" }, { default: () => h(FolderOutline) })
+  }
+}
+
+function docIsLeaf(groupType: string) {
+  switch (groupType) {
+    case "doc":
+      return true
+    default:
+      return false
+  }
+}
+
 function handleLoad(node: TreeOption) {
   return new Promise<void>((resolve, reject) => {
     getDocGroupTree(node.key as number, false).then((response) => {
-      if (!response?.data || (response.data as Array<DocGroup>).length == 0) {
+      if (response?.data === null || (response?.data as Array<DocGroup>).length == 0) {
         reject()
+        return
       }
+
       let arr: any = new Array<any>((response.data as Array<DocGroup>).length)
       for (const e of response.data as Array<DocGroup>) {
-        arr.push({
-          label: genTreeLab(e),
-          key: e.id,
-          isLeaf: false,
-          suffix: () =>
-            h(
-              NButton,
-              { text: true, type: 'primary' },
-              { default: () => '+' }
-            ),
-        })
-
+        arr.push(newTreeItem(e))
       }
       node.children = arr
       resolve()
     }).catch((err) => {
-      message.error(err)
+
     })
   })
-
 }
 
 function genTreeLab(g: DocGroup): string {
+  if (g.groupType == "doc") {
+    return g.title
+  }
+
   return `${g.title}(${g.childrenCount})`
+}
+
+function nodeProps({ option }: { option: TreeOption }) {
+  return {
+    onClick() {
+      const docObj = (option.docObj as DocGroup)
+      if (docObj.groupType == "doc") {
+        // message.info(`[Click] ${option.label} ${docObj.id}`)
+        router.push({ path: `/Editor/${docObj.id}` })
+      }
+    },
+  }
 }
 
 

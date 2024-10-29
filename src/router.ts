@@ -8,12 +8,12 @@ const router = createRouter({
     { path: '/', redirect: '/LogIn' },
     { path: '/LogIn', name: 'LogIn', component: () => import('./views/LogIn.vue') },
     {
-      path: '/HomePage', name: 'HomePage',  component: () => import('./views/home/HomePage.vue'),
+      path: '/HomePage', name: 'HomePage', component: () => import('./views/home/HomePage.vue'),
       redirect: { name: 'Collection' },
       children: [
         { path: '/Collection', name: 'Collection', component: () => import('./views/home/Collection.vue') },
         { path: '/Plan', name: 'Plan', component: () => import('./views/home/Plan.vue') },
-        { path: '/Editor', name: 'Editor', component: () => import('./views/home/Editor.vue') },
+        { path: '/Editor/:id', name: 'Editor', component: () => import('./views/home/Editor.vue'), props: true },
         { path: '/Note', name: 'Note', component: () => import('./views/home/Note.vue') },
       ],
     }

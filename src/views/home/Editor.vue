@@ -13,33 +13,50 @@
             <span>一个标题占位符号</span>
         </div>
         <div class="edit-content">
-            <CherryMarkdown :content="docInstance.content" @update="contentUpdate"></CherryMarkdown>
+            <CherryMarkdown :doc="docInstance" @update="contentUpdate">
+            </CherryMarkdown>
         </div>
     </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, reactive } from 'vue'
 import { useMessage, NIcon } from 'naive-ui';
 import { useRoute } from 'vue-router';
 import CherryMarkdown from '@/components/CherryMarkdown.vue';
 import { ArrowBack, Refresh, Menu } from '@vicons/ionicons5'
 import { Doc } from "@/types/resource"
-import { createDoc, updateDoc } from "@/api/doc"
+import { createDoc, updateDoc, getDoc } from "@/api/doc"
 
 
 const route = useRoute()
-const docInstance = ref<Doc>({
+const docInstance = reactive<Doc>({
     id: 0,
-    title: getDefaultTitle(),
-    content: `# ${getDefaultTitle()}`,
+    title: "",
+    content: "",
     groupId: Number(route.query.groupId)
 })
 const message = useMessage()
+const props = defineProps({
+    id: String
+})
 
 
 function contentUpdate(docUpdate: Doc) {
-    docInstance.value.content = docUpdate.content
-    docInstance.value.title = docUpdate.title
+    docInstance.content = docUpdate.content
+    docInstance.title = docUpdate.title
+
+    if (docInstance.id > 0) {
+        updateDoc(docInstance).catch(err => {
+            message.error(err)
+        })
+    } else if (docUpdate.title.length > 0) {
+        createDoc(docInstance).then(res => {
+            docInstance.id = res.getData().id
+        }).catch(err => {
+            message.error(err)
+        })
+
+    }
 }
 
 
@@ -52,20 +69,24 @@ function getDefaultTitle(suffix: string = "-速记") {
     return todayTitleStr
 }
 
-watch(docInstance, async (newDoc) => {
-    if (newDoc.id > 0) {
-        await updateDoc(newDoc).catch(err => {
-            message.error(err)
-        })
-    } else {
-        await createDoc(newDoc).then(res => {
-            docInstance.value.id = res.getData().id
-        }).catch(err => {
-            message.error(err)
-        })
 
+
+watch(() => props.id, async (newId) => {
+    if (!newId) {
+        return
     }
-}, { deep: true, immediate: true })
+    message.info("get doc " + newId)
+    getDoc((newId as string)).then(resp => {
+        const docObj = resp.data as Doc
+        docInstance.id = docObj.id
+        docInstance.title = docObj.title
+        docInstance.content = docObj.content
+        docInstance.groupId = docObj.groupId
+    }).catch(err => {
+        message.error(err)
+    })
+})
+
 </script>
 
 

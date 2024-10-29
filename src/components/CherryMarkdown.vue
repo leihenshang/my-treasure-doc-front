@@ -6,7 +6,7 @@
 <script lang="ts" setup>
 import 'cherry-markdown/dist/cherry-markdown.css';
 import Cherry from 'cherry-markdown';
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, reactive, watch } from 'vue'
 import myHttp from "@/api/treasure_axios";
 import { useMessage } from 'naive-ui';
 import { Doc } from "@/types/resource"
@@ -14,18 +14,27 @@ import { CherryOptions } from 'cherry-markdown/types/cherry';
 
 let cherryInstance: Cherry
 const message = useMessage()
-const props = defineProps({
-    content: { type: String, default: "" }
-})
+const props = defineProps<{
+    doc: Doc
+}>()
 const emit = defineEmits<{
     (e: 'update', content: Doc): void
 }>()
-const content = ref<Doc>({ title: "", content: props.content!, id: 0 })
+const content = reactive<Doc>({ title: "", content: props.doc.content, id: 0 })
+
+// watch(() => props.doc, (newDoc, oldDoc) => {
+//     message.info(JSON.stringify(newDoc))
+//     message.info(JSON.stringify(oldDoc))
+//     if (cherryInstance) {
+//         cherryInstance.setMarkdown(newDoc.content)
+//     }
+// }, { deep: true })
+
 
 onMounted(() => {
     if (!cherryInstance) {
         cherryInstance = newEditor()
-        cherryInstance.setMarkdown(content.value.content)
+        cherryInstance.setMarkdown(props.doc.content)
     }
 })
 
@@ -35,9 +44,9 @@ function newEditor() {
         value: "",
         callback: {
             afterChange(mb: any, htmlVal: any) {
-                content.value.title = cherryInstance.getToc().shift()?.text ?? ""
-                content.value.content = mb
-                emit('update', { title: content.value.title, content: content.value.content, id: 0 })
+                content.title = cherryInstance.getToc().shift()?.text ?? ""
+                content.content = mb
+                emit('update', content)
             }
         },
         fileUpload(file: File, fCallback: any) {

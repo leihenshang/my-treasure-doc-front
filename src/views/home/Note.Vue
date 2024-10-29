@@ -7,7 +7,7 @@ import { getDocList } from "@/api/doc"
 import { Doc, DocGroup } from "@/types/resource"
 import { PaginationWithSort } from "@/types/treasure_response"
 
-const groupList = ref<DocGroup[]>([{ title: '全部', id: 0 }]);
+const groupList = ref<DocGroup[]>([{ title: '全部', id: 0, groupType: "" }]);
 
 
 onMounted(() => {
@@ -81,8 +81,7 @@ function rowProps(row: any) {
     return {
         style: 'cursor: pointer;',
         onClick: () => {
-            // message.info(JSON.stringify(row))
-            router.push({ path: '/Edit', query: { id: row.id } })
+            router.push({ path: `/Editor/${row.id}` })
         }
     }
 }

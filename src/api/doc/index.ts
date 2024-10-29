@@ -12,11 +12,11 @@ export function getDocList(groupId: number = 0, pagination: PaginationWithSort =
                 orderBy: pagination.orderBy,
                 groupId: groupId
             }
-        }).then((response:any) => {
+        }).then((response: any) => {
             if (response?.code) {
                 reject(response?.msg)
             }
-       
+
             const resp: TreasureResponseList<Doc> = new TreasureResponseList()
             resp.list = response?.data?.list
             resp.pagination = response?.data?.pagination
@@ -25,35 +25,50 @@ export function getDocList(groupId: number = 0, pagination: PaginationWithSort =
     })
 }
 
-export function createDoc(doc:Doc): Promise<TreasureResponse<Doc>> {
+export function getDoc(id: number | string = 0): Promise<TreasureResponse<Doc>> {
+    return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
+        myHttp.get<TreasureResponse<Doc>>({
+            url: 'api/doc/detail', params: {
+                id
+            }
+        }).then((response: any) => {
+            if (response?.code) {
+                reject(response?.msg)
+            }
+            resolve(response)
+        })
+    })
+}
+
+export function createDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
         myHttp.post<TreasureResponse<Doc>>({
             url: 'api/doc/create', data: doc
-        }).then((response:any) => {
+        }).then((response: any) => {
             if (response?.code) {
                 reject(response?.msg)
             }
             const resp: TreasureResponse<Doc> = new TreasureResponse()
             resp.data = response?.data
             resp.msg = response?.msg
-            resp.code= response?.code
+            resp.code = response?.code
             resolve(resp)
         })
     })
 }
 
-export function updateDoc(doc:Doc): Promise<TreasureResponse<Doc>> {
+export function updateDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
         myHttp.post<TreasureResponse<Doc>>({
             url: 'api/doc/update', data: doc
-        }).then((response:any) => {
+        }).then((response: any) => {
             if (response?.code) {
                 reject(response?.msg)
             }
             const resp: TreasureResponse<Doc> = new TreasureResponse()
             resp.data = response?.data
             resp.msg = response?.msg
-            resp.code= response?.code
+            resp.code = response?.code
             resolve(resp)
         })
     })
