@@ -9,7 +9,6 @@ export interface Doc extends BaseResource {
     content: string,
     groupId?: number,
     isTop?: number,
-    isFirst?: boolean
 }
 
 export interface DocGroup extends BaseResource {

@@ -122,7 +122,7 @@ function topMenuUpdate(key: string, item: MenuOption): void {
       console.log(menuOptions)
       console.log(topMenuRef)
       createDoc({
-        content: "",
+        content: "# a title",
         title: "# a title"
       } as Doc).then(res => {
         console.log(res.getData())

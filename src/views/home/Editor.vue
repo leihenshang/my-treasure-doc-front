@@ -50,10 +50,6 @@ function contentUpdate(docUpdate: Doc) {
     const newDoc = { ...docInstance }
     newDoc.content = docUpdate.content
     newDoc.title = docUpdate.title
-    if (docUpdate.isFirst) {
-        return
-    }
-
     if (newDoc.id > 0) {
         updateDoc(newDoc).catch(err => {
             message.error(err)
@@ -89,8 +85,8 @@ watch(() => props.id, async (newId) => {
             docInstance.title = docObj.title
             docInstance.content = docObj.content
             docInstance.groupId = docObj.groupId
-            docInstance.isFirst = true
             isFirst.value = true
+            message.info(`isFirst is:${isFirst.value}`)
         }).catch(err => {
             message.error(err)
         })
