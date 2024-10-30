@@ -1,6 +1,5 @@
 <template>
-    <div id="markdown-container">
-    </div>
+    <div id="markdown-container"> </div>
 </template>
 
 <script lang="ts" setup>
@@ -15,20 +14,18 @@ import { CherryOptions } from 'cherry-markdown/types/cherry';
 let cherryInstance: Cherry
 const message = useMessage()
 const props = defineProps<{
-    doc: Doc
+    doc: Doc,
+    isFirst: boolean,
 }>()
 const emit = defineEmits<{
-    (e: 'update', content: Doc): void
+    (e: 'update', content: Doc): void,
+    (e: 'updateIsFirst', isFirst: boolean): void,
 }>()
-const content = reactive<Doc>({ title: "", content: props.doc.content, id: 0 })
+const content = reactive<Doc>({ title: "", content: "", id: 0 })
 
-// watch(() => props.doc, (newDoc, oldDoc) => {
-//     message.info(JSON.stringify(newDoc))
-//     message.info(JSON.stringify(oldDoc))
-//     if (cherryInstance) {
-//         cherryInstance.setMarkdown(newDoc.content)
-//     }
-// }, { deep: true })
+watch(() => props.doc, (newDoc, oldDoc) => {
+    cherryInstance?.setMarkdown(newDoc.content)
+}, { deep: true })
 
 
 onMounted(() => {
@@ -46,7 +43,10 @@ function newEditor() {
             afterChange(mb: any, htmlVal: any) {
                 content.title = cherryInstance.getToc().shift()?.text ?? ""
                 content.content = mb
-                emit('update', content)
+                emit("updateIsFirst", false)
+                if (!props.isFirst) {
+                    emit('update', content)
+                }
             }
         },
         fileUpload(file: File, fCallback: any) {
@@ -85,10 +85,6 @@ function newEditor() {
 
         }
     }
-
     return new Cherry(config as unknown as CherryOptions);
 }
 </script>
-
-
-<style lang="scss"></style>

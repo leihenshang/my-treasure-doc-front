@@ -13,7 +13,8 @@
             <span>一个标题占位符号</span>
         </div>
         <div class="edit-content">
-            <CherryMarkdown :doc="docInstance" @update="contentUpdate">
+            <CherryMarkdown :doc="docInstance" :is-first="isFirst" @update="contentUpdate"
+                @update-is-first="isFirstUpdate">
             </CherryMarkdown>
         </div>
     </div>
@@ -35,22 +36,30 @@ const docInstance = reactive<Doc>({
     content: "",
     groupId: Number(route.query.groupId)
 })
+const isFirst = ref<boolean>(false)
 const message = useMessage()
 const props = defineProps({
     id: String
 })
 
+function isFirstUpdate(isFirstUpdate: boolean) {
+    isFirst.value = isFirstUpdate
+}
 
 function contentUpdate(docUpdate: Doc) {
-    docInstance.content = docUpdate.content
-    docInstance.title = docUpdate.title
+    const newDoc = { ...docInstance }
+    newDoc.content = docUpdate.content
+    newDoc.title = docUpdate.title
+    if (docUpdate.isFirst) {
+        return
+    }
 
-    if (docInstance.id > 0) {
-        updateDoc(docInstance).catch(err => {
+    if (newDoc.id > 0) {
+        updateDoc(newDoc).catch(err => {
             message.error(err)
         })
     } else if (docUpdate.title.length > 0) {
-        createDoc(docInstance).then(res => {
+        createDoc(newDoc).then(res => {
             docInstance.id = res.getData().id
         }).catch(err => {
             message.error(err)
@@ -72,19 +81,27 @@ function getDefaultTitle(suffix: string = "-速记") {
 
 
 watch(() => props.id, async (newId) => {
-    if (!newId) {
-        return
+    message.info(`get doc id [${newId}] in Editor page`)
+    if (newId as unknown as number > 0) {
+        getDoc((newId as string)).then(resp => {
+            const docObj = resp.data as Doc
+            docInstance.id = docObj.id
+            docInstance.title = docObj.title
+            docInstance.content = docObj.content
+            docInstance.groupId = docObj.groupId
+            docInstance.isFirst = true
+            isFirst.value = true
+        }).catch(err => {
+            message.error(err)
+        })
+    } else {
+        // docInstance.id = 0
+        // docInstance.title = ""
+        // docInstance.content = ""
+        // docInstance.groupId = 0
     }
-    message.info("get doc " + newId)
-    getDoc((newId as string)).then(resp => {
-        const docObj = resp.data as Doc
-        docInstance.id = docObj.id
-        docInstance.title = docObj.title
-        docInstance.content = docObj.content
-        docInstance.groupId = docObj.groupId
-    }).catch(err => {
-        message.error(err)
-    })
+
+
 })
 
 </script>

@@ -40,6 +40,8 @@ import myHttp from '@/api/treasure_axios';
 import { getDocGroupTree } from "@/api/doc_group"
 import { DocGroup } from '@/types/resource';
 import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, CreateOutline } from '@vicons/ionicons5'
+import { createDoc, updateDoc, getDoc } from "@/api/doc"
+import { Doc } from "@/types/resource"
 
 const router = useRouter();
 const topMenuRef = ref(null)
@@ -62,17 +64,17 @@ const horizontalMenuOptions: MenuOption[] = [
     icon: renderIcon(Search),
   },
   {
-    label: () =>
-      h(
-        RouterLink,
-        {
-          to: {
-            name: 'Editor',
-            params: { id: 0 }
-          }
-        }
-      )
-    ,
+    // label: () =>
+    //   h(
+    //     RouterLink,
+    //     {
+    //       to: {
+    //         name: 'Editor',
+    //         params: { id: 0 }
+    //       }
+    //     }
+    //   )
+    label: '',
     key: 'top-menu-write',
     icon: renderIcon(Pen),
   },
@@ -115,14 +117,26 @@ const menuOptions = [
 
 function topMenuUpdate(key: string, item: MenuOption): void {
   console.log(key, item)
-  if (key === 'top-menu-write') {
-    console.log(menuOptions)
-    console.log(topMenuRef)
-  }
-  if (key == 'login-out') {
-    myHttp.post({ url: '/api/user/logout', data: {} }).then(() => {
-      router.push("/LogIn")
-    })
+  switch (key) {
+    case 'top-menu-write':
+      console.log(menuOptions)
+      console.log(topMenuRef)
+      createDoc({
+        content: "",
+        title: "# a title"
+      } as Doc).then(res => {
+        console.log(res.getData())
+        router.push({ path: `/Editor/${res.getData().id}` })
+      }).catch(err => {
+        message.error(err)
+      })
+      return
+    case 'login-out':
+      myHttp.post({ url: '/api/user/logout', data: {} }).then(() => {
+        router.push("/LogIn")
+      })
+      return
+    default:
   }
 }
 
@@ -232,7 +246,6 @@ function nodeProps({ option }: { option: TreeOption }) {
     onClick() {
       const docObj = (option.docObj as DocGroup)
       if (docObj.groupType == "doc") {
-        // message.info(`[Click] ${option.label} ${docObj.id}`)
         router.push({ path: `/Editor/${docObj.id}` })
       }
     },
