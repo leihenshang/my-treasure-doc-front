@@ -119,8 +119,6 @@ function topMenuUpdate(key: string, item: MenuOption): void {
   console.log(key, item)
   switch (key) {
     case 'top-menu-write':
-      console.log(menuOptions)
-      console.log(topMenuRef)
       createDoc({
         content: "# a title",
         title: "# a title"
@@ -130,12 +128,12 @@ function topMenuUpdate(key: string, item: MenuOption): void {
       }).catch(err => {
         message.error(err)
       })
-      return
+      break
     case 'login-out':
       myHttp.post({ url: '/api/user/logout', data: {} }).then(() => {
         router.push("/LogIn")
       })
-      return
+      break
     default:
   }
 }
