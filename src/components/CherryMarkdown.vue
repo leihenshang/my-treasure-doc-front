@@ -9,7 +9,6 @@ import { onMounted, ref, reactive, watch } from 'vue'
 import myHttp from "@/api/treasure_axios";
 import { useMessage } from 'naive-ui';
 import { Doc } from "@/types/resource"
-import { CherryOptions } from 'cherry-markdown/types/cherry';
 
 let cherryInstance: Cherry
 const message = useMessage()
@@ -85,6 +84,6 @@ function newEditor() {
 
         }
     }
-    return new Cherry(config as unknown as CherryOptions);
+    return new Cherry(config);
 }
 </script>
