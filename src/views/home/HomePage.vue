@@ -25,7 +25,7 @@
 
 <script lang="ts" setup>
 import { h, ref, Component, onMounted } from 'vue';
-import { MenuOption, TreeOption, useMessage, NButton, } from 'naive-ui';
+import { MenuOption, TreeOption, useMessage, NButton } from 'naive-ui';
 import { useRouter, RouterLink } from 'vue-router';
 import SvgIcon from '../../components/public/SvgIcon.vue';
 import { NIcon } from 'naive-ui';
@@ -64,16 +64,6 @@ const horizontalMenuOptions: MenuOption[] = [
     icon: renderIcon(Search),
   },
   {
-    // label: () =>
-    //   h(
-    //     RouterLink,
-    //     {
-    //       to: {
-    //         name: 'Editor',
-    //         params: { id: 0 }
-    //       }
-    //     }
-    //   )
     label: '',
     key: 'top-menu-write',
     icon: renderIcon(Pen),
@@ -187,7 +177,7 @@ function newTreeItem(d: DocGroup) {
 function getSuffixIcon(groupType: string) {
   switch (groupType) {
     case "doc":
-      return
+      return h(NIcon, null, { default: () => h(CreateOutline) })
     default:
       return h(NIcon, null, { default: () => h(CreateOutline) })
   }
