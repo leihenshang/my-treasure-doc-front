@@ -1,21 +1,13 @@
 <template>
   <div class="homePage-wrapper">
-    <!-- <Header></Header> -->
     <n-layout has-sider class="menu-layout">
-      <!-- left sidebar -->
       <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="64" :width="280"
         :collapsed="collapsed" @collapse="collapsed = true" @expand="collapsed = false">
         <h3>treasure-doc</h3>
-        <!-- user menu -->
         <n-menu v-model:value="activeKey" mode="horizontal" :options="horizontalMenuOptions"
           @update:value="topMenuUpdate" :icon-size="18" ref="topMenuRef" />
-        <!-- <n-menu class="menu-menu" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
-          :options="menuOptions" :indent="24" :render-label="renderMenuLabel" :default-value="route.path"
-          :render-icon="renderMenuIcon" /> -->
-        <!-- <n-divider /> -->
-        <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps" />
+        <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps" :render-suffix="nodesuffix" />
       </n-layout-sider>
-      <!-- right sidebar -->
       <n-layout class="right">
         <router-view></router-view>
       </n-layout>
@@ -25,7 +17,7 @@
 
 <script lang="ts" setup>
 import { h, ref, Component, onMounted } from 'vue';
-import { MenuOption, TreeOption, useMessage, NButton } from 'naive-ui';
+import { MenuOption, TreeOption, useMessage, NButton, NButtonGroup } from 'naive-ui';
 import { useRouter, RouterLink } from 'vue-router';
 import SvgIcon from '../../components/public/SvgIcon.vue';
 import { NIcon } from 'naive-ui';
@@ -168,7 +160,7 @@ function newTreeItem(d: DocGroup) {
     key: d.id,
     isLeaf: docIsLeaf(d.groupType),
     id: d.id,
-    suffix: () => getSuffixIcon(d.groupType),
+    // suffix: () => getSuffixIcon(d.groupType),
     prefix: () => getPrefixIcon(d.groupType),
     docObj: d
   }
@@ -177,7 +169,22 @@ function newTreeItem(d: DocGroup) {
 function getSuffixIcon(groupType: string) {
   switch (groupType) {
     case "doc":
-      return h(NIcon, null, { default: () => h(CreateOutline) })
+      // return h("n-flex", null, [h(NIcon, null, { default: () => h(CreateOutline) }),
+      // h(NIcon, null, { default: () => h(CreateOutline) })])
+      return h(NButtonGroup, { size: 'tiny' }, [
+        h(NButton, {
+          type: 'default', round: true, onClick: (e) => {
+            message.info("hh")
+            console.log(e)
+            e.stopPropagation();
+          }
+        }, [
+          h('template', null, [
+            h(NIcon, null, { default: () => h(CreateOutline) }),
+          ]),
+          "删除"
+        ])
+      ]);
     default:
       return h(NIcon, null, { default: () => h(CreateOutline) })
   }
@@ -237,6 +244,30 @@ function nodeProps({ option }: { option: TreeOption }) {
         router.push({ path: `/Editor/${docObj.id}` })
       }
     },
+  }
+}
+
+//节点后缀渲染
+const nodesuffix = ({ option }: { option: TreeOption }) => {
+  if (!option.children) {
+    return h(
+      NButton,
+      {
+        text: true,
+        size: 'tiny',
+        onClick: e => {
+          message.info("h")
+          console.log(option)
+          e.stopPropagation()
+          treeData.value.splice(1, 10)
+
+
+
+          // deltree(option.key), e.stopPropagation()//自定义节点删除函数
+        }
+      },
+      { default: () => '删除' }
+    )
   }
 }
 
