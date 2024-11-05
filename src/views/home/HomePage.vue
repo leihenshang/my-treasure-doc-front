@@ -267,14 +267,10 @@ const nodesuffix = ({ option }: { option: TreeOption }) => {
 
       h3 {
         text-align: center;
-        height: 50px;
-        line-height: 50px;
+        height: 40px;
+        line-height: 40px;
         color: rgb(191, 141, 15);
-        font-size: 16px;
-        border-color: black;
-        border-width: 1px;
-        border-style: dashed;
-        margin: 5px;
+        font-size: 18px;
       }
 
       .menu-menu ::v-deep(.n-menu-item.n-menu-item--selected) {
