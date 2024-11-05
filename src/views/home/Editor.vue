@@ -1,16 +1,18 @@
 <template>
     <div class="edit-box">
         <div class="edit-banner">
-            <n-icon size="20">
-                <Menu />
-            </n-icon>
-            <n-icon size="20">
-                <ArrowBack />
-            </n-icon>
-            <n-icon size="20">
-                <Refresh />
-            </n-icon>
-            <span>一个标题占位符号</span>
+            <div class="icon-group">
+                <n-icon size="20">
+                    <Menu />
+                </n-icon>
+                <n-icon size="20">
+                    <ArrowBack />
+                </n-icon>
+                <n-icon size="20">
+                    <Refresh />
+                </n-icon>
+            </div>
+            <span class="bar-title">{{ docInstance.title }}</span>
         </div>
         <div class="edit-content">
             <CherryMarkdown :doc="docInstance" :is-first="isFirst" @update="contentUpdate"
@@ -101,14 +103,32 @@ watch(() => props.id, async (newId) => {
     height: 100%;
 
     .edit-banner {
-        border: 1px dashed rgb(176, 170, 170);
-        margin-bottom: 10px;
-        height: 26px;
-        line-height: 26px;
+        height: 20px;
+        line-height: 20px;
+        margin: 5px 0 5px 0;
+
+        .icon-group {
+            display: inline-block;
+            height: 20px;
+            line-height: 20px;
+            overflow: hidden;
+
+            .n-icon {
+                margin: 0 5px;
+            }
+        }
+
+        .bar-title {
+            display: inline-block;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            overflow: hidden;
+            margin: 0 5px;
+        }
     }
 
     .edit-content {
-        border: 1px dashed rgb(176, 170, 170);
         height: 100%;
     }
 }
