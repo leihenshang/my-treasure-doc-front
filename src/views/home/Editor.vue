@@ -12,10 +12,10 @@
                     <Refresh />
                 </n-icon>
             </div>
-            <span class="bar-title">{{ docInstance.title }}</span>
+            <span class="bar-title">{{ currentDoc.title }}</span>
         </div>
         <div class="edit-content">
-            <Vditor :doc="docInstance" />
+            <Vditor :doc="currentDoc" />
         </div>
     </div>
 </template>
@@ -30,7 +30,7 @@ import { createDoc, updateDoc, getDoc } from "@/api/doc"
 
 
 const route = useRoute()
-const docInstance = reactive<Doc>({
+const currentDoc = reactive<Doc>({
     id: 0,
     title: "",
     content: "",
@@ -47,7 +47,7 @@ function isFirstUpdate(isFirstUpdate: boolean) {
 }
 
 function contentUpdate(docUpdate: Doc) {
-    const newDoc = { ...docInstance }
+    const newDoc = { ...currentDoc }
     newDoc.content = docUpdate.content
     newDoc.title = docUpdate.title
     if (newDoc.id > 0) {
@@ -56,7 +56,7 @@ function contentUpdate(docUpdate: Doc) {
         })
     } else if (docUpdate.title.length > 0) {
         createDoc(newDoc).then(res => {
-            docInstance.id = res.getData().id
+            currentDoc.id = res.getData().id
         }).catch(err => {
             message.error(err)
         })
@@ -80,10 +80,10 @@ watch(() => props.id, async (newId) => {
     if (newId as unknown as number > 0) {
         getDoc((newId as string)).then(resp => {
             const docObj = resp.data as Doc
-            docInstance.id = docObj.id
-            docInstance.title = docObj.title
-            docInstance.content = docObj.content
-            docInstance.groupId = docObj.groupId
+            currentDoc.id = docObj.id
+            currentDoc.title = docObj.title
+            currentDoc.content = docObj.content
+            currentDoc.groupId = docObj.groupId
             isFirst.value = true
         }).catch(err => {
             message.error(err)
