@@ -77,7 +77,6 @@ function getDefaultTitle(suffix: string = "-速记") {
 
 
 watch(() => props.id, async (newId) => {
-    message.info(`get doc id [${newId}] in Editor page`)
     if (newId as unknown as number > 0) {
         getDoc((newId as string)).then(resp => {
             const docObj = resp.data as Doc
@@ -86,18 +85,10 @@ watch(() => props.id, async (newId) => {
             docInstance.content = docObj.content
             docInstance.groupId = docObj.groupId
             isFirst.value = true
-            message.info(`isFirst is:${isFirst.value}`)
         }).catch(err => {
             message.error(err)
         })
-    } else {
-        // docInstance.id = 0
-        // docInstance.title = ""
-        // docInstance.content = ""
-        // docInstance.groupId = 0
     }
-
-
 })
 
 </script>

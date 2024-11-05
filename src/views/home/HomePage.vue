@@ -32,7 +32,7 @@ import myHttp from '@/api/treasure_axios';
 import { getDocGroupTree } from "@/api/doc_group"
 import { DocGroup } from '@/types/resource';
 import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, CreateOutline } from '@vicons/ionicons5'
-import { createDoc, updateDoc, getDoc } from "@/api/doc"
+import { createDoc, updateDoc, getDoc, deleteDoc } from "@/api/doc"
 import { Doc } from "@/types/resource"
 
 const router = useRouter();
@@ -75,37 +75,25 @@ const horizontalMenuOptions: MenuOption[] = [
     ]
   }
 ]
-const menuOptions = [
-  {
-    label: '收藏',
-    key: 'like',
-    pathName: 'Collection',
-    iconName: 'collect',
-  },
-  {
-    label: '计划',
-    key: 'plan',
-    pathName: 'Plan',
-    iconName: 'plan',
-  },
-  {
-    label: '笔记',
-    key: 'all-doc',
-    pathName: 'Note',
-    iconName: 'diary',
-  },
-];
-
 
 function topMenuUpdate(key: string, item: MenuOption): void {
   console.log(key, item)
   switch (key) {
     case 'top-menu-write':
-      createDoc({
+      const newDoc: Doc = {
+        id: 0,
         content: "# a title",
         title: "# a title"
-      } as Doc).then(res => {
+      }
+      createDoc(newDoc).then(res => {
         console.log(res.getData())
+        let doc = res.getData()
+        let docGroup: DocGroup = {
+          id: doc.id,
+          title: doc.title,
+          groupType: "doc",
+        }
+        treeData.value.push(newTreeItem(docGroup))
         router.push({ path: `/Editor/${res.getData().id}` })
       }).catch(err => {
         message.error(err)
@@ -122,26 +110,6 @@ function topMenuUpdate(key: string, item: MenuOption): void {
 
 const activeKey = ref<string | null>(null)
 const collapsed = ref(false)
-
-
-function renderMenuLabel(option: MenuOption) {
-  if ('pathName' in option) {
-    return h(
-      RouterLink as Component,
-      {
-        to: {
-          name: option.pathName,
-        }
-      },
-      { default: () => option.label }
-    );
-  }
-  return option.label as string;
-}
-
-function renderMenuIcon(option: MenuOption) {
-  return option.iconName && h(SvgIcon as Component, { iconName: option.iconName });
-}
 
 
 onMounted(() => {
@@ -256,21 +224,21 @@ const nodesuffix = ({ option }: { option: TreeOption }) => {
         text: true,
         size: 'tiny',
         onClick: e => {
-          message.info("h")
-          console.log(option)
           e.stopPropagation()
-          treeData.value.splice(1, 10)
-
-
-
-          // deltree(option.key), e.stopPropagation()//自定义节点删除函数
+          console.log(option)
+          for (let i = 0; i < treeData.value.length; i++) {
+            if (treeData.value[i].key == option.key) {
+              treeData.value.splice(i, 1)
+              deleteDoc({ id: option.key } as Doc)
+              break
+            }
+          }
         }
       },
       { default: () => '删除' }
     )
   }
 }
-
 
 </script>
 

@@ -74,3 +74,20 @@ export function updateDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     })
 }
 
+export function deleteDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
+    return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
+        myHttp.post<TreasureResponse<Doc>>({
+            url: 'api/doc/delete', data: doc
+        }).then((response: any) => {
+            if (response?.code) {
+                reject(response?.msg)
+            }
+            const resp: TreasureResponse<Doc> = new TreasureResponse()
+            resp.data = response?.data
+            resp.msg = response?.msg
+            resp.code = response?.code
+            resolve(resp)
+        })
+    })
+}
+
