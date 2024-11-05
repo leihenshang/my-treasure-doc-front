@@ -82,8 +82,8 @@ function topMenuUpdate(key: string, item: MenuOption): void {
     case 'top-menu-write':
       const newDoc: Doc = {
         id: 0,
-        content: "# a title",
-        title: "# a title"
+        content: "# write here",
+        title: getDefaultTitle()
       }
       createDoc(newDoc).then(res => {
         console.log(res.getData())
@@ -107,6 +107,16 @@ function topMenuUpdate(key: string, item: MenuOption): void {
     default:
   }
 }
+
+function getDefaultTitle(suffix: string = "-速记") {
+  const today = new Date()
+  let todayTitleStr = "".concat(
+    today.getFullYear().toString(),
+    (today.getMonth() + 1).toString().padStart(2, '0'),
+    today.getDate().toString()) + suffix
+  return todayTitleStr
+}
+
 
 const activeKey = ref<string | null>(null)
 const collapsed = ref(false)
