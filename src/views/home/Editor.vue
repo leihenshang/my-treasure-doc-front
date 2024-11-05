@@ -15,9 +15,6 @@
             <span class="bar-title">{{ docInstance.title }}</span>
         </div>
         <div class="edit-content">
-            <!-- <CherryMarkdown :doc="docInstance" :is-first="isFirst" @update="contentUpdate"
-                @update-is-first="isFirstUpdate">
-            </CherryMarkdown> -->
             <Vditor :doc="docInstance" />
         </div>
     </div>
@@ -26,7 +23,6 @@
 import { onMounted, ref, watch, reactive } from 'vue'
 import { useMessage, NIcon } from 'naive-ui';
 import { useRoute } from 'vue-router';
-import CherryMarkdown from '@/components/CherryMarkdown.vue';
 import Vditor from '@/components/Vditor.vue';
 import { ArrowBack, Refresh, Menu } from '@vicons/ionicons5'
 import { Doc } from "@/types/resource"
