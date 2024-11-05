@@ -8,7 +8,7 @@ import { onMounted, watch } from "vue"
 import { Doc } from "@/types/resource"
 
 const props = defineProps<{
-    doc: Doc
+    currentDoc: Doc
 }>()
 
 let vditor: Vditor
@@ -20,12 +20,12 @@ onMounted(() => {
             pin: true,
         },
         after: () => {
-            vditor.setValue(props.doc.content)
+            vditor.setValue(props.currentDoc.content)
         },
     })
 })
 
-watch(() => props.doc, (newDoc) => {
+watch(() => props.currentDoc, (newDoc) => {
     vditor?.setValue(newDoc.content)
 }, { deep: true })
 

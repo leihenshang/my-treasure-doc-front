@@ -15,7 +15,7 @@
             <span class="bar-title">{{ currentDoc.title }}</span>
         </div>
         <div class="edit-content">
-            <Vditor :doc="currentDoc" />
+            <Vditor :currentDoc="currentDoc" />
         </div>
     </div>
 </template>
