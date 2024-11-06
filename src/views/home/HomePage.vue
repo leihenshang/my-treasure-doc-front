@@ -18,9 +18,8 @@
 
 <script lang="ts" setup>
 import { h, ref, Component, onMounted } from 'vue';
-import { MenuOption, TreeOption, useMessage, NButton, NButtonGroup } from 'naive-ui';
+import { MenuOption, TreeOption, useMessage, NButton, NButtonGroup, NIcon } from 'naive-ui';
 import { useRouter, RouterLink } from 'vue-router';
-import { NIcon } from 'naive-ui';
 import {
   EllipsisHorizontalCircleOutline as EllipsisHorizontalCircle,
   Pencil as Pen,
@@ -32,7 +31,8 @@ import myHttp from '@/api/treasure_axios';
 import { getDocGroupTree } from "@/api/doc_group"
 import { DocGroup } from '@/types/resource';
 import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, CreateOutline } from '@vicons/ionicons5'
-import { FolderAddOutlined } from '@vicons/antd'
+import { FolderAddOutlined, DeleteFilled } from '@vicons/antd'
+import { Delete24Filled } from "@vicons/fluent"
 import { createDoc, updateDoc, getDoc, deleteDoc } from "@/api/doc"
 import { Doc } from "@/types/resource"
 
@@ -144,6 +144,7 @@ function newTreeItem(d: DocGroup) {
     key: d.id,
     isLeaf: docIsLeaf(d.groupType),
     id: d.id,
+    groupType: d.groupType,
     // suffix: () => getSuffixIcon(d.groupType),
     prefix: () => getPrefixIcon(d.groupType),
     docItem: d
@@ -234,25 +235,56 @@ function nodeProps({ option }: { option: TreeOption }) {
 //节点后缀渲染
 const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
   if (!option.children) {
-    return h(
-      NButton,
-      {
-        text: true,
-        size: 'tiny',
-        onClick: e => {
-          e.stopPropagation()
-          console.log(option)
-          for (let i = 0; i < treeData.value.length; i++) {
-            if (treeData.value[i].key == option.key) {
-              treeData.value.splice(i, 1)
-              deleteDoc({ id: option.key } as Doc)
-              break
+    return h(NButtonGroup, {
+      size: "small",
+    }, {
+      default: () => {
+        return [h(
+          NButton,
+          {
+            text: true,
+            size: 'small',
+            onClick: e => {
+              e.stopPropagation()
+              for (let i = 0; i < treeData.value.length; i++) {
+                if (treeData.value[i].key == option.key) {
+                  treeData.value.splice(i, 1)
+                  deleteDoc({ id: option.key } as Doc)
+                  break
+                }
+              }
             }
-          }
-        }
-      },
-      { default: () => '删除' }
-    )
+          },
+          { icon: () => h(NIcon, null, { default: () => h(Delete24Filled) }) }
+        ), option.groupType != "doc" && h(
+          NButton,
+          {
+            text: true,
+            size: 'small',
+            type: "default",
+            onClick: e => {
+              e.stopPropagation()
+              // todo:
+              message.info("doc create!")
+            }
+          },
+          { icon: () => h(NIcon, null, { default: () => h(CreateOutline) }) }
+        ), option.groupType != "doc" && h(
+          NButton,
+          {
+            text: true,
+            size: 'small',
+            type: "default",
+            onClick: e => {
+              e.stopPropagation()
+              // todo:
+              message.info("folder create!")
+            }
+          },
+          { icon: () => h(NIcon, null, { default: () => h(FolderAddOutlined) }) }
+        )]
+      }
+    })
   }
 }
 
@@ -264,6 +296,10 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
 
 .homePage-wrapper {
   height: 100%;
+
+  .tree-button {
+    padding-left: 10px;
+  }
 
   >.menu-layout {
     height: 100%;
