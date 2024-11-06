@@ -140,7 +140,7 @@ function newTreeItem(d: DocGroup) {
     id: d.id,
     // suffix: () => getSuffixIcon(d.groupType),
     prefix: () => getPrefixIcon(d.groupType),
-    docObj: d
+    docItem: d
   }
 }
 
@@ -217,9 +217,9 @@ function genTreeLab(g: DocGroup): string {
 function nodeProps({ option }: { option: TreeOption }) {
   return {
     onClick() {
-      const docObj = (option.docObj as DocGroup)
-      if (docObj.groupType == "doc") {
-        router.push({ path: `/Editor/${docObj.id}` })
+      const docItem = (option.docItem as DocGroup)
+      if (docItem.groupType == "doc") {
+        router.push({ path: `/Editor/${docItem.id}` })
       }
     },
   }

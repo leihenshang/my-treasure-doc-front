@@ -36,15 +36,12 @@ const currentDoc = reactive<Doc>({
     content: "",
     groupId: Number(route.query.groupId)
 })
-const isFirst = ref<boolean>(false)
+
 const message = useMessage()
 const props = defineProps({
     id: String
 })
 
-function isFirstUpdate(isFirstUpdate: boolean) {
-    isFirst.value = isFirstUpdate
-}
 
 function contentUpdate(docUpdate: Doc) {
     const newDoc = { ...currentDoc }
@@ -74,6 +71,19 @@ function getDefaultTitle(suffix: string = "-速记") {
     return todayTitleStr
 }
 
+onMounted(() => {
+    if (currentDoc.id <= 0) {
+        getDoc(props.id).then(resp => {
+            const docObj = resp.data as Doc
+            currentDoc.id = docObj.id
+            currentDoc.title = docObj.title
+            currentDoc.content = docObj.content
+            currentDoc.groupId = docObj.groupId
+        }).catch(err => {
+            message.error(err)
+        })
+    }
+})
 
 
 watch(() => props.id, async (newId) => {
@@ -84,7 +94,6 @@ watch(() => props.id, async (newId) => {
             currentDoc.title = docObj.title
             currentDoc.content = docObj.content
             currentDoc.groupId = docObj.groupId
-            isFirst.value = true
         }).catch(err => {
             message.error(err)
         })
