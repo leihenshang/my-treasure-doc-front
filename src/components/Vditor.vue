@@ -4,29 +4,49 @@
 <script lang="ts" setup>
 import Vditor from 'vditor'
 import "vditor/dist/index.css"
+import { ref, nextTick, reactive } from "vue"
 import { onMounted, watch } from "vue"
+import { useMessage } from "naive-ui"
 import { Doc } from "@/types/resource"
 
 const props = defineProps<{
     currentDoc: Doc
 }>()
 
-let vditor: Vditor
+const vditorContainer = ref()
+const message = useMessage()
+
+const emit = defineEmits<{
+    (e: 'updateDoc', updateDoc: Doc): void
+}>()
+
+const currentDoc = reactive({ ...props.currentDoc })
+
 onMounted(() => {
-    vditor = new Vditor("vditor-container", {
+    message.loading("编辑器初始化")
+    vditorContainer.value = new Vditor("vditor-container", {
         theme: "classic",
         minHeight: 800,
         toolbarConfig: {
             pin: true,
         },
         after: () => {
-            vditor.setValue(props.currentDoc.content)
+            message.destroyAll()
+            vditorContainer.value.setValue(props.currentDoc.content)
         },
+        input(md) {
+            currentDoc.content = md
+            currentDoc.isFirst = false
+            emit("updateDoc", currentDoc)
+        }
     })
 })
 
-watch(() => props.currentDoc, (newDoc) => {
-    vditor?.setValue(newDoc.content)
+watch(() => props.currentDoc, async (newDoc) => {
+    if (!newDoc.isFirst) {
+        vditorContainer.value?.setValue(newDoc.content)
+    }
+
 }, { deep: true })
 
 

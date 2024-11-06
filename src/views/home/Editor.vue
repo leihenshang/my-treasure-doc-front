@@ -15,12 +15,12 @@
             <span class="bar-title">{{ currentDoc.title }}</span>
         </div>
         <div class="edit-content">
-            <Vditor :currentDoc="currentDoc" />
+            <Vditor :currentDoc="currentDoc" @update-doc="contentUpdate" />
         </div>
     </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref, watch, reactive } from 'vue'
+import { onMounted, ref, watch, reactive, nextTick, watchEffect } from 'vue'
 import { useMessage, NIcon } from 'naive-ui';
 import { useRoute } from 'vue-router';
 import Vditor from '@/components/Vditor.vue';
@@ -28,6 +28,9 @@ import { ArrowBack, Refresh, Menu } from '@vicons/ionicons5'
 import { Doc } from "@/types/resource"
 import { createDoc, updateDoc, getDoc } from "@/api/doc"
 
+const props = defineProps({
+    id: String,
+})
 
 const route = useRoute()
 const currentDoc = reactive<Doc>({
@@ -38,12 +41,9 @@ const currentDoc = reactive<Doc>({
 })
 
 const message = useMessage()
-const props = defineProps({
-    id: String
-})
-
 
 function contentUpdate(docUpdate: Doc) {
+    currentDoc.isFirst = false
     const newDoc = { ...currentDoc }
     newDoc.content = docUpdate.content
     newDoc.title = docUpdate.title
@@ -72,33 +72,32 @@ function getDefaultTitle(suffix: string = "-速记") {
 }
 
 onMounted(() => {
-    if (currentDoc.id <= 0) {
-        getDoc(props.id).then(resp => {
-            const docObj = resp.data as Doc
-            currentDoc.id = docObj.id
-            currentDoc.title = docObj.title
-            currentDoc.content = docObj.content
-            currentDoc.groupId = docObj.groupId
-        }).catch(err => {
-            message.error(err)
-        })
-    }
+    nextTick(() => {
+        getSetCurrentDoc(props.id as unknown as number, true)
+    })
 })
 
 
-watch(() => props.id, async (newId) => {
-    if (newId as unknown as number > 0) {
-        getDoc((newId as string)).then(resp => {
-            const docObj = resp.data as Doc
-            currentDoc.id = docObj.id
-            currentDoc.title = docObj.title
-            currentDoc.content = docObj.content
-            currentDoc.groupId = docObj.groupId
-        }).catch(err => {
-            message.error(err)
-        })
-    }
+watch(() => props.id, (newId) => {
+    getSetCurrentDoc(newId as unknown as number, false)
+
 })
+
+function getSetCurrentDoc(docId: number, isFirst: boolean) {
+    if (docId <= 0) {
+        return
+    }
+    getDoc(docId).then(resp => {
+        const respDoc = resp.data as Doc
+        currentDoc.id = respDoc.id
+        currentDoc.title = respDoc.title
+        currentDoc.content = respDoc.content
+        currentDoc.groupId = respDoc.groupId
+        currentDoc.isFirst = isFirst
+    }).catch(err => {
+        message.error(err)
+    })
+}
 
 </script>
 
