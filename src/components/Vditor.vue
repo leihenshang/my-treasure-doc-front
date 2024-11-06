@@ -33,13 +33,21 @@ onMounted(() => {
         after: () => {
             message.destroyAll()
             vditorContainer.value.setValue(props.currentDoc.content)
+            vditorContainer.value.focus()
         },
         input(md) {
             currentDoc.content = md
             currentDoc.isFirst = false
             emit("updateDoc", currentDoc)
+        },
+        upload: {
+            url: "api/file/upload",
+            setHeaders() {
+                return { "XToken": "1" }
+            },
         }
     })
+
 })
 
 watch(() => props.currentDoc, async (newDoc) => {

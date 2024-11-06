@@ -1,7 +1,7 @@
 <template>
   <div class="homePage-wrapper">
     <n-layout has-sider class="menu-layout">
-      <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="64" :width="280"
+      <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="64" :width="300"
         :collapsed="collapsed" @collapse="collapsed = true" @expand="collapsed = false">
         <h3>treasure-doc</h3>
         <n-menu v-model:value="activeKey" mode="horizontal" :options="horizontalMenuOptions"
@@ -19,7 +19,6 @@
 import { h, ref, Component, onMounted } from 'vue';
 import { MenuOption, TreeOption, useMessage, NButton, NButtonGroup } from 'naive-ui';
 import { useRouter, RouterLink } from 'vue-router';
-import SvgIcon from '../../components/public/SvgIcon.vue';
 import { NIcon } from 'naive-ui';
 import {
   EllipsisHorizontalCircleOutline as EllipsisHorizontalCircle,
@@ -32,6 +31,7 @@ import myHttp from '@/api/treasure_axios';
 import { getDocGroupTree } from "@/api/doc_group"
 import { DocGroup } from '@/types/resource';
 import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, CreateOutline } from '@vicons/ionicons5'
+import { FolderAddOutlined } from '@vicons/antd'
 import { createDoc, updateDoc, getDoc, deleteDoc } from "@/api/doc"
 import { Doc } from "@/types/resource"
 
@@ -45,15 +45,20 @@ function renderIcon(icon: Component) {
 }
 
 const horizontalMenuOptions: MenuOption[] = [
-  {
-    label: '',
-    key: 'top-menu-message',
-    icon: renderIcon(MailOpen)
-  },
+  // {
+  //   label: '',
+  //   key: 'top-menu-message',
+  //   icon: renderIcon(MailOpen)
+  // },
   {
     label: '',
     key: 'top-menu-search',
     icon: renderIcon(Search),
+  },
+  {
+    label: '',
+    key: 'top-menu-folder',
+    icon: renderIcon(FolderAddOutlined),
   },
   {
     label: '',
