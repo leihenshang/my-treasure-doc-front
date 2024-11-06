@@ -37,6 +37,8 @@ onMounted(() => {
         },
         input(md) {
             currentDoc.content = md
+            let newTitle: string = getMarkdownH1Text(currentDoc.content)
+            currentDoc.title = newTitle ?? currentDoc.title
             currentDoc.isFirst = false
             emit("updateDoc", currentDoc)
         },
@@ -49,6 +51,16 @@ onMounted(() => {
     })
 
 })
+
+function getMarkdownH1Text(markdownContent: string): string {
+    const h1Regex = /^#\s*(.*)$/gm;
+    const match = h1Regex.exec(markdownContent);
+    if (match && match.length > 1) {
+        return match[1].trim();
+    }
+
+    return "";
+}
 
 watch(() => props.currentDoc, async (newDoc) => {
     if (!newDoc.isFirst) {
