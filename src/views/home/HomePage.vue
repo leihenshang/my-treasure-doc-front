@@ -3,7 +3,16 @@
     <n-layout has-sider class="menu-layout">
       <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="64" :width="288"
         :collapsed="collapsed" @collapse="collapsed = true" @expand="collapsed = false">
-        <h3>treasure-doc</h3>
+        <div style="text-align:center;"> <n-button icon-placement="right" text size="large"
+            @click="router.push('/Dashboard')">
+            <template #icon>
+              <n-icon>
+                <DashboardOutlined />
+              </n-icon>
+            </template>
+            treasure-doc
+          </n-button>
+        </div>
         <n-menu v-model:value="activeKey" mode="horizontal" :options="horizontalMenuOptions"
           @update:value="topMenuUpdate" :icon-size="18" ref="topMenuRef" />
         <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
@@ -31,7 +40,7 @@ import myHttp from '@/api/treasure_axios';
 import { getDocGroupTree } from "@/api/doc_group"
 import { DocGroup } from '@/types/resource';
 import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, CreateOutline } from '@vicons/ionicons5'
-import { FolderAddOutlined, DeleteFilled } from '@vicons/antd'
+import { FolderAddOutlined, DashboardOutlined } from '@vicons/antd'
 import { Delete24Filled } from "@vicons/fluent"
 import { createDoc, updateDoc, getDoc, deleteDoc } from "@/api/doc"
 import { Doc } from "@/types/resource"
@@ -306,14 +315,6 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
 
     .menu-sider {
       background: $menuBackground;
-
-      h3 {
-        text-align: center;
-        height: 40px;
-        line-height: 40px;
-        color: rgb(191, 141, 15);
-        font-size: 18px;
-      }
 
       .menu-menu ::v-deep(.n-menu-item.n-menu-item--selected) {
         .n-menu-item-content {
