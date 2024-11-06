@@ -47,15 +47,13 @@ const usernameInput = ref<InstanceType<typeof NInput> | null>(null)
 
 const longIn = (e: MouseEvent) => {
   e.preventDefault()
-  router.push({ name: 'HomePage' })
-  return
   formRef.value?.validate((errors) => {
     if (!errors) {
       message.loading("登录...")
-      myHttp.post({ url: 'api/user/login', data: userInfo }).then((response) => {
+      myHttp.post({ url: 'api/user/login', data: { ...userInfo.value } }).then((response) => {
         message.destroyAll()
-        if (response?.data.code > 0) {
-          message.error("登录失败:" + response?.data?.msg)
+        if (response?.code > 0) {
+          message.error("登录失败:" + response?.msg)
           localStorage.removeItem('userInfo')
           if (usernameInput.value) {
             (usernameInput.value.focus)()
@@ -64,11 +62,12 @@ const longIn = (e: MouseEvent) => {
         }
 
         // local storage
-        localStorage.setItem('userInfo', JSON.stringify(response?.data?.data))
-        storeUserInfo.updateUserinfo(response?.data?.data as UserInfo)
+        localStorage.setItem('userInfo', JSON.stringify(response?.data))
+        storeUserInfo.updateUserinfo(response?.data as UserInfo)
         message.success("登录成功")
         router.push({ name: 'HomePage' })
       }).catch((err: any) => {
+        console.log("axios:", err)
         message.error(JSON.stringify(err))
       })
     }

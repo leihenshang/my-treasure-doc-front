@@ -36,6 +36,7 @@ type AxiosResponseType = 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' |
 export interface IResponse<T = any> {
   code: number
   data: T extends any ? T : T & any
+  msg: string
 }
 
 export interface HttpClient {
@@ -45,7 +46,7 @@ export interface HttpClient {
 }
 
 export interface MyResponse {
-  code:number,
+  code: number,
   msg: string,
   data?: any
 }
@@ -58,6 +59,5 @@ export {
   InternalAxiosRequestConfig,
   AxiosRequestHeaders,
   AxiosError,
-
   AxiosConfig
 }

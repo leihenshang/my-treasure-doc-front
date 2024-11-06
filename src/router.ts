@@ -28,10 +28,14 @@ router.beforeEach(async (to, from) => {
   } else {
     let localUserInfo: string | null = localStorage.getItem('userInfo')
     if (localUserInfo) {
-      let userInfo: UserInfo = JSON.parse(localUserInfo)
-      if (userInfo && userInfo.id > 0) {
-        storeUserinfo.updateUserinfo(userInfo)
-        isAuthenticated = true
+      try {
+        let userInfo: UserInfo = JSON.parse(localUserInfo)
+        if (userInfo && userInfo.id > 0) {
+          storeUserinfo.updateUserinfo(userInfo)
+          isAuthenticated = true
+        }
+      } catch (error) {
+        console.log("failed to parse userinfo from local storage")
       }
     }
   }
