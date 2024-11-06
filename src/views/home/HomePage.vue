@@ -6,7 +6,8 @@
         <h3>treasure-doc</h3>
         <n-menu v-model:value="activeKey" mode="horizontal" :options="horizontalMenuOptions"
           @update:value="topMenuUpdate" :icon-size="18" ref="topMenuRef" />
-        <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps" :render-suffix="nodesuffix" />
+        <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
+          :render-suffix="treeNodeSuffix" />
       </n-layout-sider>
       <n-layout class="right">
         <router-view></router-view>
@@ -231,7 +232,7 @@ function nodeProps({ option }: { option: TreeOption }) {
 }
 
 //节点后缀渲染
-const nodesuffix = ({ option }: { option: TreeOption }) => {
+const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
   if (!option.children) {
     return h(
       NButton,
