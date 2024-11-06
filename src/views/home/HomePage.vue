@@ -1,7 +1,7 @@
 <template>
   <div class="homePage-wrapper">
     <n-layout has-sider class="menu-layout">
-      <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="64" :width="300"
+      <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="64" :width="288"
         :collapsed="collapsed" @collapse="collapsed = true" @expand="collapsed = false">
         <h3>treasure-doc</h3>
         <n-menu v-model:value="activeKey" mode="horizontal" :options="horizontalMenuOptions"
