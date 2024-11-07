@@ -102,7 +102,7 @@ img {
 }
 
 .btn7 {
-    background-color: greenyellow;
+    background-color: rgb(124, 165, 13);
     grid-area: btn7;
 }
 
