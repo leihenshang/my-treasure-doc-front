@@ -199,11 +199,12 @@ function handleLoad(node: TreeOption) {
 }
 
 function genTreeLab(g: DocGroup): string {
-  if (g.groupType == "doc") {
-    return g.title
-  }
+  return g.title
+  // if (g.groupType == "doc") {
+  //   return g.title
+  // }
 
-  return `${g.title}(${g.childrenCount})`
+  // return `${g.title}(${g.childrenCount})`
 }
 
 function nodeProps({ option }: { option: TreeOption }) {
