@@ -1,36 +1,32 @@
 <template>
     <div class="home">
         <div class="container">
-        <div class="grid">
-            <a href="#" class="btn1"><img src="assets/icons/contact.svg" alt="mail"></a>
-            <a href="#" class="btn2"><img src="assets/icons/gallery.svg" alt="gallery"></a>
-            <a href="#" class="btn3"><img src="assets/icons/calendar.svg" alt="calender"></a>
-            <a href="#" class="btn4"><img src="assets/icons/list.svg" alt="list"></a>
-            <a href="#" class="btn5"><img src="assets/icons/multiple-users-silhouette.svg" alt="contacts"></a>
-            <a href="#" class="btn6"><img src="assets/icons/play-button.svg" alt="play"></a>
-            <a href="#" class="btn7"><img src="assets/icons/picture-gallery.svg" alt="gallery"></a>
-            <a href="#" class="btn8"><img src="assets/icons/video-player.svg" alt="videoplay"></a>
-            <a href="#" class="btn9"><img src="assets/icons/users.svg" alt="users"></a>
-            <a href="#" class="btn10"><img src="assets/icons/settings.svg" alt="settings"></a>
-            <a href="#" class="btn11"><img src="assets/icons/twitter.svg" alt="twitter"></a>
-            <a href="#" class="btn12"><img src="assets/icons/vimeo.svg" alt="viemo"></a>
-            <a href="#" class="btn13"><img src="assets/icons/youtube.svg" alt="youtube"></a>
-            <a href="#" class="btn14"><img src="assets/icons/facebook.svg" alt="facebook"></a>
-            <a href="#" class="btn15"><img src="assets/icons/instagram.svg" alt="instagram"></a>
-            <a href="#" class="btn16"><img src="assets/icons/linkedin.svg" alt="linkedin"></a>
+            <div class="grid">
+                <a href="#" class="btn1"><img src="@/assets/tile_icon/access.svg" alt="mail"></a>
+                <a href="#" class="btn2"><img src="@/assets/tile_icon/weather.svg" alt="gallery"></a>
+                <a href="#" class="btn3"><img src="@/assets/tile_icon/camera.svg" alt="calender"></a>
+                <a href="#" class="btn4"><img src="@/assets/tile_icon/chrome.svg" alt="list"></a>
+                <a href="#" class="btn5"><img src="@/assets/tile_icon/cortana.svg" alt="contacts"></a>
+                <a href="#" class="btn6"><img src="@/assets/tile_icon/weather.svg" alt="play"></a>
+                <a href="#" class="btn7"><img src="@/assets/tile_icon/weather.svg" alt="gallery"></a>
+                <a href="#" class="btn8"><img src="@/assets/tile_icon/weather.svg" alt="videoplay"></a>
+                <a href="#" class="btn9"><img src="@/assets/tile_icon/weather.svg" alt="users"></a>
+                <a href="#" class="btn10"><img src="@/assets/tile_icon/weather.svg" alt="settings"></a>
+                <a href="#" class="btn11"><img src="@/assets/tile_icon/weather.svg" alt="twitter"></a>
+                <a href="#" class="btn12"><img src="@/assets/tile_icon/weather.svg" alt="viemo"></a>
+                <a href="#" class="btn13"><img src="@/assets/tile_icon/weather.svg" alt="youtube"></a>
+                <a href="#" class="btn14"><img src="@/assets/tile_icon/weather.svg" alt="facebook"></a>
+                <a href="#" class="btn15"><img src="@/assets/tile_icon/weather.svg" alt="instagram"></a>
+                <a href="#" class="btn16"><img src="@/assets/tile_icon/weather.svg" alt="linkedin"></a>
+            </div>
         </div>
-    </div>
     </div>
 </template>
 <script setup lang="ts">
-
-// reference: https://github.com/yuanfux/vue-metro-tile
-//https://github.com/ArslanAmeer/Ui-Component-Metro-Tiles-Menu
 </script>
-<style scoped>
-
+<style scope>
 .home {
-    background-color: firebrick;
+    background-color: rgb(82, 112, 139);
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     height: 100%;
     width: 100%;
@@ -55,7 +51,7 @@
     -webkit-box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.75);
     box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.75);
-    transform: scale(1.03);   
+    transform: scale(1.03);
 }
 
 img {
@@ -70,7 +66,7 @@ img {
     margin: 0;
     padding: 0;
     display: grid;
-    grid-gap: 1px;
+    grid-gap: 5px;
     grid: repeat(5, 7rem) / repeat(5, 7rem);
     grid-template-areas: "btn1 btn2 btn2 btn3 btn4" "btn5 btn2 btn2 btn6 btn4" "btn7 btn7 btn8 btn6 btn9" "btn10 btn11 btn8 btn12 btn13" "btn10 btn14 btn15 btn16 btn16";
 }
@@ -81,7 +77,7 @@ img {
 }
 
 .btn2 {
-    background-color: blue;
+    background-color: rgb(67, 67, 179);
     grid-area: btn2;
 }
 
@@ -91,7 +87,7 @@ img {
 }
 
 .btn4 {
-    background-color: red;
+    background-color: rgb(173, 65, 65);
     grid-area: btn4;
 }
 
@@ -155,11 +151,11 @@ img {
     grid-area: btn16;
 }
 
-.gitlink{
+.gitlink {
     display: block;
     width: 300px;
     position: absolute;
-    top: 50%; left: 50px;
+    top: 50%;
+    left: 50px;
 }
-
 </style>
