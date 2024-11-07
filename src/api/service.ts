@@ -2,7 +2,6 @@ import axios, { AxiosError } from 'axios'
 import { defaultRequestInterceptors, defaultResponseInterceptors } from './config'
 
 import { AxiosInstance, InternalAxiosRequestConfig, RequestConfig, AxiosResponse } from '../types/treasure_request'
-import { FormInst, useMessage, NInput } from 'naive-ui';
 import { REQUEST_TIMEOUT } from '@/constants'
 
 export const PATH_URL = import.meta.env.VITE_API_BASE_PATH

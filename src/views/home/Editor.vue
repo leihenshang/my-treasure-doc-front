@@ -1,5 +1,6 @@
 <template>
     <div class="edit-box">
+    <template v-if="currentDoc.id > 0">
         <div class="edit-banner">
             <div class="icon-group">
                 <n-icon size="20">
@@ -14,10 +15,20 @@
             </div>
             <span class="bar-title">{{ currentDoc.title }}</span>
         </div>
-        <div class="edit-content">
+        <div class="edit-content" >
             <Vditor :currentDoc="currentDoc" @update-doc="contentUpdate" />
         </div>
+       
+    </template>
+    <div v-else class="div404">
+            <n-result status="404" title="404 资源不存在" description="生活总归带点荒谬" size="huge">
+                <template #footer>
+                    <n-button>找点乐子吧</n-button>
+                </template>
+            </n-result>
+        </div>
     </div>
+
 </template>
 <script lang="ts" setup>
 import { onMounted, ref, watch, reactive, nextTick, watchEffect } from 'vue'
@@ -59,16 +70,6 @@ function contentUpdate(docUpdate: Doc) {
         })
 
     }
-}
-
-
-function getDefaultTitle(suffix: string = "-速记") {
-    const today = new Date()
-    let todayTitleStr = "".concat(
-        today.getFullYear().toString(),
-        (today.getMonth() + 1).toString().padStart(2, '0'),
-        today.getDate().toString()) + suffix
-    return todayTitleStr
 }
 
 onMounted(() => {
@@ -136,6 +137,12 @@ function getSetCurrentDoc(docId: number, isFirst: boolean) {
 
     .edit-content {
         height: 100%;
+        width: 100%;
+
+    }
+
+    .div404 {
+        margin-top: 10%
     }
 }
 </style>
