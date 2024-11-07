@@ -94,34 +94,31 @@ const horizontalMenuOptions: MenuOption[] = [
 ]
 
 function topMenuUpdate(key: string, item: MenuOption): void {
-  console.log(key, item)
-  switch (key) {
-    case 'top-menu-write':
-      const newDoc: Doc = {
-        id: 0,
-        content: "# write here",
-        title: getDefaultTitle()
+  if (key === 'top-menu-write') {
+    let title: string = getDefaultTitle()
+    const newDoc: Doc = {
+      id: 0,
+      content: `# ${title}`,
+      title: title
+    }
+    createDoc(newDoc).then(res => {
+      let doc = res.getData()
+      let docGroup: DocGroup = {
+        id: doc.id,
+        title: doc.title,
+        groupType: "doc",
       }
-      createDoc(newDoc).then(res => {
-        console.log(res.getData())
-        let doc = res.getData()
-        let docGroup: DocGroup = {
-          id: doc.id,
-          title: doc.title,
-          groupType: "doc",
-        }
-        treeData.value.push(newTreeItem(docGroup))
-        router.push({ path: `/Editor/${res.getData().id}` })
-      }).catch(err => {
-        message.error(err)
-      })
-      break
-    case 'login-out':
-      myHttp.post({ url: '/api/user/logout', data: {} }).then(() => {
-        router.push("/LogIn")
-      })
-      break
-    default:
+      treeData.value.push(newTreeItem(docGroup))
+      router.push({ path: `/Editor/${res.getData().id}` })
+    }).catch(err => {
+      message.error(err)
+    })
+  }
+
+  if (key === 'login-out') {
+    myHttp.post({ url: '/api/user/logout', data: {} }).then(() => {
+      router.push("/LogIn")
+    })
   }
 }
 
@@ -277,8 +274,26 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
         type: "default",
         onClick: e => {
           e.stopPropagation()
-          // todo:
-          message.info("doc create!")
+          let title: string = getDefaultTitle()
+          const newDoc: Doc = {
+            id: 0,
+            content: `# ${title}`,
+            title: title,
+            groupId: option.key as unknown as number
+          }
+          createDoc(newDoc).then(res => {
+            console.log(res.getData())
+            let doc = res.getData()
+            let docGroup: DocGroup = {
+              id: doc.id,
+              title: doc.title,
+              groupType: "doc",
+            }
+            treeData.value.push(newTreeItem(docGroup))
+            router.push({ path: `/Editor/${res.getData().id}` })
+          }).catch(err => {
+            message.error(err)
+          })
         }
       },
       { icon: () => h(NIcon, null, { default: () => h(AddCircleOutline) }) }
