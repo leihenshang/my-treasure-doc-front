@@ -86,26 +86,19 @@ export  function getDocGroupTree(pid: number = 0 ,withChildren:boolean = false):
 //     })
 // }
 
-// export async function doCreateGroup(groupObj: DocGroup) {
-//     myHttp.post({
-//         url: '/api/doc-group/create', data: {
-//             ...groupObj
-//         }
-//     }).then((response: any) => {
-//         if (!response) {
-//             message.error("创建分组数据失败！")
-//             return
-//         }
-
-//         if (response?.data?.code) {
-//             message.error(response?.data?.msg)
-//             return
-//         }
-//         getGroupList(groupPagination.value).then((res) => {
-//             groupList.value = [groupList.value[0]]
-//             groupList.value.push(...res.list)
-//         })
-//     }).catch((err: any) => {
-//         console.log(err)
-//     })
-// }
+export async function createGroup(groupObj: DocGroup) {
+    return new Promise<TreasureResponse<DocGroup>>((resolve:any,reject:any)=> {
+        myHttp.post<TreasureResponse<DocGroup>>({
+            url: '/api/doc-group/create', data: groupObj
+        }).then((response:any) => {
+            if (response?.code) {
+                reject(response?.msg)
+            }
+       
+            const resp: TreasureResponse<DocGroup> = new TreasureResponse()
+            resp.data = response?.data
+            resolve(resp)
+        })
+    
+    })
+}

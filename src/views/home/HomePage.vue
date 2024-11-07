@@ -39,7 +39,7 @@ import {
   AddCircleOutline
 } from '@vicons/ionicons5'
 import myHttp from '@/api/treasure_axios';
-import { getDocGroupTree } from "@/api/doc_group"
+import { getDocGroupTree,createGroup } from "@/api/doc_group"
 import { DocGroup } from '@/types/resource';
 import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, CreateOutline } from '@vicons/ionicons5'
 import { FolderAddOutlined, DashboardOutlined, PlusCircleTwotone } from '@vicons/antd'
@@ -250,7 +250,14 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
             }
           }
           if (key === 'createFolder') {
-
+              const docGroupObj:DocGroup = {
+                id:0,
+                title: "new folder",
+                groupType: "",
+              }
+              createGroup(docGroupObj).catch(err => {
+                message.error(err)
+              })
           }
         }
 
