@@ -27,20 +27,22 @@
 
 <script lang="ts" setup>
 import { h, ref, Component, onMounted } from 'vue';
-import { MenuOption, TreeOption, useMessage, NButton, NButtonGroup, NIcon } from 'naive-ui';
+import { MenuOption, TreeOption, useMessage, NButton, NButtonGroup, NIcon, NDropdown, DropdownOption } from 'naive-ui';
 import { useRouter, RouterLink } from 'vue-router';
 import {
   EllipsisHorizontalCircleOutline as EllipsisHorizontalCircle,
   Pencil as Pen,
   SearchSharp as Search,
   MailOpen,
-  ArrowForwardCircleSharp
+  ArrowForwardCircleSharp,
+  MenuOutline,
+  AddCircleOutline
 } from '@vicons/ionicons5'
 import myHttp from '@/api/treasure_axios';
 import { getDocGroupTree } from "@/api/doc_group"
 import { DocGroup } from '@/types/resource';
 import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, CreateOutline } from '@vicons/ionicons5'
-import { FolderAddOutlined, DashboardOutlined } from '@vicons/antd'
+import { FolderAddOutlined, DashboardOutlined, PlusCircleTwotone } from '@vicons/antd'
 import { Delete24Filled } from "@vicons/fluent"
 import { createDoc, updateDoc, getDoc, deleteDoc } from "@/api/doc"
 import { Doc } from "@/types/resource"
@@ -160,29 +162,6 @@ function newTreeItem(d: DocGroup) {
   }
 }
 
-function getSuffixIcon(groupType: string) {
-  switch (groupType) {
-    case "doc":
-      // return h("n-flex", null, [h(NIcon, null, { default: () => h(CreateOutline) }),
-      // h(NIcon, null, { default: () => h(CreateOutline) })])
-      return h(NButtonGroup, { size: 'tiny' }, [
-        h(NButton, {
-          type: 'default', round: true, onClick: (e) => {
-            message.info("hh")
-            console.log(e)
-            e.stopPropagation();
-          }
-        }, [
-          h('template', null, [
-            h(NIcon, null, { default: () => h(CreateOutline) }),
-          ]),
-          "删除"
-        ])
-      ]);
-    default:
-      return h(NIcon, null, { default: () => h(CreateOutline) })
-  }
-}
 
 function getPrefixIcon(groupType: string) {
   switch (groupType) {
@@ -243,58 +222,68 @@ function nodeProps({ option }: { option: TreeOption }) {
 
 //节点后缀渲染
 const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
-  if (!option.children) {
-    return h(NButtonGroup, {
-      size: "small",
-    }, {
-      default: () => {
-        return [h(
-          NButton,
+  return h(NButtonGroup, {
+    size: "tiny",
+  }, () => [
+    h(
+      NDropdown,
+      {
+        options: [
           {
-            text: true,
-            size: 'small',
-            onClick: e => {
-              e.stopPropagation()
-              for (let i = 0; i < treeData.value.length; i++) {
-                if (treeData.value[i].key == option.key) {
-                  treeData.value.splice(i, 1)
-                  deleteDoc({ id: option.key } as Doc)
-                  break
-                }
+            icon: () => { return h(NIcon, null, { default: () => h(Delete24Filled) }) },
+            label: '删除',
+            key: 'delete',
+          },
+          {
+            icon: () => { return h(NIcon, null, { default: () => h(FolderAddOutlined) }) },
+            label: '创建文件夹',
+            key: 'createFolder',
+            show: (option.groupType != "doc")
+          },
+        ],
+        onSelect: (key: string | number) => {
+          if (key === 'delete') {
+            for (let i = 0; i < treeData.value.length; i++) {
+              if (treeData.value[i].key == option.key) {
+                treeData.value.splice(i, 1)
+                deleteDoc({ id: option.key } as Doc)
+                break
               }
             }
-          },
-          { icon: () => h(NIcon, null, { default: () => h(Delete24Filled) }) }
-        ), option.groupType != "doc" && h(
-          NButton,
-          {
-            text: true,
-            size: 'small',
-            type: "default",
-            onClick: e => {
-              e.stopPropagation()
-              // todo:
-              message.info("doc create!")
-            }
-          },
-          { icon: () => h(NIcon, null, { default: () => h(CreateOutline) }) }
-        ), option.groupType != "doc" && h(
-          NButton,
-          {
-            text: true,
-            size: 'small',
-            type: "default",
-            onClick: e => {
-              e.stopPropagation()
-              // todo:
-              message.info("folder create!")
-            }
-          },
-          { icon: () => h(NIcon, null, { default: () => h(FolderAddOutlined) }) }
-        )]
-      }
-    })
-  }
+          }
+          if (key === 'createFolder') {
+
+          }
+        }
+
+      },
+      () => h(
+        NButton,
+        {
+          text: true,
+          size: 'small',
+          onClick: e => {
+            e.preventDefault()
+            e.stopPropagation()
+          }
+        },
+        { icon: () => h(NIcon, null, { default: () => h(MenuOutline) }) }
+      )
+    ), option.groupType != "doc" && h(
+      NButton,
+      {
+        text: true,
+        size: 'tiny',
+        type: "default",
+        onClick: e => {
+          e.stopPropagation()
+          // todo:
+          message.info("doc create!")
+        }
+      },
+      { icon: () => h(NIcon, null, { default: () => h(AddCircleOutline) }) }
+    ),
+  ])
 }
 
 </script>
