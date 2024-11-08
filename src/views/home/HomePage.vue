@@ -27,7 +27,10 @@
 
 <script lang="ts" setup>
 import { h, ref, Component, onMounted } from 'vue';
-import { MenuOption, TreeOption, useMessage, NButton, NButtonGroup, NIcon, NDropdown, DropdownOption } from 'naive-ui';
+import {
+  MenuOption, TreeOption, useMessage, NButton, NButtonGroup,
+  NIcon, NDropdown, DropdownOption, NMenu, NLayout, NTree
+} from 'naive-ui';
 import { useRouter, RouterLink } from 'vue-router';
 import {
   EllipsisHorizontalCircleOutline as EllipsisHorizontalCircle,
@@ -39,7 +42,7 @@ import {
   AddCircleOutline
 } from '@vicons/ionicons5'
 import myHttp from '@/api/treasure_axios';
-import { getDocGroupTree,createGroup } from "@/api/doc_group"
+import { getDocGroupTree, createGroup } from "@/api/doc_group"
 import { DocGroup } from '@/types/resource';
 import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, CreateOutline } from '@vicons/ionicons5'
 import { FolderAddOutlined, DashboardOutlined, PlusCircleTwotone } from '@vicons/antd'
@@ -118,6 +121,16 @@ function topMenuUpdate(key: string, item: MenuOption): void {
   if (key === 'login-out') {
     myHttp.post({ url: '/api/user/logout', data: {} }).then(() => {
       router.push("/LogIn")
+    })
+  }
+
+  if (key === 'top-menu-folder') {
+    createGroup({
+      id: 0,
+      title: "new folder",
+      groupType: "",
+    }).catch(err => {
+      message.error(err)
     })
   }
 }
@@ -250,14 +263,13 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
             }
           }
           if (key === 'createFolder') {
-              const docGroupObj:DocGroup = {
-                id:0,
-                title: "new folder",
-                groupType: "",
-              }
-              createGroup(docGroupObj).catch(err => {
-                message.error(err)
-              })
+            createGroup({
+              id: 0,
+              title: "new folder",
+              groupType: "",
+            }).catch(err => {
+              message.error(err)
+            })
           }
         }
 

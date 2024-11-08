@@ -57,9 +57,9 @@
   </n-modal>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { h, defineComponent, computed, ref, Component, onMounted } from 'vue';
-import { NButton, useMessage, DataTableColumns } from 'naive-ui';
+import { NButton, useMessage, DataTableColumns, NMenu, NModal } from 'naive-ui';
 import SvgIcon from '../../components/public/SvgIcon.vue';
 import CollectionHandle from '../../components/collection/CollectionHandle.vue'
 
@@ -113,70 +113,53 @@ const data: Song[] = [
   { name: 'Champagne Supernova', belong: 'Champagne Supernova', time: '2021-01-29 14:32' }
 ];
 
-export default {
-  name: 'Collection',
-  components: { SvgIcon, CollectionHandle },
-  setup() {
-    const groupList: Group[] = [{ title: '全部', type: 'all', count: 100, id: '1' }
-      , { title: 'javaScript', type: '', count: 50, id: '2' }, { title: '好看的花花们', type: '', count: 50, id: '3' },];
-    const searchData = ref<search>({});
-    const selectedCollectionId = ref('1');
-    const showModal = ref(false);
-    const newGroupName = ref('');
-    const updateGroup = ref({});
-    const groupHandleType = ref('');
-    //选中收藏的某个分类，并保存分类的id
-    const viewCollectionList = (collectionId: string) => {
-      selectedCollectionId.value = collectionId;
-    };
-    //左侧收藏分类的编辑删除操作
-    const changeGroup = (type: string, group?: Group) => {
-      groupHandleType.value = type
-      if (type === 'update') {
-        updateGroup.value = group || {};
-        newGroupName.value = group?.title || '';
-        showModal.value = true;
-      } else if (type === 'delete') {
-        //调用删除接口后，再次调用分组接口刷新页面的分组信息
-      } else if (type === 'add') {
-        newGroupName.value = ''
-        showModal.value = true;
-      }
-    };
-    //更新分组名字
-    const updateGroupName = () => {
-      //调用保存接口后，再次调用分组接口刷新页面的分组信息
-      //然后关闭弹窗
-      showModal.value = false;
-    };
-
-    //获取右侧表格的标题
-    const selectedGroupName = computed(() => {
-      return groupList.filter((item) => item.id === selectedCollectionId.value)[0]?.title;
-    });
-    //渲染右侧表格
-    const message = useMessage();
-    return {
-      groupHandleType,
-      groupList,
-      viewCollectionList,
-      changeGroup,
-      updateGroupName,
-      showModal,
-      newGroupName,
-      selectedCollectionId,
-      selectedGroupName,
-      data,
-      searchData,
-      columns: createColumns({
-        play(row: Song) {
-          message.info(`Play ${row.name}`);
-        }
-      }),
-      pagination: false as const
-    };
+const groupList: Group[] = [{ title: '全部', type: 'all', count: 100, id: '1' }
+  , { title: 'javaScript', type: '', count: 50, id: '2' }, { title: '好看的花花们', type: '', count: 50, id: '3' },];
+const searchData = ref<search>({});
+const selectedCollectionId = ref('1');
+const showModal = ref(false);
+const newGroupName = ref('');
+const updateGroup = ref({});
+const groupHandleType = ref('');
+//选中收藏的某个分类，并保存分类的id
+const viewCollectionList = (collectionId: string) => {
+  selectedCollectionId.value = collectionId;
+};
+//左侧收藏分类的编辑删除操作
+const changeGroup = (type: string, group?: Group) => {
+  groupHandleType.value = type
+  if (type === 'update') {
+    updateGroup.value = group || {};
+    newGroupName.value = group?.title || '';
+    showModal.value = true;
+  } else if (type === 'delete') {
+    //调用删除接口后，再次调用分组接口刷新页面的分组信息
+  } else if (type === 'add') {
+    newGroupName.value = ''
+    showModal.value = true;
   }
 };
+//更新分组名字
+const updateGroupName = () => {
+  //调用保存接口后，再次调用分组接口刷新页面的分组信息
+  //然后关闭弹窗
+  showModal.value = false;
+};
+
+//获取右侧表格的标题
+const selectedGroupName = computed(() => {
+  return groupList.filter((item) => item.id === selectedCollectionId.value)[0]?.title;
+});
+//渲染右侧表格
+const message = useMessage();
+const columns = createColumns({
+  play(row: Song) {
+    message.info(`Play ${row.name}`);
+  }
+})
+
+const pagination = false as const
+
 </script>
 
 <style scoped lang='scss'>

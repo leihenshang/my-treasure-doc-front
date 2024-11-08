@@ -4,12 +4,9 @@
   </n-message-provider>
 </template>
 
-<script>
+<script setup>
 import './assets/style/reset.scss'
-
-export default {
-  name: 'App',
-}
+import { NMessageProvider } from "naive-ui"
 </script>
 <style type="text/css">
 .icon {
