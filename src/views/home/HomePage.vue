@@ -23,10 +23,24 @@
       </n-layout>
     </n-layout>
   </div>
+  <n-modal v-model:show="showModal" preset="dialog" title="Dialog" :show-icon="false" class="modal-dialog"
+    :mask-closable=false style="position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
+    <template #header>
+      <div>{{ groupHandleType === 'create' ? '新增分组' : '编辑分组' }}</div>
+    </template>
+    <div class="dialog-content">
+      <label>分组名称</label>
+      <n-input v-model:value="newGroup.title" type="text" placeholder="分组名称"></n-input>
+    </div>
+    <template #action>
+      <n-button type="primary" @click="updateGroupName">确定</n-button>
+      <n-button @click="showModal = false">取消</n-button>
+    </template>
+  </n-modal>
 </template>
 
 <script lang="ts" setup>
-import { h, ref, Component, onMounted } from 'vue';
+import { h, ref, Component, onMounted, reactive } from 'vue';
 import {
   MenuOption, TreeOption, useMessage, NButton, NButtonGroup,
   NIcon, NDropdown, DropdownOption, NMenu, NLayout, NTree
@@ -42,7 +56,7 @@ import {
   AddCircleOutline
 } from '@vicons/ionicons5'
 import myHttp from '@/api/treasure_axios';
-import { getDocGroupTree, createGroup } from "@/api/doc_group"
+import { getDocGroupTree, createGroup, updateGroup as updateGroupData } from "@/api/doc_group"
 import { DocGroup } from '@/types/resource';
 import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, CreateOutline } from '@vicons/ionicons5'
 import { FolderAddOutlined, DashboardOutlined, PlusCircleTwotone } from '@vicons/antd'
@@ -54,6 +68,51 @@ const router = useRouter();
 const topMenuRef = ref(null)
 const message = useMessage()
 const treeData = ref<Array<any>>([])
+const showModal = ref(false);
+const groupHandleType = ref('');
+const newGroup = reactive<DocGroup>({ title: '', groupType: '', id: 0 });
+const updateGroup = reactive<DocGroup>({ title: '', groupType: '', id: 0 });
+
+function updateGroupName() {
+  //调用保存接口后，再次调用分组接口刷新页面的分组信息
+  //然后关闭弹窗
+  showModal.value = false;
+  if (updateGroup.title !== "") {
+    updateGroup.title = newGroup.title
+    updateGroup.pid = newGroup.pid
+    updateGroupData(updateGroup).then(() => {
+      refreshTree()
+    }).catch(err => {
+      message.error(err)
+    })
+  } else {
+    createGroup(newGroup).then(() => {
+      refreshTree()
+    }).catch(err => {
+      message.error(err)
+    })
+  }
+
+};
+
+
+
+const changeGroup = (type: string, group?: DocGroup) => {
+  groupHandleType.value = type
+  if (type === 'update') {
+    Object.assign(updateGroup, group)
+    newGroup.title = group?.title || ''
+    newGroup.pid = group?.pid || 0;
+    showModal.value = true;
+  } else if (type === 'delete') {
+    //调用删除接口后，再次调用分组接口刷新页面的分组信息
+  } else if (type === 'create') {
+    newGroup.title = ''
+    newGroup.pid = group?.pid || 0;
+    showModal.value = true;
+
+  }
+};
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) })
@@ -125,12 +184,10 @@ function topMenuUpdate(key: string, item: MenuOption): void {
   }
 
   if (key === 'top-menu-folder') {
-    createGroup({
+    changeGroup('create', {
       id: 0,
-      title: "new folder",
+      title: "",
       groupType: "",
-    }).catch(err => {
-      message.error(err)
     })
   }
 }
@@ -150,6 +207,11 @@ const collapsed = ref(false)
 
 
 onMounted(() => {
+  refreshTree()
+})
+
+function refreshTree() {
+  treeData.value = []
   getDocGroupTree(0, true).then((response) => {
     for (const e of response.data as Array<DocGroup>) {
       treeData.value.push(newTreeItem(e))
@@ -157,7 +219,7 @@ onMounted(() => {
   }).catch((err) => {
     message.error(err)
   })
-})
+}
 
 function newTreeItem(d: DocGroup) {
   return {
@@ -168,7 +230,8 @@ function newTreeItem(d: DocGroup) {
     groupType: d.groupType,
     // suffix: () => getSuffixIcon(d.groupType),
     prefix: () => getPrefixIcon(d.groupType),
-    docItem: d
+    docItem: d,
+    pid: d.pid
   }
 }
 
@@ -247,8 +310,14 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
           },
           {
             icon: () => { return h(NIcon, null, { default: () => h(FolderAddOutlined) }) },
-            label: '创建文件夹',
+            label: '创建目录',
             key: 'createFolder',
+            show: (option.groupType != "doc")
+          },
+          {
+            icon: () => { return h(NIcon, null, { default: () => h(FolderAddOutlined) }) },
+            label: '编辑目录',
+            key: 'updateFolder',
             show: (option.groupType != "doc")
           },
         ],
@@ -263,13 +332,20 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
             }
           }
           if (key === 'createFolder') {
-            createGroup({
+            changeGroup('create', {
               id: 0,
-              title: "new folder",
-              groupType: "",
-            }).catch(err => {
-              message.error(err)
-            })
+              groupType: '',
+              pid: option.pid
+            } as DocGroup)
+          }
+
+          if (key === 'updateFolder') {
+            changeGroup('update', {
+              id: option.key,
+              title: option.label,
+              groupType: '',
+              pid: option.pid
+            } as DocGroup)
           }
         }
 
