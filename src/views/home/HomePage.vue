@@ -93,6 +93,8 @@ function updateGroupName() {
     })
   }
 
+  updateGroup.title = ''
+  updateGroup.pid = 0
 };
 
 
@@ -107,10 +109,10 @@ const changeGroup = (type: string, group?: DocGroup) => {
   } else if (type === 'delete') {
     //调用删除接口后，再次调用分组接口刷新页面的分组信息
   } else if (type === 'create') {
+    console.log(group)
     newGroup.title = ''
     newGroup.pid = group?.pid || 0;
     showModal.value = true;
-
   }
 };
 
@@ -256,12 +258,7 @@ function docIsLeaf(groupType: string) {
 
 function handleLoad(node: TreeOption) {
   return new Promise<void>((resolve, reject) => {
-    getDocGroupTree(node.key as number, false).then((response) => {
-      if (response?.data === null || (response?.data as Array<DocGroup>).length == 0) {
-        reject()
-        return
-      }
-
+    getDocGroupTree(node.key as number, true).then((response) => {
       let arr: any = new Array<any>((response.data as Array<DocGroup>).length)
       for (const e of response.data as Array<DocGroup>) {
         arr.push(newTreeItem(e))
@@ -269,7 +266,7 @@ function handleLoad(node: TreeOption) {
       node.children = arr
       resolve()
     }).catch((err) => {
-
+      message.error(err)
     })
   })
 }
@@ -335,7 +332,7 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
             changeGroup('create', {
               id: 0,
               groupType: '',
-              pid: option.pid
+              pid: option.key
             } as DocGroup)
           }
 
