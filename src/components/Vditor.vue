@@ -33,10 +33,16 @@ onMounted(() => {
         toolbarConfig: {
             pin: true,
         },
+        placeholder: '在这里写下你的第一行文字吧！',
+        value: props.currentDoc.content,
         after: () => {
             message.destroyAll()
-            vditorContainer.value.setValue(props.currentDoc.content)
-            vditorContainer.value.focus()
+            // vditorContainer.value.setValue(props.currentDoc.content)
+            // vditorContainer.value.focus()
+        },
+        outline: {
+            enable: false,
+            position: 'left'
         },
         input(md) {
             currentDoc.content = md
