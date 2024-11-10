@@ -28,9 +28,16 @@
     <template #header>
       <div>{{ groupHandleType === 'create' ? '新增分组' : '编辑分组' }}</div>
     </template>
-    <div class="dialog-content">
-      <label>分组名称</label>
-      <n-input v-model:value="newGroup.title" type="text" placeholder="分组名称"></n-input>
+    <div class="dialog-container">
+      <div class="dialog-content">
+        <label>分组名称</label>
+        <n-input v-model:value="newGroup.title" type="text" placeholder="分组名称"></n-input>
+      </div>
+      <div class="dialog-content">
+        <label>层级</label>
+        <n-tree-select v-model:value="value" multiple checkable :options="options" :cascade="true" :show-path="true"
+          :allow-checking-not-loaded="true" :on-load="handleLoad" />
+      </div>
     </div>
     <template #action>
       <n-button type="primary" @click="updateGroupName">确定</n-button>
@@ -72,6 +79,15 @@ const showModal = ref(false);
 const groupHandleType = ref('');
 const newGroup = reactive<DocGroup>({ title: '', groupType: '', id: 0 });
 const updateGroup = reactive<DocGroup>({ title: '', groupType: '', id: 0 });
+const value = ref(null)
+const options = ref([
+  {
+    label: 'l-0',
+    key: 'v-0',
+    depth: 1,
+    isLeaf: false
+  }
+])
 
 function updateGroupName() {
   //调用保存接口后，再次调用分组接口刷新页面的分组信息
@@ -325,6 +341,12 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
             key: 'updateFolder',
             show: (option.groupType != "doc")
           },
+          {
+            icon: () => { return h(NIcon, null, { default: () => h(Pen) }) },
+            label: '编辑',
+            key: 'updateDoc',
+            show: (option.groupType === "doc")
+          },
         ],
         onSelect: (key: string | number) => {
           if (key === 'delete') {
@@ -439,6 +461,18 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
         }
 
       }
+    }
+  }
+}
+
+.dialog-container {
+
+  .dialog-content {
+    margin-bottom: 5px;
+
+    >label {
+      display: inline-flex;
+      margin-bottom: 4px;
     }
   }
 }
