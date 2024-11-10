@@ -8,10 +8,13 @@ import { ref, nextTick, reactive } from "vue"
 import { onMounted, watch } from "vue"
 import { useMessage } from "naive-ui"
 import { Doc } from "@/types/resource"
+import { useUserInfoStore } from "@/stores/user/userinfo";
 
 const props = defineProps<{
     currentDoc: Doc
 }>()
+
+const storeUserInfo = useUserInfoStore()
 
 const vditorContainer = ref()
 const message = useMessage()
@@ -44,10 +47,38 @@ onMounted(() => {
         },
         upload: {
             url: "api/file/upload",
-            setHeaders() {
-                return { "XToken": "1" }
+            fieldName: 'file',
+            setHeaders(): { [key: string]: string } {
+                return { "X-Token": storeUserInfo.token || '' }
             },
-        }
+            format(files: File[], responseText: string): string {
+                const resp = JSON.parse(responseText)
+                const vditorResp = {
+                    msg: "",
+                    code: 0,
+                    data: {
+                        succMap: {}
+                    }
+                }
+
+                if (!resp || resp.code > 0) {
+                    message.error(`上传文件失败:${resp?.msg}`)
+                    vditorResp.code = 1
+                    return JSON.stringify(vditorResp)
+                }
+                if (files.length <= 0) {
+                    vditorResp.code = 1
+                    vditorResp.msg = '返回的文件为空'
+                    return JSON.stringify(vditorResp)
+                }
+
+                let succ: { [key: string]: string } = {}
+                succ[files[0].name] = resp.data.path
+                vditorResp.data.succMap = succ
+                return JSON.stringify(vditorResp)
+            }
+        },
+
     })
 
 })

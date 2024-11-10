@@ -6,7 +6,7 @@ import { AxiosConfig, IResponse } from "../types/treasure_request"
 const request = (option: AxiosConfig) => {
     const { url, method, params, data, headers, responseType } = option
     const userStore = useUserInfoStore()
-    const token = userStore.getToken
+    const token = userStore.token
     return service.request({
         url,
         method,
@@ -28,7 +28,7 @@ export default {
     },
     post: <T = any>(option: AxiosConfig) => {
         return request({ method: 'post', ...option }) as Promise<IResponse<T>>
-      },
+    },
     delete: <T = any>(option: AxiosConfig) => {
         return request({ method: 'delete', ...option }) as Promise<IResponse<T>>
     },

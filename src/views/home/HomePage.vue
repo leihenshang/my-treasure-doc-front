@@ -257,8 +257,14 @@ function docIsLeaf(groupType: string) {
 }
 
 function handleLoad(node: TreeOption) {
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<void>((resolve) => {
     getDocGroupTree(node.key as number, true).then((response) => {
+      if (!response.data) {
+        node.children = []
+        resolve()
+        return
+      }
+
       let arr: any = new Array<any>((response.data as Array<DocGroup>).length)
       for (const e of response.data as Array<DocGroup>) {
         arr.push(newTreeItem(e))
@@ -266,8 +272,10 @@ function handleLoad(node: TreeOption) {
       node.children = arr
       resolve()
     }).catch((err) => {
-      message.error(err)
+      console.log(err)
     })
+  }).catch(err => {
+    console.log(err)
   })
 }
 
