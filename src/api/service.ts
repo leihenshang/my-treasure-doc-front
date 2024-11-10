@@ -28,8 +28,7 @@ axiosInstance.interceptors.response.use(
   },
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // const userStore = useUserStoreWithOut()
-      // userStore.logout()
+      localStorage.removeItem('userInfo')
     }
     return Promise.reject(error)
   }
