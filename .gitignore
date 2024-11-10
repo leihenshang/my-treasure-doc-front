@@ -43,3 +43,6 @@ dist
 yarn-error.log
 
 .vscode
+
+/auto-imports.d.ts 
+/components.d.ts
