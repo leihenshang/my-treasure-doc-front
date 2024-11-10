@@ -46,11 +46,13 @@ onMounted(() => {
             emit("updateDoc", currentDoc)
         },
         upload: {
+            accept: 'image/*',//规定上传的图片格式
             url: "api/file/upload",
             fieldName: 'file',
             setHeaders(): { [key: string]: string } {
                 return { "X-Token": storeUserInfo.token || '' }
             },
+            max: 10 * 1024 * 1024,//上传图片的大小
             format(files: File[], responseText: string): string {
                 const resp = JSON.parse(responseText)
                 const vditorResp = {
@@ -76,7 +78,10 @@ onMounted(() => {
                 succ[files[0].name] = resp.data.path
                 vditorResp.data.succMap = succ
                 return JSON.stringify(vditorResp)
-            }
+            },
+            error(msg) {
+                message.error(msg)
+            },
         },
 
     })
