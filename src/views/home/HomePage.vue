@@ -128,6 +128,7 @@ function updateGroupInfo() {
       updateGroup.pid = updateModalPid.value
     }
     updateGroupData(updateGroup).then(() => {
+      clearModal()
       refreshTree()
     }).catch(err => {
       message.error(err)
@@ -138,6 +139,7 @@ function updateGroupInfo() {
       newGroup.pid = updateModalPid.value
     }
     createGroup(newGroup).then(() => {
+      clearModal()
       refreshTree()
     }).catch(err => {
       message.error(err)
@@ -166,8 +168,8 @@ const changeModal = (type: string, group?: DocGroup) => {
   updateGroup.pid = group?.pid || -1
   if (type === 'update') {
     Object.assign(updateGroup, group)
-    newGroup.title = group?.title || ''
-    newGroup.pid = group?.pid || 0;
+    updateModalName.value = group?.title || ''
+    updateModalPid.value = group?.pid || 0;
     showModal.value = true;
   } else if (type === 'delete') {
     //调用删除接口后，再次调用分组接口刷新页面的分组信息
