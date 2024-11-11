@@ -92,6 +92,12 @@ const options = ref([
 
 function updateModal(type: string) {
   if (type === 'updateDoc') {
+    if (updateModalPid.value < 0) {
+      showModal.value = false
+      clearModal()
+      return
+    }
+
     updateDoc({
       id: updateModalDocId.value,
       groupId: updateModalPid.value
