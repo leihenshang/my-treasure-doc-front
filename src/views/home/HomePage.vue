@@ -133,6 +133,10 @@ function updateGroupInfo() {
       message.error(err)
     })
   } else {
+    newGroup.title = updateModalName.value
+    if (newGroup.pid as number < 0 && updateModalPid.value > 0) {
+      newGroup.pid = updateModalPid.value
+    }
     createGroup(newGroup).then(() => {
       refreshTree()
     }).catch(err => {
@@ -158,8 +162,8 @@ function getModalTileByType(type: string): string {
 
 const changeModal = (type: string, group?: DocGroup) => {
   groupHandleType.value = type
-  updateModalName.value = group?.title || ''
-  updateModalPid.value = group?.pid || -1
+  updateGroup.title = group?.title || ''
+  updateGroup.pid = group?.pid || -1
   if (type === 'update') {
     Object.assign(updateGroup, group)
     newGroup.title = group?.title || ''
