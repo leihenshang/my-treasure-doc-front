@@ -30,7 +30,7 @@ onMounted(() => {
     vditorContainer.value = new Vditor("vditor-container", {
         theme: "classic",
         minHeight: 800,
-        height: '100%',
+        height: '100%-20px',
         toolbarConfig: {
             pin: true,
         },
