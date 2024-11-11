@@ -26,21 +26,21 @@
   <n-modal v-model:show="showModal" preset="dialog" title="Dialog" :show-icon="false" class="modal-dialog"
     :mask-closable=false style="position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
     <template #header>
-      <div>{{ groupHandleType === 'create' ? '新增分组' : '编辑分组' }}</div>
+      <div>{{ getModalTileByType(groupHandleType) }}</div>
     </template>
     <div class="dialog-container">
-      <div class="dialog-content">
-        <label>分组名称</label>
-        <n-input v-model:value="newGroup.title" type="text" placeholder="分组名称"></n-input>
+      <div class="dialog-content" v-if="groupHandleType != 'updateDoc'">
+        <label>名称</label>
+        <n-input v-model:value="updateModalName" type="text" placeholder="分组名称"></n-input>
       </div>
       <div class="dialog-content">
         <label>层级</label>
-        <n-tree-select v-model:value="value" multiple checkable :options="options" :cascade="true" :show-path="true"
-          :allow-checking-not-loaded="true" :on-load="handleLoad" />
+        <n-tree-select v-model:value="updateModalPid" clearable :options="options" :cascade="true" :show-path="true"
+          :allow-checking-not-loaded="true" :on-load="handleLoadWithUpdateGroupLocation" />
       </div>
     </div>
     <template #action>
-      <n-button type="primary" @click="updateGroupName">确定</n-button>
+      <n-button type="primary" @click="updateModal(groupHandleType)">确定</n-button>
       <n-button @click="showModal = false">取消</n-button>
     </template>
   </n-modal>
@@ -64,12 +64,11 @@ import {
 } from '@vicons/ionicons5'
 import myHttp from '@/api/treasure_axios';
 import { getDocGroupTree, createGroup, updateGroup as updateGroupData } from "@/api/doc_group"
-import { DocGroup } from '@/types/resource';
+import { DocGroup, Doc } from '@/types/resource';
 import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, CreateOutline } from '@vicons/ionicons5'
 import { FolderAddOutlined, DashboardOutlined, PlusCircleTwotone } from '@vicons/antd'
 import { Delete24Filled } from "@vicons/fluent"
 import { createDoc, updateDoc, getDoc, deleteDoc } from "@/api/doc"
-import { Doc } from "@/types/resource"
 
 const router = useRouter();
 const topMenuRef = ref(null)
@@ -77,25 +76,51 @@ const message = useMessage()
 const treeData = ref<Array<any>>([])
 const showModal = ref(false);
 const groupHandleType = ref('');
-const newGroup = reactive<DocGroup>({ title: '', groupType: '', id: 0 });
+const newGroup = reactive<DocGroup>({ title: '', groupType: '', id: 0, pid: -1 });
 const updateGroup = reactive<DocGroup>({ title: '', groupType: '', id: 0 });
-const value = ref(null)
+const updateModalName = ref('')
+const updateModalPid = ref(-1)
+const updateModalDocId = ref(0)
 const options = ref([
   {
-    label: 'l-0',
-    key: 'v-0',
+    label: '顶层',
+    key: 0,
     depth: 1,
     isLeaf: false
   }
 ])
 
-function updateGroupName() {
-  //调用保存接口后，再次调用分组接口刷新页面的分组信息
-  //然后关闭弹窗
+function updateModal(type: string) {
+  if (type === 'updateDoc') {
+    updateDoc({
+      id: updateModalDocId.value,
+      groupId: updateModalPid.value
+    } as Doc).then(() => {
+      showModal.value = false
+      clearModal()
+      refreshTree()
+    }).catch(err => {
+      console.log(err)
+    })
+
+  } else {
+    updateGroupInfo()
+  }
+}
+
+function clearModal() {
+  updateModalName.value = ''
+  updateModalPid.value = -1
+  updateModalDocId.value = 0
+}
+
+function updateGroupInfo() {
   showModal.value = false;
   if (updateGroup.title !== "") {
-    updateGroup.title = newGroup.title
-    updateGroup.pid = newGroup.pid
+    updateGroup.title = updateModalName.value
+    if (updateModalPid.value > 0) {
+      updateGroup.pid = updateModalPid.value
+    }
     updateGroupData(updateGroup).then(() => {
       refreshTree()
     }).catch(err => {
@@ -113,10 +138,22 @@ function updateGroupName() {
   updateGroup.pid = 0
 };
 
+function getModalTileByType(type: string): string {
+  if (type === 'create') {
+    return `新增分组`
+  } else if (type === 'update') {
+    return `编辑分组`
+  } else if (type === 'updateDoc') {
+    return `编辑文档`
+  }
+  return ''
+}
 
 
-const changeGroup = (type: string, group?: DocGroup) => {
+const changeModal = (type: string, group?: DocGroup) => {
   groupHandleType.value = type
+  updateModalName.value = group?.title || ''
+  updateModalPid.value = group?.pid || -1
   if (type === 'update') {
     Object.assign(updateGroup, group)
     newGroup.title = group?.title || ''
@@ -125,12 +162,21 @@ const changeGroup = (type: string, group?: DocGroup) => {
   } else if (type === 'delete') {
     //调用删除接口后，再次调用分组接口刷新页面的分组信息
   } else if (type === 'create') {
-    console.log(group)
     newGroup.title = ''
     newGroup.pid = group?.pid || 0;
     showModal.value = true;
   }
+
+  if (type === 'updateDoc') {
+    showModal.value = true;
+
+  } else if (type === 'deleteDoc') {
+
+  } else if (type === 'createDoc') {
+
+  }
 };
+
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) })
@@ -202,7 +248,7 @@ function topMenuUpdate(key: string, item: MenuOption): void {
   }
 
   if (key === 'top-menu-folder') {
-    changeGroup('create', {
+    changeModal('create', {
       id: 0,
       title: "",
       groupType: "",
@@ -295,13 +341,38 @@ function handleLoad(node: TreeOption) {
   })
 }
 
-function genTreeLab(g: DocGroup): string {
-  return g.title
-  // if (g.groupType == "doc") {
-  //   return g.title
+function handleLoadWithUpdateGroupLocation(node: TreeOption) {
+  return new Promise<void>((resolve) => {
+    getDocGroupTree(node.key as number, false).then((response) => {
+      if (!response.data) {
+        node.children = []
+        resolve()
+        return
+      }
+
+      let arr: any = new Array<any>((response.data as Array<DocGroup>).length)
+      for (const e of response.data as Array<DocGroup>) {
+        arr.push(newTreeItem(e))
+      }
+      node.children = arr
+      resolve()
+    }).catch((err) => {
+      console.log(err)
+    })
+  }).catch(err => {
+    console.log(err)
+  })
+}
+
+function genTreeLab(group: DocGroup): string {
+  // if (group.groupType == "doc") {
+  //   return group.title
   // }
 
-  // return `${g.title}(${g.childrenCount})`
+  // if (group.childrenCount as number > 0) {
+  //   return `${group.title} [${group.childrenCount}]`
+  // }
+  return group.title
 }
 
 function nodeProps({ option }: { option: TreeOption }) {
@@ -338,7 +409,7 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
           {
             icon: () => { return h(NIcon, null, { default: () => h(FolderAddOutlined) }) },
             label: '编辑目录',
-            key: 'updateFolder',
+            key: 'updateGroup',
             show: (option.groupType != "doc")
           },
           {
@@ -359,21 +430,27 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
             }
           }
           if (key === 'createFolder') {
-            changeGroup('create', {
+            changeModal('create', {
               id: 0,
               groupType: '',
               pid: option.key
             } as DocGroup)
           }
 
-          if (key === 'updateFolder') {
-            changeGroup('update', {
+          if (key === 'updateGroup') {
+            changeModal('update', {
               id: option.key,
               title: option.label,
               groupType: '',
               pid: option.pid
             } as DocGroup)
           }
+
+          if (key === 'updateDoc') {
+            updateModalDocId.value = option.key as number
+            changeModal('updateDoc')
+          }
+
         }
 
       },
