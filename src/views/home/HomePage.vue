@@ -233,21 +233,18 @@ const horizontalMenuOptions: MenuOption[] = [
 
 function topMenuUpdate(key: string, item: MenuOption): void {
   if (key === 'top-menu-write') {
-    let title: string = getDefaultTitle()
-    const newDoc: Doc = {
+    createDoc({
       id: 0,
-      content: `# ${title}`,
-      title: title
-    }
-    createDoc(newDoc).then(res => {
-      let doc = res.getData()
-      let docGroup: DocGroup = {
+      content: ``,
+      title: genDocTitle()
+    } as Doc).then(res => {
+      const doc = res.getData()
+      treeData.value.push(newTreeItem({
         id: doc.id,
         title: doc.title,
         groupType: "doc",
-      }
-      treeData.value.push(newTreeItem(docGroup))
-      router.push({ path: `/Editor/${res.getData().id}` })
+      } as DocGroup))
+      router.push({ path: `/Editor/${doc.id}` })
     }).catch(err => {
       message.error(err)
     })
@@ -270,7 +267,7 @@ function topMenuUpdate(key: string, item: MenuOption): void {
   }
 }
 
-function getDefaultTitle(suffix: string = "-速记") {
+function genDocTitle(suffix: string = "-速记") {
   const today = new Date()
   let todayTitleStr = "".concat(
     today.getFullYear().toString(),
@@ -428,13 +425,19 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
         ],
         onSelect: (key: string | number) => {
           if (key === 'delete') {
-            for (let i = 0; i < treeData.value.length; i++) {
-              if (treeData.value[i].key == option.key) {
-                treeData.value.splice(i, 1)
-                deleteDoc({ id: option.key } as Doc)
-                break
-              }
-            }
+            console.log(treeData)
+            deleteDoc({ id: option.key } as Doc).then(() => {
+              refreshTree()
+            })
+            //TODO: recursion delete,cancel the use of  global refresh
+
+            // for (let i = 0; i < treeData.value.length; i++) {
+            //   if (treeData.value[i].key == option.key) {
+            //     treeData.value.splice(i, 1)
+            //     
+            //     break
+            //   }
+            // }
           }
           if (key === 'createFolder') {
             changeModal('create', {
@@ -481,7 +484,7 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
         type: "default",
         onClick: e => {
           e.stopPropagation()
-          let title: string = getDefaultTitle()
+          let title: string = genDocTitle()
           const newDoc: Doc = {
             id: 0,
             content: `# ${title}`,
@@ -489,15 +492,22 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
             groupId: option.key as unknown as number
           }
           createDoc(newDoc).then(res => {
-            console.log(res.getData())
-            let doc = res.getData()
-            let docGroup: DocGroup = {
-              id: doc.id,
-              title: doc.title,
-              groupType: "doc",
+            const doc = res.getData()
+            if (doc.groupId === 0) {
+              treeData.value.push(newTreeItem({
+                id: doc.id,
+                title: doc.title,
+                groupType: "doc",
+              } as DocGroup))
+            } else {
+              for (let i = 0; i < treeData.value.length; i++) {
+                if (treeData.value[i].key == doc.groupId) {
+                  handleLoad(treeData.value[i])
+                  break
+                }
+              }
             }
-            treeData.value.push(newTreeItem(docGroup))
-            router.push({ path: `/Editor/${res.getData().id}` })
+            router.push({ path: `/Editor/${doc.id}` })
           }).catch(err => {
             message.error(err)
           })
