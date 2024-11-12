@@ -3,6 +3,7 @@ import { defaultRequestInterceptors, defaultResponseInterceptors } from './confi
 
 import { AxiosInstance, InternalAxiosRequestConfig, RequestConfig, AxiosResponse } from '../types/treasure_request'
 import { REQUEST_TIMEOUT } from '@/constants'
+import { router } from '@/router'
 
 export const PATH_URL = import.meta.env.VITE_API_BASE_PATH
 const abortControllerMap: Map<string, AbortController> = new Map()
@@ -23,10 +24,10 @@ axiosInstance.interceptors.response.use(
   (res: AxiosResponse) => {
     const url = res.config.url || ''
     abortControllerMap.delete(url)
-    // 这里不能做任何处理，否则后面的 interceptors 拿不到完整的上下文了
     return res
   },
   (error: AxiosError) => {
+    console.log(error)
     if (error.response?.status === 401) {
       localStorage.removeItem('userInfo')
     }
@@ -43,7 +44,7 @@ const service = {
       if (config.interceptors?.requestInterceptors) {
         config = config.interceptors.requestInterceptors(config as any)
       }
-      // console.log(config)
+
       axiosInstance.request(config).then((res) => {
         resolve(res)
       }).catch((err: any) => {

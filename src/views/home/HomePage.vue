@@ -255,6 +255,8 @@ function topMenuUpdate(key: string, item: MenuOption): void {
 
   if (key === 'login-out') {
     myHttp.post({ url: '/api/user/logout', data: {} }).then(() => {
+
+      localStorage.removeItem('userInfo')
       router.push("/LogIn")
     })
   }
