@@ -16,7 +16,6 @@ export interface DocGroup extends BaseResource {
     title: string,
     groupType: string,
     pid?: number,
-    childrenCount?: number,
     children?: Array<DocGroup>
 }
 

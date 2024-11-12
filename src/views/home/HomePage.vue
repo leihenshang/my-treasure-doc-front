@@ -377,13 +377,6 @@ function handleLoadWithUpdateGroupLocation(node: TreeOption) {
 }
 
 function genTreeLab(group: DocGroup): string {
-  // if (group.groupType == "doc") {
-  //   return group.title
-  // }
-
-  // if (group.childrenCount as number > 0) {
-  //   return `${group.title} [${group.childrenCount}]`
-  // }
   return group.title
 }
 
