@@ -109,7 +109,6 @@ function updateModal(type: string) {
     }).catch(err => {
       console.log(err)
     })
-
   } else {
     updateGroupInfo()
   }
@@ -168,25 +167,16 @@ const changeModal = (type: string, group?: DocGroup) => {
   updateGroup.title = group?.title || ''
   updateGroup.pid = group?.pid || -1
   if (type === 'update') {
-    Object.assign(updateGroup, group)
-    updateModalName.value = group?.title || ''
-    updateModalPid.value = group?.pid || 0;
+    updateModalName.value = updateGroup?.title || ''
+    updateModalPid.value = updateGroup?.pid || 0;
     showModal.value = true;
-  } else if (type === 'delete') {
-    //调用删除接口后，再次调用分组接口刷新页面的分组信息
   } else if (type === 'create') {
     newGroup.title = ''
     newGroup.pid = group?.pid || 0;
     showModal.value = true;
   }
-
   if (type === 'updateDoc') {
     showModal.value = true;
-
-  } else if (type === 'deleteDoc') {
-
-  } else if (type === 'createDoc') {
-
   }
 };
 
@@ -233,11 +223,12 @@ const horizontalMenuOptions: MenuOption[] = [
 ]
 
 function topMenuUpdate(key: string, item: MenuOption): void {
+  const title = genDocTitle()
   if (key === 'top-menu-write') {
     createDoc({
       id: 0,
-      content: ``,
-      title: genDocTitle()
+      content: `# ${title}`,
+      title: title
     } as Doc).then(res => {
       const doc = res.getData()
       treeData.value.push(buildTreeItem({
@@ -253,7 +244,6 @@ function topMenuUpdate(key: string, item: MenuOption): void {
 
   if (key === 'login-out') {
     myHttp.post({ url: '/api/user/logout', data: {} }).then(() => {
-
       localStorage.removeItem('userInfo')
       router.push("/LogIn")
     })
@@ -273,7 +263,11 @@ function genDocTitle(suffix: string = "-速记") {
   let todayTitleStr = "".concat(
     today.getFullYear().toString(),
     (today.getMonth() + 1).toString().padStart(2, '0'),
-    today.getDate().toString()) + suffix
+    today.getDate().toString().padStart(2, '0'),
+    '.',
+    today.getHours().toString().padStart(2, '0'),
+    today.getMinutes().toString().padStart(2, '0'),
+    today.getSeconds().toString().padStart(2, '0')) + suffix
   return todayTitleStr
 }
 
@@ -386,7 +380,6 @@ function nodeProps({ option }: { option: TreeOption }) {
   }
 }
 
-//节点后缀渲染
 const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: boolean }) => {
   return h(NButtonGroup, {
     size: "tiny",
@@ -459,7 +452,9 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
         },
         { icon: () => h(NIcon, null, { default: () => h(MenuOutline) }) }
       )
-    ), info.option.groupType != "doc" && h(
+    ),
+    // the add document button on the tree
+    info.option.groupType != "doc" && h(
       NButton,
       {
         text: true,
@@ -467,7 +462,7 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
         type: "default",
         onClick: e => {
           e.stopPropagation()
-          let title: string = genDocTitle()
+          const title = genDocTitle()
           const newDoc: Doc = {
             id: 0,
             content: `# ${title}`,
@@ -483,15 +478,11 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
                 groupType: "doc",
               } as DocGroup))
             } else {
-              for (let i = 0; i < treeData.value.length; i++) {
-                if (treeData.value[i].key == doc.groupId) {
-                  handleLoad(treeData.value[i])
-                  break
-                }
-              }
+              recursionReloadTreeNode(treeData.value, doc.groupId || 0)
             }
             router.push({ path: `/Editor/${doc.id}` })
           }).catch(err => {
+            console.log(err)
             message.error(err)
           })
         }
@@ -511,7 +502,7 @@ function deleteTreeNode(id: number, type: string) {
 }
 
 function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
-  if (arr.length <= 0) {
+  if (arr.length <= 0 || key <= 0) {
     return
   }
 
@@ -523,6 +514,20 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
       break
     }
     recursionDeleteTreeNode(arr[i]?.children || [], key)
+  }
+}
+
+function recursionReloadTreeNode(arr: Array<TreeOption>, key: number) {
+  if (arr.length <= 0 || key <= 0) {
+    return
+  }
+
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i]?.key && arr[i].key == key) {
+      handleLoad(arr[i])
+      break
+    }
+    recursionReloadTreeNode(arr[i]?.children || [], key)
   }
 }
 
