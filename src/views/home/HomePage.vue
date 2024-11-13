@@ -63,17 +63,18 @@ import {
   AddCircleOutline
 } from '@vicons/ionicons5'
 import myHttp from '@/api/treasure_axios';
-import { getDocGroupTree, createGroup, updateGroup as updateGroupData } from "@/api/doc_group"
 import { DocGroup, Doc } from '@/types/resource';
 import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, CreateOutline } from '@vicons/ionicons5'
 import { FolderAddOutlined, DashboardOutlined } from '@vicons/antd'
 import { Delete24Filled } from "@vicons/fluent"
 import { createDoc, updateDoc, getDoc, deleteDoc } from "@/api/doc"
+import { getDocGroupTree, createGroup, deleteGroup, updateGroup as updateGroupData } from "@/api/doc_group"
+
 
 const router = useRouter();
 const topMenuRef = ref(null)
 const message = useMessage()
-const treeData = ref<Array<any>>([])
+const treeData = ref<Array<TreeOption>>([])
 const showModal = ref(false);
 const groupHandleType = ref('');
 const newGroup = reactive<DocGroup>({ title: '', groupType: '', id: 0, pid: -1 });
@@ -418,21 +419,9 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
             show: (info.option.groupType === "doc")
           },
         ],
-        onSelect: (key: string | number) => {
+        onSelect: (key: string) => {
           if (key === 'delete') {
-            console.log(treeData)
-            deleteDoc({ id: info.option.key } as Doc).then(() => {
-              refreshTree()
-            })
-            //TODO: recursion delete,cancel the use of  global refresh
-
-            // for (let i = 0; i < treeData.value.length; i++) {
-            //   if (treeData.value[i].key == option.key) {
-            //     treeData.value.splice(i, 1)
-            //     
-            //     break
-            //   }
-            // }
+            recursionDeleteTreeNode(treeData.value, info.option.key as number)
           }
           if (key === 'createFolder') {
             changeModal('create', {
@@ -455,7 +444,6 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
             updateModalDocId.value = info.option.key as number
             changeModal('updateDoc')
           }
-
         }
 
       },
@@ -511,6 +499,32 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
       { icon: () => h(NIcon, null, { default: () => h(AddCircleOutline) }) }
     ),
   ])
+}
+
+function deleteTreeNode(id: number, type: string) {
+  console.log(arguments)
+  if (type === 'doc') {
+    deleteDoc({ id } as Doc).then(() => { message.success('删除成功') }).catch(err => { console.log(err) })
+  } else {
+    deleteGroup({ id } as DocGroup).then(() => { message.success('删除成功') }).catch(err => { console.log(err) })
+  }
+}
+
+function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
+  if (arr.length <= 0) {
+    return
+  }
+
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i]?.key && arr[i].key == key) {
+      console.log('delete', arr[i])
+      deleteTreeNode(arr[i].key as number, arr[i].groupType as string)
+      arr.splice(i, 1)
+      router.push({ path: `/Editor/0` })
+      break
+    }
+    recursionDeleteTreeNode(arr[i]?.children || [], key)
+  }
 }
 
 </script>

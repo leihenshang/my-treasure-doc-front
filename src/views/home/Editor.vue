@@ -1,29 +1,28 @@
 <template>
     <div class="edit-box">
-    <template v-if="currentDoc.id > 0">
-        <div class="edit-banner">
-            <div class="icon-group">
-                <n-icon size="20">
-                    <Menu />
-                </n-icon>
-                <n-icon size="20">
-                    <ArrowBack />
-                </n-icon>
-                <n-icon size="20">
-                    <Refresh />
-                </n-icon>
+        <template v-if="parseInt((props.id as string)) > 0">
+            <div class="edit-banner">
+                <div class="icon-group">
+                    <n-icon size="20">
+                        <Menu />
+                    </n-icon>
+                    <n-icon size="20">
+                        <ArrowBack />
+                    </n-icon>
+                    <n-icon size="20">
+                        <Refresh />
+                    </n-icon>
+                </div>
+                <span class="bar-title">{{ currentDoc.title }}</span>
             </div>
-            <span class="bar-title">{{ currentDoc.title }}</span>
-        </div>
-        <div class="edit-content" >
-            <Vditor :currentDoc="currentDoc" @update-doc="contentUpdate" />
-        </div>
-       
-    </template>
-    <div v-else class="div404">
-            <n-result status="404" title="404 资源不存在" description="生活总归带点荒谬" size="huge">
+            <div class="edit-content">
+                <Vditor :currentDoc="currentDoc" @update-doc="contentUpdate" />
+            </div>
+        </template>
+        <div v-else class="div404">
+            <n-result status="404" title="没有找到它！" description="爱可能是常觉亏欠，也可能是常觉亏钱" size="huge">
                 <template #footer>
-                    <n-button>找点乐子吧</n-button>
+                    <n-button>需要哪种？</n-button>
                 </template>
             </n-result>
         </div>

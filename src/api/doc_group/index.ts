@@ -43,26 +43,23 @@ export function getDocGroupTree(pid: number = 0, withChildren: boolean = false):
     })
 }
 
-// export async function doDelGroup(groupObj: DocGroup) {
-//     myHttp.post({
-//         url: '/api/doc-group/delete', data: {
-//             ...groupObj
-//         }
-//     }).then((response: any) => {
-//         if (!response) {
-//             message.error("删除分组数据失败！")
-//             return
-//         }
 
-//         if (response?.data?.code) {
-//             message.error(response?.data?.msg)
-//             return
-//         }
+export async function deleteGroup(groupObj: DocGroup) {
+    return new Promise<TreasureResponse<DocGroup>>((resolve: any, reject: any) => {
+        myHttp.post<TreasureResponse<DocGroup>>({
+            url: '/api/doc-group/delete', data: groupObj
+        }).then((response: any) => {
+            if (response?.code) {
+                reject(response?.msg)
+            }
 
-//     }).catch((err: any) => {
-//         console.log(err)
-//     })
-// }
+            const resp: TreasureResponse<DocGroup> = new TreasureResponse()
+            resp.data = response?.data
+            resolve(resp)
+        })
+
+    })
+}
 
 export async function createGroup(groupObj: DocGroup) {
     return new Promise<TreasureResponse<DocGroup>>((resolve: any, reject: any) => {
