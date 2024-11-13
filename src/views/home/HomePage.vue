@@ -66,7 +66,7 @@ import myHttp from '@/api/treasure_axios';
 import { getDocGroupTree, createGroup, updateGroup as updateGroupData } from "@/api/doc_group"
 import { DocGroup, Doc } from '@/types/resource';
 import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, CreateOutline } from '@vicons/ionicons5'
-import { FolderAddOutlined, DashboardOutlined, PlusCircleTwotone } from '@vicons/antd'
+import { FolderAddOutlined, DashboardOutlined } from '@vicons/antd'
 import { Delete24Filled } from "@vicons/fluent"
 import { createDoc, updateDoc, getDoc, deleteDoc } from "@/api/doc"
 
@@ -239,7 +239,7 @@ function topMenuUpdate(key: string, item: MenuOption): void {
       title: genDocTitle()
     } as Doc).then(res => {
       const doc = res.getData()
-      treeData.value.push(newTreeItem({
+      treeData.value.push(buildTreeItem({
         id: doc.id,
         title: doc.title,
         groupType: "doc",
@@ -289,23 +289,20 @@ function refreshTree() {
   treeData.value = []
   getDocGroupTree(0, true).then((response) => {
     for (const e of response.data as Array<DocGroup>) {
-      treeData.value.push(newTreeItem(e))
+      treeData.value.push(buildTreeItem(e))
     }
   }).catch((err) => {
     message.error(err)
   })
 }
 
-function newTreeItem(d: DocGroup) {
+function buildTreeItem(d: DocGroup) {
   return {
     label: genTreeLab(d),
     key: d.id,
     isLeaf: docIsLeaf(d.groupType),
-    id: d.id,
     groupType: d.groupType,
-    // suffix: () => getSuffixIcon(d.groupType),
     prefix: () => getPrefixIcon(d.groupType),
-    docItem: d,
     pid: d.pid
   }
 }
@@ -339,7 +336,7 @@ function handleLoad(node: TreeOption) {
 
       let arr: any = new Array<any>((response.data as Array<DocGroup>).length)
       for (const e of response.data as Array<DocGroup>) {
-        arr.push(newTreeItem(e))
+        arr.push(buildTreeItem(e))
       }
       node.children = arr
       resolve()
@@ -362,7 +359,7 @@ function handleLoadWithUpdateGroupLocation(node: TreeOption) {
 
       let arr: any = new Array<any>((response.data as Array<DocGroup>).length)
       for (const e of response.data as Array<DocGroup>) {
-        arr.push(newTreeItem(e))
+        arr.push(buildTreeItem(e))
       }
       node.children = arr
       resolve()
@@ -381,16 +378,15 @@ function genTreeLab(group: DocGroup): string {
 function nodeProps({ option }: { option: TreeOption }) {
   return {
     onClick() {
-      const docItem = (option.docItem as DocGroup)
-      if (docItem.groupType == "doc") {
-        router.push({ path: `/Editor/${docItem.id}` })
+      if (option.groupType == "doc") {
+        router.push({ path: `/Editor/${option.key}` })
       }
     },
   }
 }
 
 //节点后缀渲染
-const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
+const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: boolean }) => {
   return h(NButtonGroup, {
     size: "tiny",
   }, () => [
@@ -407,25 +403,25 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
             icon: () => { return h(NIcon, null, { default: () => h(FolderAddOutlined) }) },
             label: '创建目录',
             key: 'createFolder',
-            show: (option.groupType != "doc")
+            show: (info.option.groupType != "doc")
           },
           {
             icon: () => { return h(NIcon, null, { default: () => h(FolderAddOutlined) }) },
             label: '编辑目录',
             key: 'updateGroup',
-            show: (option.groupType != "doc")
+            show: (info.option.groupType != "doc")
           },
           {
             icon: () => { return h(NIcon, null, { default: () => h(Pen) }) },
             label: '编辑',
             key: 'updateDoc',
-            show: (option.groupType === "doc")
+            show: (info.option.groupType === "doc")
           },
         ],
         onSelect: (key: string | number) => {
           if (key === 'delete') {
             console.log(treeData)
-            deleteDoc({ id: option.key } as Doc).then(() => {
+            deleteDoc({ id: info.option.key } as Doc).then(() => {
               refreshTree()
             })
             //TODO: recursion delete,cancel the use of  global refresh
@@ -442,21 +438,21 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
             changeModal('create', {
               id: 0,
               groupType: '',
-              pid: option.key
+              pid: info.option.key
             } as DocGroup)
           }
 
           if (key === 'updateGroup') {
             changeModal('update', {
-              id: option.key,
-              title: option.label,
+              id: info.option.key,
+              title: info.option.label,
               groupType: '',
-              pid: option.pid
+              pid: info.option.pid
             } as DocGroup)
           }
 
           if (key === 'updateDoc') {
-            updateModalDocId.value = option.key as number
+            updateModalDocId.value = info.option.key as number
             changeModal('updateDoc')
           }
 
@@ -475,7 +471,7 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
         },
         { icon: () => h(NIcon, null, { default: () => h(MenuOutline) }) }
       )
-    ), option.groupType != "doc" && h(
+    ), info.option.groupType != "doc" && h(
       NButton,
       {
         text: true,
@@ -488,12 +484,12 @@ const treeNodeSuffix = ({ option }: { option: TreeOption }) => {
             id: 0,
             content: `# ${title}`,
             title: title,
-            groupId: option.key as unknown as number
+            groupId: info.option.key as unknown as number
           }
           createDoc(newDoc).then(res => {
             const doc = res.getData()
             if (doc.groupId === 0) {
-              treeData.value.push(newTreeItem({
+              treeData.value.push(buildTreeItem({
                 id: doc.id,
                 title: doc.title,
                 groupType: "doc",
