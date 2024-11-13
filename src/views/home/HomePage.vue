@@ -110,7 +110,7 @@ function updateModal(type: string) {
       console.log(err)
     })
   } else {
-    updateGroupInfo()
+    updateOrUpdateGroup()
   }
 }
 
@@ -120,16 +120,23 @@ function clearModal() {
   updateModalDocId.value = 0
 }
 
-function updateGroupInfo() {
+//TODO: recursion update
+function updateOrUpdateGroup() {
   showModal.value = false;
   if (updateGroup.title !== "") {
     updateGroup.title = updateModalName.value
     if (updateModalPid.value > 0) {
       updateGroup.pid = updateModalPid.value
     }
-    updateGroupData(updateGroup).then(() => {
+    updateGroupData(updateGroup).then((resp) => {
       clearModal()
-      refreshTree()
+      if (updateGroup.pid == 0) {
+        const newItem = Object.assign({}, updateGroup)
+        newItem.id = resp?.getData()?.id
+        treeData.value.push(buildTreeItem(newItem))
+      } else {
+        refreshTree()
+      }
     }).catch(err => {
       message.error(err)
     })
@@ -138,9 +145,15 @@ function updateGroupInfo() {
     if (newGroup.pid as number < 0 && updateModalPid.value > 0) {
       newGroup.pid = updateModalPid.value
     }
-    createGroup(newGroup).then(() => {
+    createGroup(newGroup).then((resp) => {
       clearModal()
-      refreshTree()
+      if (newGroup.pid == 0) {
+        const newItem = Object.assign({}, newGroup)
+        newItem.id = resp?.getData()?.id
+        treeData.value.push(buildTreeItem(newGroup))
+      } else {
+        refreshTree()
+      }
     }).catch(err => {
       message.error(err)
     })
