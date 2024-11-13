@@ -330,11 +330,10 @@ function docIsLeaf(groupType: string) {
 }
 
 function handleLoad(node: TreeOption) {
-  return new Promise<void>((resolve) => {
+  return new Promise<void>((resolve, reject) => {
     getDocGroupTree(node.key as number, true).then((response) => {
       if (!response.data) {
-        node.children = []
-        resolve()
+        reject()
         return
       }
 
