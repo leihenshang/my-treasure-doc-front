@@ -110,7 +110,7 @@ function updateModal(type: string) {
       console.log(err)
     })
   } else {
-    updateOrUpdateGroup()
+    createOrUpdateGroup()
   }
 }
 
@@ -121,7 +121,7 @@ function clearModal() {
 }
 
 //TODO: recursion update
-function updateOrUpdateGroup() {
+function createOrUpdateGroup() {
   showModal.value = false;
   if (updateGroup.title !== "") {
     updateGroup.title = updateModalName.value
@@ -135,7 +135,7 @@ function updateOrUpdateGroup() {
         newItem.id = resp?.getData()?.id
         treeData.value.push(buildTreeItem(newItem))
       } else {
-        refreshTree()
+        recursionReloadTreeNode(treeData.value, updateGroup.pid || 0)
       }
     }).catch(err => {
       message.error(err)
@@ -147,12 +147,13 @@ function updateOrUpdateGroup() {
     }
     createGroup(newGroup).then((resp) => {
       clearModal()
+      console.log(resp)
       if (newGroup.pid == 0) {
         const newItem = Object.assign({}, newGroup)
         newItem.id = resp?.getData()?.id
-        treeData.value.push(buildTreeItem(newGroup))
+        treeData.value.push(buildTreeItem(newItem))
       } else {
-        refreshTree()
+        recursionReloadTreeNode(treeData.value, newGroup.pid || 0)
       }
     }).catch(err => {
       message.error(err)
