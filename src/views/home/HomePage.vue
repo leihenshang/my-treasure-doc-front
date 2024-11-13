@@ -517,7 +517,6 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
 
   for (let i = 0; i < arr.length; i++) {
     if (arr[i]?.key && arr[i].key == key) {
-      console.log('delete', arr[i])
       deleteTreeNode(arr[i].key as number, arr[i].groupType as string)
       arr.splice(i, 1)
       router.push({ path: `/Editor/0` })
