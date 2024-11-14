@@ -9,21 +9,22 @@ import { onMounted, watch } from "vue"
 import { useMessage } from "naive-ui"
 import { Doc } from "@/types/resource"
 import { useUserInfoStore } from "@/stores/user/userinfo";
+import eventBus from '@/utils/event_bus'
+
 
 const props = defineProps<{
     currentDoc: Doc
 }>()
 
 const storeUserInfo = useUserInfoStore()
-
 const vditorContainer = ref()
 const message = useMessage()
+const currentDoc = reactive({ ...props.currentDoc })
 
 const emit = defineEmits<{
     (e: 'updateDoc', updateDoc: Doc): void
 }>()
 
-const currentDoc = reactive({ ...props.currentDoc })
 
 onMounted(() => {
     message.loading("编辑器初始化")
@@ -47,9 +48,12 @@ onMounted(() => {
         },
         input(md) {
             currentDoc.content = md
-            let newTitle: string = getMarkdownH1Text(currentDoc.content)
-            currentDoc.title = newTitle ?? currentDoc.title
+            currentDoc.title = getMarkdownH1Text(currentDoc.content) ?? currentDoc.title
             currentDoc.isFirst = false
+            currentDoc.id = props.currentDoc.id
+            if (currentDoc.title != '') {
+                eventBus.emit('updateDocTitle', { ...currentDoc })
+            }
             emit("updateDoc", currentDoc)
         },
         upload: {

@@ -29,7 +29,7 @@
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue"
-  ],
+, "src/utils/event_bus.ts"  ],
   "references": [
     {
       "path": "./tsconfig.node.json"

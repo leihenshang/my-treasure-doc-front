@@ -69,7 +69,7 @@ import { FolderAddOutlined, DashboardOutlined } from '@vicons/antd'
 import { Delete24Filled } from "@vicons/fluent"
 import { createDoc, updateDoc, getDoc, deleteDoc } from "@/api/doc"
 import { getDocGroupTree, createGroup, deleteGroup, updateGroup as updateGroupData } from "@/api/doc_group"
-
+import eventBus from '@/utils/event_bus'
 
 const router = useRouter();
 const topMenuRef = ref(null)
@@ -90,6 +90,10 @@ const options = ref([
     isLeaf: false
   }
 ])
+
+eventBus.on('updateDocTitle', (data: Doc) => {
+  recursionUpdateTreeNodeTitle(treeData.value, data.id, data.title)
+})
 
 function updateModal(type: string) {
   if (type === 'updateDoc') {
@@ -113,6 +117,7 @@ function updateModal(type: string) {
     createOrUpdateGroup()
   }
 }
+
 
 function clearModal() {
   updateModalName.value = ''
@@ -147,7 +152,6 @@ function createOrUpdateGroup() {
     }
     createGroup(newGroup).then((resp) => {
       clearModal()
-      console.log(resp)
       if (newGroup.pid == 0) {
         const newItem = Object.assign({}, newGroup)
         newItem.id = resp?.getData()?.id
@@ -507,7 +511,6 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
 }
 
 function deleteTreeNode(id: number, type: string) {
-  console.log(arguments)
   if (type === 'doc') {
     deleteDoc({ id } as Doc).then(() => { message.success('删除成功') }).catch(err => { console.log(err) })
   } else {
@@ -544,6 +547,21 @@ function recursionReloadTreeNode(arr: Array<TreeOption>, key: number) {
     recursionReloadTreeNode(arr[i]?.children || [], key)
   }
 }
+
+function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: number, title: string) {
+  if (arr.length <= 0 || key <= 0) {
+    return
+  }
+
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i]?.key == key) {
+      arr[i].label = title
+      break
+    }
+    recursionUpdateTreeNodeTitle(arr[i]?.children || [], key, title)
+  }
+}
+
 
 </script>
 
