@@ -43,26 +43,17 @@ const props = defineProps({
 })
 
 const route = useRoute()
-const currentDoc = reactive<Doc>({
-    id: 0,
-    title: "",
-    content: "",
-    groupId: Number(route.query.groupId)
-})
+const currentDoc = reactive<Doc>({} as Doc)
 
 const message = useMessage()
 
 function contentUpdate(docUpdate: Doc) {
-    currentDoc.isFirst = false
-    const newDoc = { ...currentDoc }
-    newDoc.content = docUpdate.content
-    newDoc.title = docUpdate.title
-    if (newDoc.id > 0) {
-        updateDoc(newDoc).catch(err => {
+    if (docUpdate.id > 0) {
+        updateDoc(docUpdate).catch(err => {
             message.error(err)
         })
     } else if (docUpdate.title.length > 0) {
-        createDoc(newDoc).then(res => {
+        createDoc(docUpdate).then(res => {
             currentDoc.id = res.getData().id
         }).catch(err => {
             message.error(err)
@@ -71,29 +62,24 @@ function contentUpdate(docUpdate: Doc) {
     }
 }
 
-onMounted(() => {
-    nextTick(() => {
-        getSetCurrentDoc(props.id as unknown as number, true)
-    })
-})
+// onMounted(() => {
+//     nextTick(() => {
+//         getSetCurrentDoc(props.id as unknown as number)
+//     })
+// })
 
 
 watch(() => props.id, (newId) => {
-    getSetCurrentDoc(newId as unknown as number, false)
+    getSetCurrentDoc(newId as unknown as number)
 
 })
 
-function getSetCurrentDoc(docId: number, isFirst: boolean) {
+function getSetCurrentDoc(docId: number) {
     if (docId <= 0) {
         return
     }
     getDoc(docId).then(resp => {
-        const respDoc = resp.data as Doc
-        currentDoc.id = respDoc.id
-        currentDoc.title = respDoc.title
-        currentDoc.content = respDoc.content
-        currentDoc.groupId = respDoc.groupId
-        currentDoc.isFirst = isFirst
+        Object.assign(currentDoc,resp.data as Doc)
     }).catch(err => {
         message.error(err)
     })

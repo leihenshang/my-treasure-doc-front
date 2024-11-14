@@ -19,7 +19,7 @@ const props = defineProps<{
 const storeUserInfo = useUserInfoStore()
 const vditorContainer = ref()
 const message = useMessage()
-const currentDoc = reactive({ ...props.currentDoc })
+const currentDoc = reactive({  } as Doc)
 
 const emit = defineEmits<{
     (e: 'updateDoc', updateDoc: Doc): void
@@ -36,7 +36,7 @@ onMounted(() => {
             pin: true,
         },
         placeholder: '在这里写下你的第一行文字吧！',
-        value: props.currentDoc.content,
+        value: currentDoc.content,
         after: () => {
             message.destroyAll()
             // vditorContainer.value.setValue(props.currentDoc.content)
@@ -49,7 +49,6 @@ onMounted(() => {
         input(md) {
             currentDoc.content = md
             currentDoc.title = getMarkdownH1Text(currentDoc.content) ?? currentDoc.title
-            currentDoc.isFirst = false
             currentDoc.id = props.currentDoc.id
             if (currentDoc.title != '') {
                 eventBus.emit('updateDocTitle', { ...currentDoc })
@@ -109,12 +108,9 @@ function getMarkdownH1Text(markdownContent: string): string {
     return "";
 }
 
-watch(() => props.currentDoc, async (newDoc) => {
-    if (!newDoc.isFirst) {
+watch(() =>props.currentDoc, (newDoc) => {
         vditorContainer.value?.setValue(newDoc.content)
-    }
-
-}, { deep: true })
+},{deep:true})
 
 
 </script>

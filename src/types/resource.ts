@@ -8,8 +8,7 @@ export interface Doc extends BaseResource {
     title: string,
     content: string,
     groupId?: number,
-    isTop?: number,
-    isFirst?: boolean
+    isTop?: number
 }
 
 export interface DocGroup extends BaseResource {
