@@ -13,7 +13,7 @@
                         <Refresh />
                     </n-icon>
                 </div>
-                <span class="bar-title">{{ currentDoc.title }}</span>
+                <span class="bar-title">{{ currentTitle }}</span>
             </div>
             <div class="edit-content">
                 <Vditor :doc="currentDoc" @update-doc="contentUpdate" />
@@ -30,9 +30,8 @@
 
 </template>
 <script lang="ts" setup>
-import { onMounted, ref, watch, reactive, nextTick, watchEffect } from 'vue'
+import { onMounted, ref, watch, reactive, nextTick, computed } from 'vue'
 import { useMessage, NIcon } from 'naive-ui';
-import { useRoute } from 'vue-router';
 import Vditor from '@/components/Vditor.vue';
 import { ArrowBack, Refresh, Menu } from '@vicons/ionicons5'
 import { Doc } from "@/types/resource"
@@ -42,17 +41,24 @@ const props = defineProps({
     id: String,
 })
 
-const route = useRoute()
 const currentDoc = reactive<Doc>({} as Doc)
-
+const updateTitle = ref('')
 const message = useMessage()
 
+const currentTitle = computed(() => {
+    return updateTitle ?? ''
+})
+
 function contentUpdate(docUpdate: Doc) {
+    if (docUpdate.title.length > 0) {
+        updateTitle.value = docUpdate.title
+    }
+
     if (docUpdate.id > 0) {
         updateDoc(docUpdate).catch(err => {
             message.error(err)
         })
-    } else if (docUpdate.title.length > 0) {
+    } else if (docUpdate.title.length > 0 || docUpdate.content.length > 0) {
         createDoc(docUpdate).then(res => {
             currentDoc.id = res.getData().id
         }).catch(err => {
@@ -61,13 +67,6 @@ function contentUpdate(docUpdate: Doc) {
 
     }
 }
-
-// onMounted(() => {
-//     nextTick(() => {
-//         getSetCurrentDoc(props.id as unknown as number)
-//     })
-// })
-
 
 watch(() => props.id, (newId) => {
     getSetCurrentDoc(newId as unknown as number)
@@ -79,7 +78,9 @@ function getSetCurrentDoc(docId: number) {
         return
     }
     getDoc(docId).then(resp => {
-        Object.assign(currentDoc, resp.data as Doc)
+        const doc = resp.data as Doc
+        Object.assign(currentDoc, doc)
+        updateTitle.value = doc.title
     }).catch(err => {
         message.error(err)
     })
