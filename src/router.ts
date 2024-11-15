@@ -35,7 +35,7 @@ router.beforeEach(async (to, from) => {
       try {
         let userInfo: UserInfo = JSON.parse(localUserInfo)
         if (userInfo && userInfo.id > 0) {
-          storeUserinfo.updateUserinfo(userInfo)
+          storeUserinfo.updateUserInfo(userInfo)
           isAuthenticated = true
         }
       } catch (error) {
@@ -43,6 +43,7 @@ router.beforeEach(async (to, from) => {
       }
     }
   }
+
 
   if (isAuthenticated && to.name === "LogIn") {
     return { name: "HomePage" }

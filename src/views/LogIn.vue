@@ -31,6 +31,7 @@ import { useUserInfoStore } from "@/stores/user/user_info";
 import myHttp from "@/api/treasure_axios";
 import { UserInfo } from '@/stores/user/types'
 import { LoginUser } from "@/types/resource"
+import { logIn } from '@/api/user';
 
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
@@ -48,29 +49,33 @@ const usernameInput = ref<InstanceType<typeof NInput> | null>(null)
 const longIn = (e: MouseEvent) => {
   e.preventDefault()
   formRef.value?.validate((errors) => {
-    if (!errors) {
-      message.loading("登录...")
-      myHttp.post({ url: 'api/user/login', data: { ...userInfo.value } }).then((response) => {
-        message.destroyAll()
-        if (response?.code > 0) {
-          message.error("登录失败:" + response?.msg)
-          localStorage.removeItem('userInfo')
-          if (usernameInput.value) {
-            (usernameInput.value.focus)()
-          }
-          return
-        }
-
-        // local storage
-        localStorage.setItem('userInfo', JSON.stringify(response?.data))
-        storeUserInfo.updateUserinfo(response?.data as UserInfo)
-        message.success("登录成功")
-        router.push({ name: 'HomePage' })
-      }).catch((err: any) => {
-        console.log("axios:", err)
-        message.error(JSON.stringify(err))
-      })
+    if (errors) {
+      message.info(errors.toString())
+      return
     }
+    const msg = message.loading("登录...")
+    logIn(userInfo.value).then((response) => {
+      msg.destroy()
+      if (response?.code > 0) {
+        message.error("登录失败:" + response?.msg)
+        localStorage.removeItem('userInfo')
+        if (usernameInput.value) {
+          (usernameInput.value.focus)()
+        }
+        return
+      }
+
+      // local storage
+      localStorage.setItem('userInfo', JSON.stringify(response?.data))
+      storeUserInfo.updateUserInfo(response?.data as UserInfo)
+      const logInMsg = message.success("登录成功")
+      router.push({ name: 'HomePage' }).then(() => {
+        logInMsg.destroy()
+      })
+    }).catch((err: any) => {
+      console.log("axios:", err)
+      message.error(JSON.stringify(err))
+    })
   }).catch((err: any) => {
     console.log(err)
   })

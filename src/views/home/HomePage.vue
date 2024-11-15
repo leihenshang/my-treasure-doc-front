@@ -70,6 +70,8 @@ import { Delete24Filled } from "@vicons/fluent"
 import { createDoc, updateDoc, getDoc, deleteDoc } from "@/api/doc"
 import { getDocGroupTree, createGroup, deleteGroup, updateGroup as updateGroupData } from "@/api/doc_group"
 import eventBus from '@/utils/event_bus'
+import { logOut } from '@/api/user';
+import { useUserInfoStore } from '@/stores/user/user_info';
 
 const router = useRouter();
 const topMenuRef = ref(null)
@@ -90,6 +92,8 @@ const options = ref([
     isLeaf: false
   }
 ])
+
+const userInfoStore = useUserInfoStore()
 
 eventBus.on('updateDocTitle', (data: Doc) => {
   recursionUpdateTreeNodeTitle(treeData.value, data.id, data.title)
@@ -258,16 +262,18 @@ function topMenuUpdate(key: string, item: MenuOption): void {
     }).catch(err => {
       message.error(err)
     })
-  }
-
-  if (key === 'login-out') {
-    myHttp.post({ url: '/api/user/logout', data: {} }).then(() => {
-      localStorage.removeItem('userInfo')
+  } else if (key === 'login-out') {
+    logOut().then(() => {
       router.push("/LogIn")
-    })
-  }
+    }).catch((err) => {
+      if (typeof err === "string") {
+        message.error(err)
+      } else {
+        console.log(err)
+      }
 
-  if (key === 'top-menu-folder') {
+    })
+  } else if (key === 'top-menu-folder') {
     changeModal('create', {
       id: 0,
       title: "",

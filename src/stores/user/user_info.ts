@@ -12,7 +12,7 @@ export const useUserInfoStore = defineStore('userinfo', {
         }
     },
     actions: {
-        updateUserinfo(newUserinfo: UserInfo) {
+        updateUserInfo(newUserinfo: UserInfo) {
             this.userInfo = newUserinfo
         }
     },
