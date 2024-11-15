@@ -1,7 +1,6 @@
 <template>
     <div class="edit-box">
         <template v-if="props.id as number > 0">
-            {{ vnode }}
             <div class="edit-banner">
                 <div class="icon-group">
                     <n-icon size="20">
