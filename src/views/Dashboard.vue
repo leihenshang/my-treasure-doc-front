@@ -14,12 +14,27 @@
     </n-grid>
 </template>
 <script lang="ts" setup>
+import { getNoteList } from '@/api/note';
 import { router } from '@/router';
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useMessage } from 'naive-ui'
+import { Note } from '@/types/resource';
+
 const gridCollapsed = ref(false)
 const gridCollapsedRows = ref(1)
 const gridItemCount = ref(4)
 const showSuffix = ref(true)
+const message = useMessage()
+const noteList = ref<Note[]>()
+
+onMounted(() => {
+    getNoteList().then((resp) => {
+        noteList.value = resp.list
+    }).catch(err => {
+        message.error(err)
+    })
+})
+
 </script>
 <style scoped>
 .light-green {

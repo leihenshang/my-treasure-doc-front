@@ -3,14 +3,13 @@ import { TreasureResponse, TreasureResponseList, PaginationWithSort } from "@/ty
 import { Note } from "@/types/resource"
 
 
-export function getNoteList(groupId: number = 0, pagination: PaginationWithSort = new PaginationWithSort()): Promise<TreasureResponseList<Note>> {
+export function getNoteList(pagination: PaginationWithSort = new PaginationWithSort()): Promise<TreasureResponseList<Note>> {
     return new Promise<TreasureResponseList<Note>>((resolve, reject) => {
         myHttp.get<TreasureResponse<Note>>({
             url: 'api/note/list', params: {
                 page: pagination.page,
                 pageSize: pagination.pageSize,
-                orderBy: pagination.orderBy,
-                groupId: groupId
+                orderBy: pagination.orderBy
             }
         }).then((response: any) => {
             if (response?.code) {
