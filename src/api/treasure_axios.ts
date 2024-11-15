@@ -1,4 +1,4 @@
-import { useUserInfoStore } from '@/stores/user/userinfo'
+import { useUserInfoStore } from '@/stores/user/user_info'
 import { CONTENT_TYPE } from '@/constants'
 import service from './service'
 import { AxiosConfig, IResponse } from "../types/treasure_request"

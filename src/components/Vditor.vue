@@ -8,18 +8,16 @@ import { ref, nextTick, reactive } from "vue"
 import { onMounted, watch } from "vue"
 import { useMessage } from "naive-ui"
 import { Doc } from "@/types/resource"
-import { useUserInfoStore } from "@/stores/user/userinfo";
+import { useUserInfoStore } from "@/stores/user/user_info";
 import eventBus from '@/utils/event_bus'
 
 
-const props = defineProps<{
-    currentDoc: Doc
-}>()
+const props = defineProps<{ currentDoc: Doc }>()
 
 const storeUserInfo = useUserInfoStore()
 const vditorContainer = ref()
 const message = useMessage()
-const currentDoc = reactive({  } as Doc)
+const currentDoc = reactive({} as Doc)
 
 const emit = defineEmits<{
     (e: 'updateDoc', updateDoc: Doc): void
@@ -27,7 +25,7 @@ const emit = defineEmits<{
 
 
 onMounted(() => {
-    message.loading("编辑器初始化")
+    const msg = message.loading("正在做一些准备工作~编辑器初始化...")
     vditorContainer.value = new Vditor("vditor-container", {
         theme: "classic",
         minHeight: 900,
@@ -38,9 +36,7 @@ onMounted(() => {
         placeholder: '在这里写下你的第一行文字吧！',
         value: currentDoc.content,
         after: () => {
-            message.destroyAll()
-            // vditorContainer.value.setValue(props.currentDoc.content)
-            // vditorContainer.value.focus()
+            msg.destroy()
         },
         outline: {
             enable: false,
@@ -50,10 +46,12 @@ onMounted(() => {
             currentDoc.content = md
             currentDoc.title = getMarkdownH1Text(currentDoc.content) ?? currentDoc.title
             currentDoc.id = props.currentDoc.id
-            if (currentDoc.title != '') {
+            if (currentDoc.title.length > 0) {
                 eventBus.emit('updateDocTitle', { ...currentDoc })
             }
-            emit("updateDoc", currentDoc)
+            if (currentDoc.content.length > 0) {
+                emit("updateDoc", currentDoc)
+            }
         },
         upload: {
             accept: 'image/*',//规定上传的图片格式
@@ -104,13 +102,14 @@ function getMarkdownH1Text(markdownContent: string): string {
     if (match && match.length > 1) {
         return match[1].trim();
     }
-
     return "";
 }
 
-watch(() =>props.currentDoc, (newDoc) => {
-        vditorContainer.value?.setValue(newDoc.content)
-},{deep:true})
+watch(() => props.currentDoc.content, (newContent) => {
+    if (newContent.length > 0) {
+        vditorContainer.value?.setValue(newContent)
+    }
+})
 
 
 </script>

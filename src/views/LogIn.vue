@@ -27,7 +27,7 @@
 import { FormInst, useMessage, NInput } from 'naive-ui';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUserInfoStore } from "@/stores/user/userinfo";
+import { useUserInfoStore } from "@/stores/user/user_info";
 import myHttp from "@/api/treasure_axios";
 import { UserInfo } from '@/stores/user/types'
 import { LoginUser } from "@/types/resource"

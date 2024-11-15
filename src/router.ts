@@ -1,5 +1,5 @@
 import { createWebHashHistory, createRouter } from 'vue-router';
-import { useUserInfoStore } from "@/stores/user/userinfo";
+import { useUserInfoStore } from "@/stores/user/user_info";
 import { UserInfo } from '@/stores/user/types'
 
 const router = createRouter({
@@ -44,7 +44,7 @@ router.beforeEach(async (to, from) => {
   }
 
   if (isAuthenticated && to.name === "LogIn") {
-    return {name:"HomePage"}
+    return { name: "HomePage" }
   }
 
   if (
