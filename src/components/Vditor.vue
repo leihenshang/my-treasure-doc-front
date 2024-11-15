@@ -106,7 +106,9 @@ function getMarkdownH1Text(markdownContent: string): string {
 
 watch(() => props.doc.content, (newContent) => {
     if (newContent.length > 0) {
-        vditorContainer.value?.setValue(newContent)
+        vditorContainer.value?.setValue(newContent, true)
+        vditorContainer.value?.focus()
+
     }
 })
 
