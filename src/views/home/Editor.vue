@@ -1,6 +1,6 @@
 <template>
     <div class="edit-box">
-        <template v-if="parseInt((props.id as string)) > 0">
+        <template v-if="props.id as number > 0">
             <div class="edit-banner">
                 <div class="icon-group">
                     <n-icon size="20">
@@ -37,9 +37,9 @@ import { ArrowBack, Refresh, Menu } from '@vicons/ionicons5'
 import { Doc } from "@/types/resource"
 import { createDoc, updateDoc, getDoc } from "@/api/doc"
 
-const props = defineProps({
-    id: String,
-})
+const props = defineProps<{
+    id: number | string,
+}>()
 
 const currentDoc = reactive<Doc>({} as Doc)
 const updateTitle = ref('')
