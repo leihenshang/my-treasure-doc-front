@@ -5,7 +5,7 @@
 import Vditor from 'vditor'
 import "vditor/dist/index.css"
 import { ref, nextTick, reactive } from "vue"
-import { onMounted, watch } from "vue"
+import { onMounted, watch, onBeforeUpdate, onUpdated } from "vue"
 import { useMessage } from "naive-ui"
 import { Doc } from "@/types/resource"
 import { useUserInfoStore } from "@/stores/user/user_info";
@@ -17,15 +17,14 @@ const props = defineProps<{ doc: Doc }>()
 const storeUserInfo = useUserInfoStore()
 const vditorContainer = ref()
 const message = useMessage()
-const currentDoc = reactive({} as Doc)
+const currentDoc = reactive({ ...props.doc } as Doc)
 
 const emit = defineEmits<{
     (e: 'updateDoc', updateDoc: Doc): void
 }>()
 
-
 onMounted(() => {
-    const msg = message.loading("正在做一些准备工作~编辑器初始化...")
+    const msg = message.loading("编辑器初始化...")
     vditorContainer.value = new Vditor("vditor-container", {
         theme: "classic",
         minHeight: 900,
@@ -34,7 +33,7 @@ onMounted(() => {
             pin: true,
         },
         placeholder: '在这里写下你的第一行文字吧！',
-        value: currentDoc.content,
+        value: props.doc.content,
         after: () => {
             msg.destroy()
         },

@@ -68,9 +68,14 @@ function contentUpdate(docUpdate: Doc) {
     }
 }
 
-watch(() => props.id, (newId) => {
-    getSetCurrentDoc(newId as unknown as number)
+// 为了保证当直接进入页面的时候不会获取到默认的缓存数据
+onMounted(async () => {
+    getSetCurrentDoc(props.id as number)
+    await nextTick()
+})
 
+watch(() => props.id, (newId: number | string) => {
+    getSetCurrentDoc(newId as number)
 })
 
 function getSetCurrentDoc(docId: number) {
