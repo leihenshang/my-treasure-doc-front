@@ -23,3 +23,9 @@ export interface LoginUser extends BaseResource {
     password: string
     verifyCode: string
 }
+
+export interface Note extends BaseResource {
+    content: string,
+    noteType: string,
+    isTop?: number
+}
