@@ -16,7 +16,7 @@
                 <span class="bar-title">{{ currentDoc.title }}</span>
             </div>
             <div class="edit-content">
-                <Vditor :currentDoc="currentDoc" @update-doc="contentUpdate" />
+                <Vditor :doc="currentDoc" @update-doc="contentUpdate" />
             </div>
         </template>
         <div v-else class="div404">
@@ -79,7 +79,7 @@ function getSetCurrentDoc(docId: number) {
         return
     }
     getDoc(docId).then(resp => {
-        Object.assign(currentDoc,resp.data as Doc)
+        Object.assign(currentDoc, resp.data as Doc)
     }).catch(err => {
         message.error(err)
     })

@@ -12,7 +12,7 @@ import { useUserInfoStore } from "@/stores/user/user_info";
 import eventBus from '@/utils/event_bus'
 
 
-const props = defineProps<{ currentDoc: Doc }>()
+const props = defineProps<{ doc: Doc }>()
 
 const storeUserInfo = useUserInfoStore()
 const vditorContainer = ref()
@@ -45,7 +45,7 @@ onMounted(() => {
         input(md) {
             currentDoc.content = md
             currentDoc.title = getMarkdownH1Text(currentDoc.content) ?? currentDoc.title
-            currentDoc.id = props.currentDoc.id
+            currentDoc.id = props.doc.id
             if (currentDoc.title.length > 0) {
                 eventBus.emit('updateDocTitle', { ...currentDoc })
             }
@@ -105,7 +105,7 @@ function getMarkdownH1Text(markdownContent: string): string {
     return "";
 }
 
-watch(() => props.currentDoc.content, (newContent) => {
+watch(() => props.doc.content, (newContent) => {
     if (newContent.length > 0) {
         vditorContainer.value?.setValue(newContent)
     }
