@@ -1,16 +1,17 @@
 <template>
     <div class="edit-box">
         <template v-if="props.id as number > 0">
+            {{ vnode }}
             <div class="edit-banner">
                 <div class="icon-group">
                     <n-icon size="20">
-                        <Menu />
+                        <Menu></Menu>
                     </n-icon>
                     <n-icon size="20">
-                        <ArrowBack />
+                        <ArrowBack> </ArrowBack>
                     </n-icon>
                     <n-icon size="20">
-                        <Refresh />
+                        <Refresh></Refresh>
                     </n-icon>
                 </div>
                 <span class="bar-title">{{ currentTitle }}</span>
