@@ -20,7 +20,7 @@
             </div>
         </template>
         <div v-else class="div404">
-            <n-result status="404" title="没有找到它！" description="爱可能是常觉亏欠，也可能是常觉亏钱" size="huge">
+            <n-result status="404" title="爱是什么？" description="爱可能是常觉亏欠，也可能是常觉亏钱" size="huge">
                 <template #footer>
                     <n-button>需要哪种？</n-button>
                 </template>
