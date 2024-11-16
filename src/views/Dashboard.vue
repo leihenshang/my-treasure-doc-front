@@ -1,17 +1,27 @@
 <template>
-    <n-grid :cols="2">
-        <n-form-item-gi label="操作">
-            <n-button @click="router.push('HomePage')">返回首页</n-button>
-        </n-form-item-gi>
-        <n-form-item-gi label="数量">
-            <n-input-number v-model:value="gridItemCount" :min="1" />
-        </n-form-item-gi>
-    </n-grid>
-    <n-grid :cols="9" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows">
-        <n-gi v-for="i in gridItemCount" :key="i" :class="i % 2 ? 'green' : 'light-green'">
-            {{ i }}
-        </n-gi>
-    </n-grid>
+    <div class="dashboard">
+        <n-grid :cols="1">
+            <n-form-item-gi>
+                <n-button @click="router.push('HomePage')">返回首页</n-button>
+            </n-form-item-gi>
+        </n-grid>
+        <n-grid :cols="9" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" x-gap="12">
+            <n-gi v-for="i in noteList" :key="i.id" :class="i.id % 2 ? 'green' : 'light-green'">
+                <a v-if="i.noteType === 'bookmark'" :href="i.content" target="_blank">
+                    <ExternalLinkSquareAlt></ExternalLinkSquareAlt>{{ i.title }}
+                </a>
+                <template v-else-if="i.noteType === 'note'">
+                    <StickyNote></StickyNote> <n-ellipsis style="max-width: 240px" :line-clamp="2">{{ i.content }}
+                    </n-ellipsis>
+                </template>
+                <template v-else-if="i.noteType === 'treeHole'">
+                    <TrashRestoreAlt></TrashRestoreAlt> <n-ellipsis style="max-width: 240px" :line-clamp="2">{{ i.content }}
+                    </n-ellipsis>
+                </template>
+                <template v-else>{{ i.content }}</template>
+            </n-gi>
+        </n-grid>
+    </div>
 </template>
 <script lang="ts" setup>
 import { getNoteList } from '@/api/note';
@@ -19,11 +29,11 @@ import { router } from '@/router';
 import { ref, onMounted } from 'vue'
 import { useMessage } from 'naive-ui'
 import { Note } from '@/types/resource';
+import { ExternalLinkSquareAlt, StickyNote,TrashRestoreAlt } from '@vicons/fa'
 
 const gridCollapsed = ref(false)
 const gridCollapsedRows = ref(1)
 const gridItemCount = ref(4)
-const showSuffix = ref(true)
 const message = useMessage()
 const noteList = ref<Note[]>()
 
@@ -37,6 +47,10 @@ onMounted(() => {
 
 </script>
 <style scoped>
+.dashboard {
+    padding: 10px;
+}
+
 .light-green {
     height: 80px;
     background-color: rgba(0, 128, 0, 0.12);

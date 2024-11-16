@@ -25,6 +25,7 @@ export interface LoginUser extends BaseResource {
 }
 
 export interface Note extends BaseResource {
+    title: string,
     content: string,
     noteType: string,
     isTop?: number
