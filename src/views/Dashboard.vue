@@ -1,8 +1,11 @@
 <template>
     <div class="dashboard">
-        <n-grid :cols="1">
+        <n-grid :cols="2">
             <n-form-item-gi>
-                <n-button @click="router.push('HomePage')">返回首页</n-button>
+                <n-button @click.prevent="router.push('/HomePage')">返回首页</n-button>
+            </n-form-item-gi>
+            <n-form-item-gi>
+                <n-button @click.prevent="router.push('/HomePage')">新建</n-button>
             </n-form-item-gi>
         </n-grid>
         <n-grid :cols="9" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" x-gap="12">
@@ -15,7 +18,8 @@
                     </n-ellipsis>
                 </template>
                 <template v-else-if="i.noteType === 'treeHole'">
-                    <TrashRestoreAlt></TrashRestoreAlt> <n-ellipsis style="max-width: 240px" :line-clamp="2">{{ i.content }}
+                    <TrashRestoreAlt></TrashRestoreAlt> <n-ellipsis style="max-width: 240px" :line-clamp="2">{{
+                        i.content }}
                     </n-ellipsis>
                 </template>
                 <template v-else>{{ i.content }}</template>
@@ -29,7 +33,7 @@ import { router } from '@/router';
 import { ref, onMounted } from 'vue'
 import { useMessage } from 'naive-ui'
 import { Note } from '@/types/resource';
-import { ExternalLinkSquareAlt, StickyNote,TrashRestoreAlt } from '@vicons/fa'
+import { ExternalLinkSquareAlt, StickyNote, TrashRestoreAlt } from '@vicons/fa'
 
 const gridCollapsed = ref(false)
 const gridCollapsedRows = ref(1)
