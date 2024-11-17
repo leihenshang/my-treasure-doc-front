@@ -2,10 +2,10 @@
     <div class="dashboard">
         <n-grid :cols="2">
             <n-form-item-gi>
-                <n-button @click.prevent="router.push('/HomePage')">返回首页</n-button>
+                <n-button @click.prevent="router.push('/Start')">返回首页</n-button>
             </n-form-item-gi>
             <n-form-item-gi>
-                <n-button @click.prevent="showModal = true">新建</n-button>
+                <n-button @click.prevent="showModal = true;">新建</n-button>
             </n-form-item-gi>
         </n-grid>
         <n-grid :cols="9" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" x-gap="12">
@@ -26,19 +26,7 @@
             </n-gi>
         </n-grid>
     </div>
-    <n-modal v-model:show="showModal" preset="dialog" title="Dialog" :show-icon="false" class="modal-dialog"
-        :mask-closable=false style="position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
-        <template #header>
-            a modal
-        </template>
-        <div class="dialog-container">
-            s
-        </div>
-        <template #action>
-            <n-button type="primary" @click="">确定</n-button>
-            <n-button @click="showModal = false">取消</n-button>
-        </template>
-    </n-modal>
+    <CreateNote :show-create-note="showModal"></CreateNote>
 </template>
 <script lang="ts" setup>
 import { getNoteList } from '@/api/note';
@@ -47,6 +35,7 @@ import { ref, onMounted } from 'vue'
 import { useMessage } from 'naive-ui'
 import { Note } from '@/types/resource';
 import { ExternalLinkSquareAlt, StickyNote, TrashRestoreAlt } from '@vicons/fa'
+import CreateNote from '@/components/note/CreateNote.vue'
 
 const gridCollapsed = ref(false)
 const gridCollapsedRows = ref(1)

@@ -1,12 +1,12 @@
 <template>
   <header>
     <section class="left">
-      <img src="../assets/images/duck.png" class="favicon" alt="" width="32" height="32"/>
-      <h3>my-treasure-doc</h3>
+      <img src="../assets/images/duck.png" class="favicon" alt="" width="32" height="32" />
+      <h3>my-treasure-doc1</h3>
     </section>
     <section class="right">
       <div class="avatar-wrapper">
-        <n-avatar class="avatar" round size="medium" src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"/>
+        <n-avatar class="avatar" round size="medium" src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg" />
         <n-icon size="18">
           <chevron-down />
         </n-icon>
@@ -20,7 +20,7 @@ import { ChevronDown } from '@vicons/ionicons5'
 
 export default {
   name: 'Header',
-  components: {ChevronDown}
+  components: { ChevronDown }
 
 };
 </script>
@@ -36,23 +36,28 @@ header {
   display: flex;
   align-items: center;
   padding: 0 32px;
-  > .left{
+
+  >.left {
     display: flex;
     width: calc(#{$menuWidth} - 32px);
-    > h3{
+
+    >h3 {
       font-size: 20px;
       margin-left: 8px;
     }
   }
-  > .right{
+
+  >.right {
     display: flex;
     width: calc(100% - #{$menuWidth});
     align-items: center;
-    > .avatar-wrapper{
+
+    >.avatar-wrapper {
       margin-left: auto;
       display: flex;
       align-items: center;
-      > .avatar{
+
+      >.avatar {
         margin-right: 8px;
       }
     }
