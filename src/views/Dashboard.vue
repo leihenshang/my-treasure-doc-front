@@ -8,7 +8,7 @@
                 <CreateNote :id="currentNoteId" @refresh-list="refreshList"> </CreateNote>
             </n-form-item-gi>
         </n-grid>
-        <n-grid :cols="9" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" x-gap="12">
+        <n-grid :cols="9" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" :x-gap="12" :y-gap="8">
             <n-gi v-for="i in noteList" :key="i.id" :class="i.id % 2 ? 'green' : 'light-green'">
                 <a v-if="i.noteType === 'bookmark'" :href="i.content" target="_blank">
                     <n-icon :size="iconSize">
@@ -19,14 +19,14 @@
                     <n-icon :size="iconSize">
                         <StickyNote></StickyNote>
                     </n-icon>
-                    <n-ellipsis style="max-width: 240px" :line-clamp="2">{{ i.content }}
+                    <n-ellipsis style="max-width: 240px" :line-clamp="3">{{ i.content }}
                     </n-ellipsis>
                 </template>
                 <template v-else-if="i.noteType === 'treeHole'">
                     <n-icon :size="iconSize">
                         <TrashRestoreAlt></TrashRestoreAlt>
                     </n-icon>
-                    <n-ellipsis style="max-width: 240px" :line-clamp="2">{{
+                    <n-ellipsis style="max-width: 240px" :line-clamp="3">{{
                         i.content }}
                     </n-ellipsis>
                 </template>
