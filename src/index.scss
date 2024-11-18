@@ -1,10 +1,10 @@
 @import "@/assets/style/helper";
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+// * {
+//   margin: 0;
+//   padding: 0;
+//   box-sizing: border-box;
+// }
 
 // warning: setting this css property will be cause the list of numbers before vditor invalid
 // ul,
@@ -12,24 +12,24 @@
 //   list-style: none;
 // }
 
-a {
-  text-decoration: none;
-  color: inherit;
+// a {
+//   text-decoration: none;
+//   color: inherit;
 
-  &:hover {
+//   &:hover {
     //border-bottom: 1px solid;
-    cursor: pointer;
-  }
-}
+    // cursor: pointer;
+//   }
+// }
 
-h1, h2, h3, h4, h5, h6 {
-  font-weight: normal;
-}
+// h1, h2, h3, h4, h5, h6 {
+//   font-weight: normal;
+// }
 
 
 body {
-  font-size: 14px;
-  color: rgba(0, 0, 0, 0.85);
+  // font-size: 14px;
+  // color: rgba(0, 0, 0, 0.85);
   // 为什么这样写 font-family
   // 答案见 https://github.com/zenozeng/fonts.css/
   font-family: $font-hei;
