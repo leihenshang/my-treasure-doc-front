@@ -1,4 +1,4 @@
-@import "src/assets/style/helper";
+@import "@/assets/style/helper";
 
 * {
   margin: 0;
@@ -6,10 +6,11 @@
   box-sizing: border-box;
 }
 
-ul,
-ol {
-  list-style: none;
-}
+// warning: setting this css property will be cause the list of numbers before vditor invalid
+// ul,
+// ol {
+//   list-style: none;
+// }
 
 a {
   text-decoration: none;
