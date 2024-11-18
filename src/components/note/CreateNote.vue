@@ -7,11 +7,15 @@
         </template>
         <div class="dialog-container">
             <n-form ref="formRef" :label-width="80" :model="formValue" :rules="rules" :size="size">
-                <n-form-item label="类型" path="noteType">
-                    <n-select v-model:value="formValue.noteType" :options="options" clearable />
-                </n-form-item>
                 <n-form-item label="标题" path="title">
                     <n-input v-model:value="formValue.title" placeholder="标题" />
+                </n-form-item>
+                <n-form-item label="类型" path="noteType">
+                    <n-space vertical>
+                        <n-radio-group v-model:value="formValue.noteType" name="radiobuttongroup1">
+                            <n-radio-button v-for="op in options" :key="op.value" :value="op.value" :label="op.label" />
+                        </n-radio-group>
+                    </n-space>
                 </n-form-item>
                 <n-form-item label="内容" path="content">
                     <n-input v-model:value="formValue.content" placeholder="内容" />
@@ -49,7 +53,7 @@ const formRef = ref<FormInst | null>(null)
 const message = useMessage()
 const size = ref<'small' | 'medium' | 'large'>('medium')
 const formValue = ref({
-    noteType: '',
+    noteType: 'note',
     title: '',
     content: '',
 })
@@ -103,7 +107,7 @@ function handleValidateClick(): Promise<void> {
 
 const rules = {
     title: {
-        required: true,
+        required: false,
         message: '请输入标题',
         trigger: 'blur'
     },
@@ -120,6 +124,4 @@ const rules = {
 }
 
 </script>
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>
