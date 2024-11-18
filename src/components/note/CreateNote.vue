@@ -21,7 +21,10 @@
                     <n-input v-model:value="formValue.content" placeholder="内容" />
                 </n-form-item>
                 <n-form-item label="置顶">
-
+                    <n-space>
+                        <n-switch :round="false" checked-value='1' unchecked-value='0'
+                            v-model:value="formValue.isTop" />
+                    </n-space>
                 </n-form-item>
             </n-form>
         </div>
@@ -56,6 +59,7 @@ const formValue = ref({
     noteType: 'note',
     title: '',
     content: '',
+    isTop: 0
 })
 
 
@@ -78,9 +82,9 @@ function noteHandler(e: MouseEvent) {
     e.preventDefault()
     handleValidateClick().then(
         () => {
-            createNote({
-                ...formValue.value
-            } as Note).then(() => {
+            const note = { ...formValue.value }
+            note.isTop = note.isTop ? 1 : 0;
+            createNote(note as Note).then(() => {
                 showModal.value = !showModal.value
                 message.success('创建成功')
                 emit('refreshList')
