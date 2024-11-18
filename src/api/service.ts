@@ -4,6 +4,9 @@ import { defaultRequestInterceptors, defaultResponseInterceptors } from './confi
 import { AxiosInstance, InternalAxiosRequestConfig, RequestConfig, AxiosResponse } from '../types/treasure_request'
 import { REQUEST_TIMEOUT } from '@/constants'
 import { router } from '@/router'
+import { useUserInfoStore } from '@/stores/user/user_info';
+
+const userInfoStore = useUserInfoStore()
 
 export const PATH_URL = import.meta.env.VITE_API_BASE_PATH
 const abortControllerMap: Map<string, AbortController> = new Map()
@@ -30,6 +33,8 @@ axiosInstance.interceptors.response.use(
     console.log(error)
     if (error.response?.status === 401) {
       localStorage.removeItem('userInfo')
+      userInfoStore.$reset()
+      router.push('/LogIn')
     }
     return Promise.reject(error)
   }
