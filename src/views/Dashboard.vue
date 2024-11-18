@@ -31,6 +31,17 @@
                     </n-ellipsis>
                 </template>
                 <template v-else>{{ i.content }}</template>
+                <div>
+                    <n-dropdown trigger="hover" :options="genDropMenuOptions(i.id)" @select="handleSelect">
+                        <n-button text>
+                            <template #icon>
+                                <n-icon>
+                                    <MenuSharp />
+                                </n-icon>
+                            </template>
+                        </n-button>
+                    </n-dropdown>
+                </div>
             </n-gi>
         </n-grid>
     </div>
@@ -39,11 +50,16 @@
 <script lang="ts" setup>
 import { getNoteList } from '@/api/note';
 import { router } from '@/router';
-import { ref, onMounted } from 'vue'
-import { useMessage } from 'naive-ui'
+import { ref, onMounted, computed } from 'vue'
+import { useMessage, DropdownOption } from 'naive-ui'
 import { Note } from '@/types/resource';
 import { ExternalLinkSquareAlt, StickyNote, TrashRestoreAlt } from '@vicons/fa'
+import { MenuSharp } from '@vicons/ionicons5'
 import CreateNote from '@/components/note/CreateNote.vue'
+import { createNote, deleteNote } from "@/api/note"
+import { ca } from 'date-fns/locale';
+// 鼠标事件
+// @mouseenter="handleMouse(i.id, 'enter')" @mouseleave="handleMouse(i.id, 'leave')"
 
 const gridCollapsed = ref(false)
 const gridCollapsedRows = ref(1)
@@ -52,17 +68,71 @@ const message = useMessage()
 const noteList = ref<Note[]>()
 const currentNoteId = ref(0)
 const iconSize = ref(32)
+const dropMenuOptions = [
+    {
+        label: '编辑',
+        key: 'update',
+    },
+    {
+        label: '删除',
+        key: 'delete'
+    }, {
+        label: '置顶',
+        key: 'isTop'
+    }]
+
 
 onMounted(() => {
     refreshList()
 })
 
+function genDropMenuOptions(id: number) {
+    return [
+        {
+            label: '编辑',
+            key: 'update',
+            id: id,
+        },
+        {
+            label: '删除',
+            key: 'delete',
+            id: id,
+        }, {
+            label: '置顶',
+            key: 'isTop',
+            id: id,
+        }]
+}
+
 function refreshList() {
+    currentNoteId.value = 0
     getNoteList().then((resp) => {
         noteList.value = resp.list
     }).catch(err => {
         message.error(err)
     })
+}
+
+function handleSelect(key: string | number, option: DropdownOption) {
+    const id = option.id as number
+    if (!id) {
+        message.info('id 不能为空')
+        return
+    }
+    if (key === 'delete') {
+        deleteNote({ id: id } as Note).then(() => {
+            message.success('删除成功')
+            refreshList()
+        }).catch(err => {
+            if (typeof err === 'string') {
+                message.error(err)
+            }
+            console.log(err)
+        })
+    }
+    if (key === 'update') {
+        currentNoteId.value = id
+    }
 }
 
 </script>

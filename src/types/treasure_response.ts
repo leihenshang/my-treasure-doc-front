@@ -15,7 +15,6 @@ class TreasureResponse<T> {
 
     getData() {
         return this.data as T
-
     }
 
     getDataList() {

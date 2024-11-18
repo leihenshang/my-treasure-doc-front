@@ -29,7 +29,7 @@
             </n-form>
         </div>
         <template #action>
-            <n-button type="primary" @click="noteHandler">确定</n-button>
+            <n-button type="primary" @click="handleOkBtn">确定</n-button>
             <n-button @click="showModal = false">取消</n-button>
         </template>
     </n-modal>
@@ -40,7 +40,7 @@
 import { defineComponent, ref, watchEffect } from 'vue'
 import type { FormInst } from 'naive-ui'
 import { useMessage } from 'naive-ui'
-import { createNote, updateNote } from "@/api/note"
+import { createNote, updateNote, getNote } from "@/api/note"
 import { Note } from '@/types/resource';
 
 const props = defineProps<{
@@ -55,11 +55,28 @@ const showModal = ref<boolean>(false)
 const formRef = ref<FormInst | null>(null)
 const message = useMessage()
 const size = ref<'small' | 'medium' | 'large'>('medium')
-const formValue = ref({
+const formValue = ref<Note>({
+    id: 0,
     noteType: 'note',
     title: '',
     content: '',
     isTop: 0
+})
+
+watchEffect(() => {
+    if (props.id > 0) {
+        getNote(props.id).then((resp) => {
+            showModal.value = true
+            const respNote = resp.data as Note
+            formValue.value.noteType = respNote.noteType
+            formValue.value.title = respNote.title
+            formValue.value.content = respNote.content
+            formValue.value.isTop = respNote.isTop || 0
+            formValue.value.id = respNote.id
+        }).catch(err => {
+            message.error((typeof err) === 'string' ? err : console.log(err))
+        })
+    }
 })
 
 
@@ -78,12 +95,23 @@ const options = [
     },
 ]
 
-function noteHandler(e: MouseEvent) {
+function handleOkBtn(e: MouseEvent) {
     e.preventDefault()
     handleValidateClick().then(
         () => {
             const note = { ...formValue.value }
             note.isTop = note.isTop ? 1 : 0;
+            if (formValue.value.id > 0) {
+                updateNote(note as Note).then(() => {
+                    showModal.value = !showModal.value
+                    message.success('更新成功')
+                    emit('refreshList')
+                }).catch(err => {
+                    message.error(err)
+                })
+                return
+            }
+
             createNote(note as Note).then(() => {
                 showModal.value = !showModal.value
                 message.success('创建成功')
