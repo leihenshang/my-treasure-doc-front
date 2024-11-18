@@ -1,5 +1,5 @@
 <template>
-
+    <n-button @click.prevent="showModal = true;">新建</n-button>
     <n-modal v-model:show="showModal" preset="dialog" title="Dialog" :show-icon="false" class="modal-dialog"
         :mask-closable=false style="position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
         <template #header>
@@ -16,15 +16,13 @@
                 <n-form-item label="内容" path="content">
                     <n-input v-model:value="formValue.content" placeholder="内容" />
                 </n-form-item>
-                <n-form-item>
-                    <n-button attr-type="button" @click="handleValidateClick">
-                        验证
-                    </n-button>
+                <n-form-item label="置顶">
+
                 </n-form-item>
             </n-form>
         </div>
         <template #action>
-            <n-button type="primary" @click="">确定</n-button>
+            <n-button type="primary" @click="noteHandler">确定</n-button>
             <n-button @click="showModal = false">取消</n-button>
         </template>
     </n-modal>
@@ -35,12 +33,18 @@
 import { defineComponent, ref, watchEffect } from 'vue'
 import type { FormInst } from 'naive-ui'
 import { useMessage } from 'naive-ui'
+import { createNote, updateNote } from "@/api/note"
+import { Note } from '@/types/resource';
 
 const props = defineProps<{
-    showCreateNote: boolean
+    id: number
 }>()
 
-const showModal = ref<boolean>(props.showCreateNote)
+const emit = defineEmits<{
+    (e: 'refreshList'): void
+}>()
+
+const showModal = ref<boolean>(false)
 const formRef = ref<FormInst | null>(null)
 const message = useMessage()
 const size = ref<'small' | 'medium' | 'large'>('medium')
@@ -50,9 +54,6 @@ const formValue = ref({
     content: '',
 })
 
-watchEffect(() => {
-    showModal.value = props.showCreateNote
-})
 
 const options = [
     {
@@ -69,16 +70,34 @@ const options = [
     },
 ]
 
-function handleValidateClick(e: MouseEvent) {
+function noteHandler(e: MouseEvent) {
     e.preventDefault()
-    formRef.value?.validate((errors) => {
-        if (!errors) {
-            message.success('Valid')
+    handleValidateClick().then(
+        () => {
+            createNote({
+                ...formValue.value
+            } as Note).then(() => {
+                showModal.value = !showModal.value
+                message.success('创建成功')
+                emit('refreshList')
+            }).catch(err => {
+                message.error(err)
+            })
         }
-        else {
-            console.log(errors)
-            message.error('Invalid')
-        }
+    ).catch(err => {
+        console.log(err)
+    })
+}
+
+function handleValidateClick(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        formRef.value?.validate((errors) => {
+            if (!errors) {
+                resolve()
+            } else {
+                reject(errors)
+            }
+        })
     })
 }
 
@@ -101,3 +120,6 @@ const rules = {
 }
 
 </script>
+<style lang="scss">
+
+</style>
