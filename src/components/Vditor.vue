@@ -41,6 +41,9 @@ onMounted(() => {
             enable: false,
             position: 'left'
         },
+        cache: {
+            enable: false
+        },
         input(md) {
             currentDoc.content = md
             currentDoc.title = getMarkdownH1Text(currentDoc.content) ?? currentDoc.title
