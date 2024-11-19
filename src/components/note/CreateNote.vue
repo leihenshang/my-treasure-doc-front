@@ -1,5 +1,5 @@
 <template>
-    <n-button @click.prevent="showModal = true;">新建</n-button>
+    <n-button @click.prevent="formValue = initNote; showModal = true;">新建</n-button>
     <n-modal v-model:show="showModal" preset="dialog" title="Dialog" :show-icon="false" class="modal-dialog"
         :mask-closable=false style="position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
         <template #header>
