@@ -3,27 +3,26 @@
     <n-modal v-model:show="showModal" preset="dialog" title="Dialog" :show-icon="false" class="modal-dialog"
         :mask-closable=false style="position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
         <template #header>
-            a modal
+            新建
         </template>
         <div class="dialog-container">
             <n-form ref="formRef" :label-width="80" :model="formValue" :rules="rules" :size="size">
-                <n-form-item label="标题" path="title">
-                    <n-input v-model:value="formValue.title" placeholder="标题" />
-                </n-form-item>
                 <n-form-item label="类型" path="noteType">
                     <n-space vertical>
-                        <n-radio-group v-model:value="formValue.noteType" name="radiobuttongroup1">
+                        <n-radio-group v-model:value="formValue.noteType">
                             <n-radio-button v-for="op in options" :key="op.value" :value="op.value" :label="op.label" />
                         </n-radio-group>
                     </n-space>
                 </n-form-item>
+                <n-form-item label="标题" path="title" v-if="formValue.noteType == 'bookmark'">
+                    <n-input v-model:value="formValue.title" placeholder="标题" />
+                </n-form-item>
                 <n-form-item label="内容" path="content">
-                    <n-input v-model:value="formValue.content" placeholder="内容" />
+                    <n-input type="textarea" v-model:value="formValue.content" placeholder="内容" />
                 </n-form-item>
                 <n-form-item label="置顶">
                     <n-space>
-                        <n-switch :round="false" checked-value='1' unchecked-value='0'
-                            v-model:value="formValue.isTop" />
+                        <n-switch :round="false" :checked-value=1 :unchecked-value=0 v-model:value="formValue.isTop" />
                     </n-space>
                 </n-form-item>
             </n-form>
@@ -51,17 +50,22 @@ const emit = defineEmits<{
     (e: 'refreshList'): void
 }>()
 
-const showModal = ref<boolean>(false)
-const formRef = ref<FormInst | null>(null)
-const message = useMessage()
-const size = ref<'small' | 'medium' | 'large'>('medium')
-const formValue = ref<Note>({
+const initNote: Note = {
     id: 0,
     noteType: 'note',
     title: '',
     content: '',
     isTop: 0
-})
+}
+
+
+const showModal = ref<boolean>(false)
+const formRef = ref<FormInst | null>(null)
+const message = useMessage()
+const size = ref<'small' | 'medium' | 'large'>('medium')
+const formValue = ref<Note>({ ...initNote })
+
+
 
 watchEffect(() => {
     if (props.id > 0) {
@@ -105,6 +109,7 @@ function handleOkBtn(e: MouseEvent) {
                 updateNote(note as Note).then(() => {
                     showModal.value = !showModal.value
                     message.success('更新成功')
+                    formValue.value = initNote
                     emit('refreshList')
                 }).catch(err => {
                     message.error(err)
@@ -115,6 +120,7 @@ function handleOkBtn(e: MouseEvent) {
             createNote(note as Note).then(() => {
                 showModal.value = !showModal.value
                 message.success('创建成功')
+                formValue.value = initNote
                 emit('refreshList')
             }).catch(err => {
                 message.error(err)
