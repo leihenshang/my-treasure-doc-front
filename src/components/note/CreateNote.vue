@@ -89,10 +89,10 @@ const options = [
         label: '书签',
         value: 'bookmark',
     },
-    {
-        label: '树洞',
-        value: 'treeHole'
-    },
+    // {
+    //     label: '树洞',
+    //     value: 'treeHole'
+    // },
     {
         label: '备忘',
         value: 'note'
