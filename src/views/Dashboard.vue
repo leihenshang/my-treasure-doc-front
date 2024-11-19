@@ -5,7 +5,8 @@
                 <n-button @click.prevent="router.push('/Start')">返回首页</n-button>
             </n-form-item-gi>
             <n-form-item-gi>
-                <CreateNote :id="currentNoteId" @refresh-list="refreshList"> </CreateNote>
+                <CreateNote :id="currentNoteId" v-model:show-modal="showModal" @refresh-list="refreshList">
+                </CreateNote>
             </n-form-item-gi>
         </n-grid>
         <n-grid :cols="9" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" :x-gap="12" :y-gap="8">
@@ -68,19 +69,7 @@ const message = useMessage()
 const noteList = ref<Note[]>()
 const currentNoteId = ref(0)
 const iconSize = ref(32)
-const dropMenuOptions = [
-    {
-        label: '编辑',
-        key: 'update',
-    },
-    {
-        label: '删除',
-        key: 'delete'
-    }, {
-        label: '置顶',
-        key: 'isTop'
-    }]
-
+const showModal = ref(false)
 
 onMounted(() => {
     refreshList()
@@ -97,11 +86,7 @@ function genDropMenuOptions(id: number) {
             label: '删除',
             key: 'delete',
             id: id,
-        }, {
-            label: '置顶',
-            key: 'isTop',
-            id: id,
-        }]
+        },]
 }
 
 function refreshList() {
@@ -131,6 +116,7 @@ function handleSelect(key: string | number, option: DropdownOption) {
         })
     }
     if (key === 'update') {
+        showModal.value = true
         currentNoteId.value = id
     }
 }

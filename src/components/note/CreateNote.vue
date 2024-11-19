@@ -1,6 +1,6 @@
 <template>
-    <n-button @click.prevent="formValue = initNote; showModal = !showModal;">新建</n-button>
-    <n-modal v-model:show="showModal" preset="dialog" title="Dialog" :show-icon="false" class="modal-dialog"
+    <n-button @click.prevent=" setCurrentId(0); showModal = !showModal;">新建</n-button>
+    <n-modal v-model:show="showModal as boolean" preset="dialog" title="Dialog" :show-icon="false" class="modal-dialog"
         :mask-closable=false style="position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
         <template #header>
             新建
@@ -29,21 +29,22 @@
         </div>
         <template #action>
             <n-button type="primary" @click="handleOkBtn">确定</n-button>
-            <n-button @click="showModal = !showModal">取消</n-button>
+            <n-button @click="showModal = false">取消</n-button>
         </template>
     </n-modal>
 
 
 </template>
 <script lang="ts" setup>
-import { defineComponent, ref, watchEffect } from 'vue'
+import { computed, defineComponent, ref, watch, watchEffect } from 'vue'
 import type { FormInst } from 'naive-ui'
 import { useMessage } from 'naive-ui'
 import { createNote, updateNote, getNote } from "@/api/note"
 import { Note } from '@/types/resource';
 
 const props = defineProps<{
-    id: number
+    id: number,
+    // showModal: boolean
 }>()
 
 const emit = defineEmits<{
@@ -58,19 +59,30 @@ const initNote: Note = {
     isTop: 0
 }
 
+const showModal = defineModel('showModal')
 
-const showModal = ref<boolean>(false)
+
+
 const formRef = ref<FormInst | null>(null)
 const message = useMessage()
 const size = ref<'small' | 'medium' | 'large'>('medium')
-const formValue = ref<Note>({ ...initNote })
+const formValue = ref<Note>({ noteType: 'note' } as Note)
+const currentId = ref(props.id)
 
-
+function setCurrentId(id: number) {
+    currentId.value = id
+    message.info('current id:' + currentId.value.toString())
+}
 
 watchEffect(() => {
     if (props.id > 0) {
+        message.info('props.id update')
+        currentId.value = props.id
+    }
+
+    if (currentId.value > 0) {
+        message.info("update note,id:" + currentId.value.toString())
         getNote(props.id).then((resp) => {
-            showModal.value = true
             const respNote = resp.data as Note
             formValue.value.noteType = respNote.noteType
             formValue.value.title = respNote.title
@@ -109,7 +121,7 @@ function handleOkBtn(e: MouseEvent) {
                 updateNote(note as Note).then(() => {
                     showModal.value = !showModal.value
                     message.success('更新成功')
-                    formValue.value = initNote
+                    formValue.value = { ...initNote }
                     emit('refreshList')
                 }).catch(err => {
                     message.error(err)
@@ -120,7 +132,7 @@ function handleOkBtn(e: MouseEvent) {
             createNote(note as Note).then(() => {
                 showModal.value = !showModal.value
                 message.success('创建成功')
-                formValue.value = initNote
+                formValue.value = { ...initNote }
                 emit('refreshList')
             }).catch(err => {
                 message.error(err)
