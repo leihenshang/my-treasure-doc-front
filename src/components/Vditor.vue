@@ -5,7 +5,7 @@
 import Vditor from 'vditor'
 import "vditor/dist/index.css"
 import { ref, nextTick, reactive } from "vue"
-import { onMounted, watch, onBeforeUpdate, onUpdated } from "vue"
+import { onMounted, watch, onBeforeUpdate, createApp } from "vue"
 import { useMessage } from "naive-ui"
 import { Doc } from "@/types/resource"
 import { useUserInfoStore } from "@/stores/user/user_info";
@@ -36,6 +36,14 @@ onMounted(() => {
         value: props.doc.content,
         after: () => {
             msg.destroy()
+            watch(() => props.doc.content, (newContent) => {
+                nextTick(() => {
+                    if (newContent.length > 0) {
+                        vditorContainer.value?.setValue(newContent, true)
+                        vditorContainer.value?.focus()
+                    }
+                })
+            })
         },
         outline: {
             enable: false,
@@ -95,7 +103,6 @@ onMounted(() => {
         },
 
     })
-
 })
 
 function getMarkdownH1Text(markdownContent: string): string {
@@ -106,18 +113,6 @@ function getMarkdownH1Text(markdownContent: string): string {
     }
     return "";
 }
-
-watch(() => props.doc.content, (newContent) => {
-    nextTick(() => {
-        if (newContent.length > 0) {
-            vditorContainer.value?.setValue(newContent, true)
-            vditorContainer.value?.focus()
-        }
-    })
-
-})
-
-
 </script>
 
 <style scoped lang='scss'></style>
