@@ -5,6 +5,7 @@
                 <n-button @click.prevent="router.push('/Start')">返回首页</n-button>
             </n-form-item-gi>
             <n-form-item-gi>
+                <n-button @click.prevent="currentNoteId = 0; showModal = !showModal;">新建</n-button>
                 <CreateNote :id="currentNoteId" v-model:show-modal="showModal" @refresh-list="refreshList">
                 </CreateNote>
             </n-form-item-gi>
@@ -58,7 +59,6 @@ import { ExternalLinkSquareAlt, StickyNote, TrashRestoreAlt } from '@vicons/fa'
 import { MenuSharp } from '@vicons/ionicons5'
 import CreateNote from '@/components/note/CreateNote.vue'
 import { createNote, deleteNote } from "@/api/note"
-import { ca } from 'date-fns/locale';
 // 鼠标事件
 // @mouseenter="handleMouse(i.id, 'enter')" @mouseleave="handleMouse(i.id, 'leave')"
 

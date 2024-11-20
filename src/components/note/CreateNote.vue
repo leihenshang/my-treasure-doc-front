@@ -1,9 +1,9 @@
 <template>
-    <n-button @click.prevent=" setCurrentId(0); showModal = !showModal;">新建</n-button>
+
     <n-modal v-model:show="showModal as boolean" preset="dialog" title="Dialog" :show-icon="false" class="modal-dialog"
         :mask-closable=false style="position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
         <template #header>
-            新建
+            {{ modalTitle }}
         </template>
         <div class="dialog-container">
             <n-form ref="formRef" :label-width="80" :model="formValue" :rules="rules" :size="size">
@@ -44,13 +44,10 @@ import { Note } from '@/types/resource';
 
 const props = defineProps<{
     id: number,
-    // showModal: boolean
 }>()
-
 const emit = defineEmits<{
     (e: 'refreshList'): void
 }>()
-
 const initNote: Note = {
     id: 0,
     noteType: 'note',
@@ -58,30 +55,15 @@ const initNote: Note = {
     content: '',
     isTop: 0
 }
-
 const showModal = defineModel('showModal')
-
-
-
 const formRef = ref<FormInst | null>(null)
 const message = useMessage()
 const size = ref<'small' | 'medium' | 'large'>('medium')
 const formValue = ref<Note>({ noteType: 'note' } as Note)
-const currentId = ref(props.id)
-
-function setCurrentId(id: number) {
-    currentId.value = id
-    message.info('current id:' + currentId.value.toString())
-}
+const modalTitle = computed(() => props.id > 0 ? '编辑' : '新增')
 
 watchEffect(() => {
     if (props.id > 0) {
-        message.info('props.id update')
-        currentId.value = props.id
-    }
-
-    if (currentId.value > 0) {
-        message.info("update note,id:" + currentId.value.toString())
         getNote(props.id).then((resp) => {
             const respNote = resp.data as Note
             formValue.value.noteType = respNote.noteType
@@ -90,8 +72,10 @@ watchEffect(() => {
             formValue.value.isTop = respNote.isTop || 0
             formValue.value.id = respNote.id
         }).catch(err => {
-            message.error((typeof err) === 'string' ? err : console.log(err))
+            message.error(`${err}`)
         })
+    } else {
+        formValue.value = { ...initNote }
     }
 })
 
