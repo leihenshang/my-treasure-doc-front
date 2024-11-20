@@ -11,28 +11,13 @@
             </n-form-item-gi>
         </n-grid>
         <n-grid :cols="9" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" :x-gap="12" :y-gap="8">
-            <n-gi v-for="i in noteList" :key="i.id" :class="i.id % 2 ? 'green' : 'light-green'">
-                <a v-if="i.noteType === 'bookmark'" :href="i.content" target="_blank">
+            <n-gi v-for="i in noteListBookmark" :key="i.id" :class="i.id % 2 ? 'green' : 'light-green'">
+                <a :href="i.content" target="_blank">
                     <n-icon :size="iconSize">
                         <ExternalLinkSquareAlt></ExternalLinkSquareAlt>
-                    </n-icon>{{ i.title }}
+                    </n-icon>
+                    {{ i.title }}
                 </a>
-                <template v-else-if="i.noteType === 'note'">
-                    <n-icon :size="iconSize">
-                        <StickyNote></StickyNote>
-                    </n-icon>
-                    <n-ellipsis style="max-width: 240px" :line-clamp="3">{{ i.content }}
-                    </n-ellipsis>
-                </template>
-                <template v-else-if="i.noteType === 'treeHole'">
-                    <n-icon :size="iconSize">
-                        <TrashRestoreAlt></TrashRestoreAlt>
-                    </n-icon>
-                    <n-ellipsis style="max-width: 240px" :line-clamp="3">{{
-                        i.content }}
-                    </n-ellipsis>
-                </template>
-                <template v-else>{{ i.content }}</template>
                 <div>
                     <n-dropdown trigger="hover" :options="genDropMenuOptions(i.id)" @select="handleSelect">
                         <n-button text>
@@ -44,6 +29,28 @@
                         </n-button>
                     </n-dropdown>
                 </div>
+            </n-gi>
+
+        </n-grid>
+        <n-hr></n-hr>
+        <n-grid :cols="9" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" :x-gap="12" :y-gap="8">
+            <n-gi v-for="i in noteListNote" :key="i.id" :class="i.id % 2 ? 'green' : 'light-green'">
+                <div>
+                    <n-icon :size="iconSize">
+                        <StickyNote></StickyNote>
+                    </n-icon>
+                    <n-ellipsis style="max-width: 100px" :line-clamp="2">{{ i.content }}</n-ellipsis>
+
+                </div>
+                <n-dropdown trigger="hover" :options="genDropMenuOptions(i.id)" @select="handleSelect">
+                    <n-button text>
+                        <template #icon>
+                            <n-icon>
+                                <MenuSharp />
+                            </n-icon>
+                        </template>
+                    </n-button>
+                </n-dropdown>
             </n-gi>
         </n-grid>
     </div>
@@ -64,12 +71,31 @@ import { createNote, deleteNote } from "@/api/note"
 
 const gridCollapsed = ref(false)
 const gridCollapsedRows = ref(1)
-const gridItemCount = ref(4)
 const message = useMessage()
 const noteList = ref<Note[]>()
 const currentNoteId = ref(0)
 const iconSize = ref(32)
 const showModal = ref(false)
+const noteListBookmark = computed(() => {
+    const arr: Note[] = []
+    noteList.value?.map((v) => {
+        if (v.noteType === 'bookmark') {
+            arr.push(v)
+        }
+    })
+    return arr
+})
+
+const noteListNote = computed(() => {
+    const arr: Note[] = []
+    noteList.value?.map((v) => {
+        if (v.noteType === 'note') {
+            arr.push(v)
+        }
+    })
+    return arr
+})
+
 
 onMounted(() => {
     refreshList()
