@@ -6,28 +6,31 @@ import { REQUEST_TIMEOUT } from '@/constants'
 import { router } from '@/router'
 import { useUserInfoStore } from '@/stores/user/user_info';
 
+const userInfoStore = useUserInfoStore()
 
-let api = ''
-await fetch('config/config.json')
-  .then(response => response.json())
+// reference https://cn.vitejs.dev/guide/env-and-mode
+export const PATH_URL = import.meta.env.VITE_API_BASE_PATH
+
+const axiosConf = {
+  timeout: REQUEST_TIMEOUT,
+  baseURL: PATH_URL
+}
+
+axios.get('config/config.json')
+  .then(response => response.data)
   .then(data => {
-    api = data.api
-    console.log('获取到的文本内容：', data, api);
+    if (data?.api) {
+      axiosConf.baseURL = data?.api
+    }
+    console.log('获取到的文本内容：', data);
   })
   .catch(error => {
     console.error('获取文件时出错：', error);
   });
 
-const userInfoStore = useUserInfoStore()
 
-// reference https://cn.vitejs.dev/guide/env-and-mode
-export const PATH_URL = api || import.meta.env.VITE_API_BASE_PATH
 const abortControllerMap: Map<string, AbortController> = new Map()
-
-const axiosInstance: AxiosInstance = axios.create({
-  timeout: REQUEST_TIMEOUT,
-  baseURL: PATH_URL
-})
+const axiosInstance: AxiosInstance = axios.create(axiosConf)
 
 axiosInstance.interceptors.request.use((res: InternalAxiosRequestConfig) => {
   const controller = new AbortController()
