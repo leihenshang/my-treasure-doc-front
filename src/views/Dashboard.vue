@@ -18,7 +18,7 @@
                     </n-icon>
                     {{ i.title }}
                 </a>
-                <div>
+                <div class="right-bottom">
                     <n-dropdown trigger="hover" :options="genDropMenuOptions(i.id)" @select="handleSelect">
                         <n-button text>
                             <template #icon>
@@ -42,15 +42,17 @@
                     <n-ellipsis style="max-width: 100px" :line-clamp="2">{{ i.content }}</n-ellipsis>
 
                 </div>
-                <n-dropdown trigger="hover" :options="genDropMenuOptions(i.id)" @select="handleSelect">
-                    <n-button text>
-                        <template #icon>
-                            <n-icon>
-                                <MenuSharp />
-                            </n-icon>
-                        </template>
-                    </n-button>
-                </n-dropdown>
+                <div class="right-bottom"> <n-dropdown trigger="hover" :options="genDropMenuOptions(i.id)"
+                        @select="handleSelect">
+                        <n-button text>
+                            <template #icon>
+                                <n-icon>
+                                    <MenuSharp />
+                                </n-icon>
+                            </template>
+                        </n-button>
+                    </n-dropdown></div>
+
             </n-gi>
         </n-grid>
     </div>
@@ -171,6 +173,7 @@ function handleSelect(key: string | number, option: DropdownOption) {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 .green {
@@ -180,5 +183,15 @@ function handleSelect(key: string | number, option: DropdownOption) {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+}
+
+
+.right-bottom {
+    display: inline;
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    height: auto;
 }
 </style>
