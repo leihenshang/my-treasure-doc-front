@@ -8,7 +8,7 @@
         <div class="dialog-container">
             <n-form ref="formRef" :label-width="80" :model="formValue" :rules="rules" :size="size">
                 <n-form-item label="类型" path="noteType">
-                    <n-space vertical>
+                    <n-space>
                         <n-radio-group v-model:value="formValue.noteType">
                             <n-radio-button v-for="op in options" :key="op.value" :value="op.value" :label="op.label" />
                         </n-radio-group>
@@ -23,6 +23,11 @@
                 <n-form-item label="置顶">
                     <n-space>
                         <n-switch :round="false" :checked-value=1 :unchecked-value=0 v-model:value="formValue.isTop" />
+                    </n-space>
+                </n-form-item>
+                <n-form-item label="优先级">
+                    <n-space>
+                        <n-input-number v-model:value="formValue.priority" clearable />
                     </n-space>
                 </n-form-item>
             </n-form>
@@ -53,13 +58,14 @@ const initNote: Note = {
     noteType: 'note',
     title: '',
     content: '',
-    isTop: 0
+    isTop: 0,
+    priority: 0
 }
 const showModal = defineModel('showModal')
 const formRef = ref<FormInst | null>(null)
 const message = useMessage()
 const size = ref<'small' | 'medium' | 'large'>('medium')
-const formValue = ref<Note>({ noteType: 'note' } as Note)
+const formValue = ref<Note>({ ...initNote } as Note)
 const modalTitle = computed(() => props.id > 0 ? '编辑' : '新增')
 
 watchEffect(() => {
@@ -71,6 +77,7 @@ watchEffect(() => {
             formValue.value.content = respNote.content
             formValue.value.isTop = respNote.isTop || 0
             formValue.value.id = respNote.id
+            formValue.value.priority = respNote.priority
         }).catch(err => {
             message.error(`${err}`)
         })

@@ -28,5 +28,8 @@ export interface Note extends BaseResource {
     title: string,
     content: string,
     noteType: string,
-    isTop?: number
+    isTop?: number,
+    priority?: 0,
+    color?: string,
+    icon?: string
 }
