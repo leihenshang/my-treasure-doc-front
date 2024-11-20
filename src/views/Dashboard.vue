@@ -10,13 +10,13 @@
                 </CreateNote>
             </n-form-item-gi>
         </n-grid>
-        <n-grid :cols="9" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" :x-gap="12" :y-gap="8">
-            <n-gi v-for="i in noteListBookmark" :key="i.id" :class="i.id % 2 ? 'green' : 'light-green'">
+        <n-grid :cols="10" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" :x-gap="12" :y-gap="8">
+            <n-gi v-for="i in noteListBookmark" :key="i.id" :class="'light-green'">
                 <a :href="i.content" target="_blank">
-                    <n-icon :size="iconSize">
+                    <n-icon :size="iconSize" color="#007DFE">
                         <ExternalLinkSquareAlt></ExternalLinkSquareAlt>
                     </n-icon>
-                    {{ i.title }}
+                    <i> {{ i.title }}</i>
                 </a>
                 <div class="right-bottom">
                     <n-dropdown trigger="hover" :options="genDropMenuOptions(i.id)" @select="handleSelect">
@@ -33,14 +33,13 @@
 
         </n-grid>
         <n-hr></n-hr>
-        <n-grid :cols="9" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" :x-gap="12" :y-gap="8">
-            <n-gi v-for="i in noteListNote" :key="i.id" :class="i.id % 2 ? 'green' : 'light-green'">
+        <n-grid :cols="5" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" :x-gap="12" :y-gap="8">
+            <n-gi v-for="i in noteListNote" :key="i.id" :class="'green'">
                 <div>
-                    <n-icon :size="iconSize">
+                    <n-icon :size="iconSize" color="#D9A115">
                         <StickyNote></StickyNote>
                     </n-icon>
-                    <n-ellipsis style="max-width: 100px" :line-clamp="2">{{ i.content }}</n-ellipsis>
-
+                    <n-ellipsis style="max-width: 200px" :line-clamp="2">{{ i.content }}</n-ellipsis>
                 </div>
                 <div class="right-bottom"> <n-dropdown trigger="hover" :options="genDropMenuOptions(i.id)"
                         @select="handleSelect">
@@ -76,7 +75,7 @@ const gridCollapsedRows = ref(1)
 const message = useMessage()
 const noteList = ref<Note[]>()
 const currentNoteId = ref(0)
-const iconSize = ref(32)
+const iconSize = ref(24)
 const showModal = ref(false)
 const noteListBookmark = computed(() => {
     const arr: Note[] = []
