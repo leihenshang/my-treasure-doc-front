@@ -10,6 +10,7 @@ import { useMessage } from "naive-ui"
 import { Doc } from "@/types/resource"
 import { useUserInfoStore } from "@/stores/user/user_info";
 import eventBus from '@/utils/event_bus'
+import { PATH_URL } from '@/api/service'
 
 
 const props = defineProps<{ doc: Doc }>()
@@ -65,7 +66,7 @@ onMounted(() => {
         },
         upload: {
             accept: 'image/*',//规定上传的图片格式
-            url: "api/file/upload",
+            url: `${PATH_URL}/api/file/upload`,
             fieldName: 'file',
             setHeaders(): { [key: string]: string } {
                 return { "X-Token": storeUserInfo.token || '' }

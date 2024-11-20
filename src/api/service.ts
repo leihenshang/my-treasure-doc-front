@@ -1,18 +1,32 @@
 import axios, { AxiosError } from 'axios'
 import { defaultRequestInterceptors, defaultResponseInterceptors } from './config'
 
-import { AxiosInstance, InternalAxiosRequestConfig, RequestConfig, AxiosResponse } from '../types/treasure_request'
+import { AxiosInstance, InternalAxiosRequestConfig, RequestConfig, AxiosResponse } from '@/types/treasure_request'
 import { REQUEST_TIMEOUT } from '@/constants'
 import { router } from '@/router'
 import { useUserInfoStore } from '@/stores/user/user_info';
 
+
+let api = ''
+await fetch('config/config.json')
+  .then(response => response.json())
+  .then(data => {
+    api = data.api
+    console.log('获取到的文本内容：', data, api);
+  })
+  .catch(error => {
+    console.error('获取文件时出错：', error);
+  });
+
 const userInfoStore = useUserInfoStore()
 
-export const PATH_URL = import.meta.env.VITE_API_BASE_PATH
+// reference https://cn.vitejs.dev/guide/env-and-mode
+export const PATH_URL = api || import.meta.env.VITE_API_BASE_PATH
 const abortControllerMap: Map<string, AbortController> = new Map()
 
 const axiosInstance: AxiosInstance = axios.create({
-  timeout: REQUEST_TIMEOUT
+  timeout: REQUEST_TIMEOUT,
+  baseURL: PATH_URL
 })
 
 axiosInstance.interceptors.request.use((res: InternalAxiosRequestConfig) => {
