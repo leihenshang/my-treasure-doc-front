@@ -36,11 +36,11 @@ onMounted(() => {
         value: props.doc.content,
         after: () => {
             msg.destroy()
+            vditorContainer.value?.setValue(props.doc.content)
             watch(() => props.doc.content, (newContent) => {
                 nextTick(() => {
                     if (newContent.length > 0) {
-                        vditorContainer.value?.setValue(newContent, true)
-                        vditorContainer.value?.focus()
+                        vditorContainer.value?.setValue(newContent)
                     }
                 })
             })
