@@ -3,10 +3,9 @@ import { CONTENT_TYPE } from '@/constants'
 import service from './service'
 import { AxiosConfig, IResponse } from "../types/treasure_request"
 
+const userStore = useUserInfoStore()
 const request = (option: AxiosConfig) => {
     const { url, method, params, data, headers, responseType } = option
-    const userStore = useUserInfoStore()
-    const token = userStore.token
     return service.request({
         url,
         method,
@@ -16,7 +15,7 @@ const request = (option: AxiosConfig) => {
         headers: {
             'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
             'Content-Type': CONTENT_TYPE,
-            'X-Token': token ?? '',
+            'X-Token': userStore.token ?? '',
             ...headers
         }
     })

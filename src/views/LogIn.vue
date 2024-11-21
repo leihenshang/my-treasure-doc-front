@@ -50,12 +50,11 @@ const longIn = (e: MouseEvent) => {
   e.preventDefault()
   formRef.value?.validate((errors) => {
     if (errors) {
-      message.info(errors.toString())
       return
     }
+
     const msg = message.loading("登录...")
     logIn(userInfo.value).then((response) => {
-      msg.destroy()
       if (response?.code > 0) {
         message.error("登录失败:" + response?.msg)
         localStorage.removeItem('userInfo')
@@ -73,9 +72,11 @@ const longIn = (e: MouseEvent) => {
         logInMsg.destroy()
       })
     }).catch((err: any) => {
+      msg.destroy()
       console.log("axios:", err)
-      message.error(JSON.stringify(err))
+      message.error(`${err}`)
     })
+
   }).catch((err: any) => {
     console.log(err)
   })
