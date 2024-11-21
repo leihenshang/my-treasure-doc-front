@@ -40,7 +40,7 @@ export default defineConfig({
         changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/api/, ''),
       },
-      '/static': {
+      '/files': {
         target: 'http://localhost:2021',
         changeOrigin: true,
       }
