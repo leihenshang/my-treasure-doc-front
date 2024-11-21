@@ -8,12 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@vicons/fa':
-        specifier: ^0.12.0
-        version: 0.12.0
-      '@vicons/ionicons5':
-        specifier: ^0.11.0
-        version: 0.11.0
       axios:
         specifier: ^1.7.7
         version: 1.7.7
@@ -45,12 +39,18 @@ importers:
       '@vicons/antd':
         specifier: ^0.12.0
         version: 0.12.0
+      '@vicons/fa':
+        specifier: ^0.12.0
+        version: 0.12.0
       '@vicons/fluent':
         specifier: ^0.12.0
         version: 0.12.0
+      '@vicons/ionicons5':
+        specifier: ^0.11.0
+        version: 0.11.0
       '@vitejs/plugin-vue':
-        specifier: ^2.3.4
-        version: 2.3.4(vite@5.4.11(@types/node@20.17.6)(sass@1.26.10))(vue@3.5.12(typescript@4.9.5))
+        specifier: ^5.2.0
+        version: 5.2.0(vite@5.4.11(@types/node@20.17.6)(sass@1.26.10))(vue@3.5.12(typescript@4.9.5))
       '@vue/compiler-sfc':
         specifier: ^3.5.12
         version: 3.5.12
@@ -418,11 +418,11 @@ packages:
   '@vicons/ionicons5@0.11.0':
     resolution: {integrity: sha512-4IWamqtXUsuCdlW6NQc2xyoJ+PUXGMwzSrppQbdVCYg0pjYld89jOfLOIkuTWq8o2XUa+Q1/78jzWBtXMTojNg==}
 
-  '@vitejs/plugin-vue@2.3.4':
-    resolution: {integrity: sha512-IfFNbtkbIm36O9KB8QodlwwYvTEsJb4Lll4c2IwB3VHc2gie2mSPtSzL0eYay7X2jd/2WX02FjSGTWR6OPr/zg==}
-    engines: {node: '>=12.0.0'}
+  '@vitejs/plugin-vue@5.2.0':
+    resolution: {integrity: sha512-7n7KdUEtx/7Yl7I/WVAMZ1bEb0eVvXF3ummWTeLcs/9gvo9pJhuLdouSXGjdZ/MKD1acf1I272+X0RMua4/R3g==}
+    engines: {node: ^18.0.0 || >=20.0.0}
     peerDependencies:
-      vite: ^2.5.10
+      vite: ^5.0.0
       vue: ^3.2.25
 
   '@volar/code-gen@0.29.8':
@@ -1376,7 +1376,7 @@ snapshots:
 
   '@vicons/ionicons5@0.11.0': {}
 
-  '@vitejs/plugin-vue@2.3.4(vite@5.4.11(@types/node@20.17.6)(sass@1.26.10))(vue@3.5.12(typescript@4.9.5))':
+  '@vitejs/plugin-vue@5.2.0(vite@5.4.11(@types/node@20.17.6)(sass@1.26.10))(vue@3.5.12(typescript@4.9.5))':
     dependencies:
       vite: 5.4.11(@types/node@20.17.6)(sass@1.26.10)
       vue: 3.5.12(typescript@4.9.5)
