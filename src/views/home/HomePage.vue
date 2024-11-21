@@ -15,8 +15,8 @@
         </div>
         <n-menu v-model:value="activeKey" mode="horizontal" :options="horizontalMenuOptions"
           @update:value="topMenuUpdate" :icon-size="18" ref="topMenuRef" />
-        <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
-          :render-suffix="treeNodeSuffix" />
+        <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps" show-line="true"
+          :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" />
       </n-layout-sider>
       <n-layout class="right">
         <router-view></router-view>
@@ -64,7 +64,7 @@ import {
 } from '@vicons/ionicons5'
 import myHttp from '@/api/treasure_axios';
 import { DocGroup, Doc } from '@/types/resource';
-import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, CreateOutline } from '@vicons/ionicons5'
+import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, ChevronForward } from '@vicons/ionicons5'
 import { FolderAddOutlined, DashboardOutlined } from '@vicons/antd'
 import { Delete24Filled } from "@vicons/fluent"
 import { createDoc, updateDoc, getDoc, deleteDoc } from "@/api/doc"
@@ -183,6 +183,9 @@ function getModalTileByType(type: string): string {
   return ''
 }
 
+function renderSwitcherIcon() {
+  return h(NIcon, null, { default: () => h(ChevronForward) })
+}
 
 const changeModal = (type: string, group?: DocGroup) => {
   groupHandleType.value = type
