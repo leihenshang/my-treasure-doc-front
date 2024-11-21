@@ -66,9 +66,9 @@ const longIn = (e: MouseEvent) => {
       // local storage
       localStorage.setItem('userInfo', JSON.stringify(response?.data))
       storeUserInfo.updateUserInfo(response?.data as UserInfo)
+      msg.destroy()
       const logInMsg = message.success("登录成功")
       router.push({ name: 'HomePage' }).then(() => {
-        msg.destroy()
         logInMsg.destroy()
       })
     }).catch((err: any) => {
