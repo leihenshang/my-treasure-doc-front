@@ -6,7 +6,7 @@ import { Doc } from "@/types/resource"
 export function getDocList(groupId: number = 0, pagination: PaginationWithSort = new PaginationWithSort()): Promise<TreasureResponseList<Doc>> {
     return new Promise<TreasureResponseList<Doc>>((resolve, reject) => {
         myHttp.get<TreasureResponse<Doc>>({
-            url: 'api/doc/list', params: {
+            url: '/api/doc/list', params: {
                 page: pagination.page,
                 pageSize: pagination.pageSize,
                 orderBy: pagination.orderBy,
@@ -28,7 +28,7 @@ export function getDocList(groupId: number = 0, pagination: PaginationWithSort =
 export function getDoc(id: number | string = 0): Promise<TreasureResponse<Doc>> {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
         myHttp.get<TreasureResponse<Doc>>({
-            url: 'api/doc/detail', params: {
+            url: '/api/doc/detail', params: {
                 id
             }
         }).then((response: any) => {
@@ -43,7 +43,7 @@ export function getDoc(id: number | string = 0): Promise<TreasureResponse<Doc>> 
 export function createDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
         myHttp.post<TreasureResponse<Doc>>({
-            url: 'api/doc/create', data: doc
+            url: '/api/doc/create', data: doc
         }).then((response: any) => {
             if (response?.code) {
                 reject(response?.msg)
@@ -60,7 +60,7 @@ export function createDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
 export function updateDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
         myHttp.post<TreasureResponse<Doc>>({
-            url: 'api/doc/update', data: doc
+            url: '/api/doc/update', data: doc
         }).then((response: any) => {
             if (response?.code) {
                 reject(response?.msg)
@@ -77,7 +77,7 @@ export function updateDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
 export function deleteDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
         myHttp.post<TreasureResponse<Doc>>({
-            url: 'api/doc/delete', data: doc
+            url: '/api/doc/delete', data: doc
         }).then((response: any) => {
             if (response?.code) {
                 reject(response?.msg)
