@@ -28,7 +28,6 @@ import { FormInst, useMessage, NInput } from 'naive-ui';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserInfoStore } from "@/stores/user/user_info";
-import myHttp from "@/api/treasure_axios";
 import { UserInfo } from '@/stores/user/types'
 import { LoginUser } from "@/types/resource"
 import { logIn } from '@/api/user';
@@ -69,6 +68,7 @@ const longIn = (e: MouseEvent) => {
       storeUserInfo.updateUserInfo(response?.data as UserInfo)
       const logInMsg = message.success("登录成功")
       router.push({ name: 'HomePage' }).then(() => {
+        msg.destroy()
         logInMsg.destroy()
       })
     }).catch((err: any) => {
