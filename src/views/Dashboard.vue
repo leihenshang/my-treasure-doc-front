@@ -58,15 +58,14 @@
 
 </template>
 <script lang="ts" setup>
-import { getNoteList } from '@/api/note';
+import { deleteNote, getNoteList } from '@/api/note';
+import CreateNote from '@/components/note/CreateNote.vue';
 import { router } from '@/router';
-import { ref, onMounted, computed } from 'vue'
-import { useMessage, DropdownOption } from 'naive-ui'
 import { Note } from '@/types/resource';
-import { ExternalLinkSquareAlt, StickyNote, TrashRestoreAlt } from '@vicons/fa'
-import { MenuSharp } from '@vicons/ionicons5'
-import CreateNote from '@/components/note/CreateNote.vue'
-import { createNote, deleteNote } from "@/api/note"
+import { ExternalLinkSquareAlt, StickyNote } from '@vicons/fa';
+import { MenuSharp } from '@vicons/ionicons5';
+import { DropdownOption, useMessage } from 'naive-ui';
+import { computed, onMounted, ref } from 'vue';
 // 鼠标事件
 // @mouseenter="handleMouse(i.id, 'enter')" @mouseleave="handleMouse(i.id, 'leave')"
 

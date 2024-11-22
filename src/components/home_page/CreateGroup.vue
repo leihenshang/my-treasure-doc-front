@@ -1,41 +1,51 @@
 <template>
-    <n-modal v-model:show="showModal as boolean" preset="dialog" title="Dialog" :show-icon="false" class="modal-dialog"
-        :mask-closable=false style="position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
+    <n-modal v-model:show="showModalModel as boolean" preset="dialog" title="Dialog" :show-icon="false"
+        class="modal-dialog" :mask-closable=false
+        style="position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
         <template #header>
-            <div>{{ getModalTileByType(groupHandleType) }}</div>
+            <div>{{ getModalTileByType(handleType as string) }}</div>
         </template>
         <div class="dialog-container">
-            <div class="dialog-content" v-if="groupHandleType != 'updateDoc'">
+            <div class="dialog-content" v-if="handleType != 'updateDoc'">
                 <label>名称</label>
                 <n-input v-model:value="updateModalName" type="text" placeholder="分组名称"></n-input>
             </div>
             <div class="dialog-content">
                 <label>层级</label>
                 <n-tree-select v-model:value="updateModalPid" clearable :options="options" :cascade="true"
-                    :show-path="true" :allow-checking-not-loaded="true" :on-load="handleLoadWithUpdateGroupLocation" />
+                    :show-path="true" :allow-checking-not-loaded="true" :on-load="loadTree" />
             </div>
         </div>
         <template #action>
-            <n-button type="primary" @click="updateModal(groupHandleType)">确定</n-button>
-            <n-button @click="showModal = false">取消</n-button>
+            <n-button type="primary" @click="updateModal(handleType as string)">确定</n-button>
+            <n-button @click="showModalModel = false">取消</n-button>
         </template>
     </n-modal>
 
 </template>
 <script setup lang="ts">
 import { updateDoc } from "@/api/doc";
-import { getDocGroupTree } from "@/api/doc_group";
+import { createGroup, getDocGroupTree, updateGroup as updateGroupData } from "@/api/doc_group";
 import { Doc, DocGroup } from '@/types/resource';
 import { FolderOutline } from '@vicons/ionicons5';
 import {
     NButton,
     NIcon,
-    TreeOption
+    TreeOption,
+    useMessage
 } from 'naive-ui';
-import { h, ref } from 'vue';
+import { h, reactive, ref } from 'vue';
 
-const showModal = defineModel('showModal')
-const groupHandleType = ref('')
+const emit = defineEmits<{
+    (e: 'refreshTree'): void,
+    (e: 'addTreeItem', value: TreeOption): void
+    (e: 'recursionReload', value: number): void
+
+}>()
+
+const showModalModel = defineModel('showModal')
+const updateGroup = defineModel('updateGroup')
+const handleType = defineModel('handleType', { type: String, required: true })
 const updateModalName = ref('')
 const updateModalPid = ref(0)
 const options = ref([
@@ -46,50 +56,85 @@ const options = ref([
         isLeaf: false
     }
 ])
-const updateModalDocId = ref(0)
+const newGroup = reactive<DocGroup>({ title: '', groupType: '', id: 0, pid: 0 });
+const message = useMessage()
 
-function getModalTileByType(type: string): string {
-    if (type === 'create') {
+function getModalTileByType(handleType: string): string {
+    if (handleType === 'create') {
         return `新增分组`
-    } else if (type === 'update') {
+    } else if (handleType === 'update') {
         return `编辑分组`
-    } else if (type === 'updateDoc') {
+    } else if (handleType === 'updateDoc') {
         return `编辑文档`
     }
     return ''
 }
 
 function updateModal(type: string) {
+    const updateGroupObj = updateGroup.value as unknown as DocGroup
     if (type === 'updateDoc') {
         if (updateModalPid.value < 0) {
-            showModal.value = false
+            showModalModel.value = false
             clearModal()
             return
         }
-
         updateDoc({
-            id: updateModalDocId.value,
+            id: updateGroupObj.id,
             groupId: updateModalPid.value
         } as Doc).then(() => {
-            showModal.value = false
+            showModalModel.value = false
             clearModal()
-            // refreshTree()
+            emit('refreshTree')
         }).catch(err => {
             console.log(err)
         })
-    } else {
-        // createOrUpdateGroup()
+
+
     }
+
+    if (type == 'update') {
+        updateGroupObj.title = updateModalName.value
+        if (updateModalPid.value > 0) {
+            updateGroupObj.pid = updateModalPid.value
+        }
+        updateGroupData(updateGroupObj).then((resp) => {
+            clearModal()
+            emit('recursionReload', updateGroupObj.pid || 0)
+        }).catch(err => {
+            message.error(err)
+        })
+    }
+
+    if (type == 'create') {
+        newGroup.title = updateModalName.value
+        if (newGroup.pid as number < 0 && updateModalPid.value > 0) {
+            newGroup.pid = updateModalPid.value
+        }
+        createGroup(newGroup).then((resp) => {
+            clearModal()
+            if (newGroup.pid == 0) {
+                const newItem = Object.assign({}, newGroup)
+                newItem.id = resp?.getData()?.id
+                emit('addTreeItem', buildTreeItem(newItem))
+            } else {
+                emit('recursionReload', newGroup.pid || 0)
+            }
+        }).catch(err => {
+            message.error(err)
+        })
+    }
+
+    showModalModel.value = false;
 }
+
 
 function clearModal() {
     updateModalName.value = ''
     updateModalPid.value = -1
-    updateModalDocId.value = 0
 }
 
 
-function handleLoadWithUpdateGroupLocation(node: TreeOption) {
+function loadTree(node: TreeOption) {
     return new Promise<void>((resolve) => {
         getDocGroupTree(node.key as number, false).then((response) => {
             if (!response.data) {
@@ -112,7 +157,7 @@ function handleLoadWithUpdateGroupLocation(node: TreeOption) {
     })
 }
 
-function buildTreeItem(d: DocGroup) {
+function buildTreeItem(d: DocGroup): TreeOption {
     return {
         label: d.title,
         key: d.id,
@@ -122,5 +167,6 @@ function buildTreeItem(d: DocGroup) {
         pid: d.pid
     }
 }
+
 
 </script>

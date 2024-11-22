@@ -14,7 +14,7 @@
                             <Refresh></Refresh>
                         </n-icon>
                     </div>
-                    <n-switch v-model:value="isTop" size="medium">
+                    <n-switch v-model:value="isTop" size="small">
                         <template #icon>
                             {{ isTop ? '😄' : '🤔' }}
                         </template>
@@ -43,13 +43,12 @@
 
 </template>
 <script lang="ts" setup>
-import { onMounted, ref, watch, reactive, nextTick, computed, watchEffect } from 'vue'
-import { useMessage, NIcon } from 'naive-ui';
+import { createDoc, getDoc, updateDoc } from "@/api/doc";
 import Vditor from '@/components/Vditor.vue';
-import { ArrowBack, Refresh, Menu } from '@vicons/ionicons5'
-import { Doc } from "@/types/resource"
-import { createDoc, updateDoc, getDoc } from "@/api/doc"
-import { ArrowBackOutline, ArrowForwardOutline } from '@vicons/ionicons5'
+import { Doc } from "@/types/resource";
+import { ArrowBack, Menu, Refresh } from '@vicons/ionicons5';
+import { NIcon, useMessage } from 'naive-ui';
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 
 
 const props = defineProps<{
@@ -65,7 +64,7 @@ const currentTitle = computed(() => {
     return updateTitle ?? ''
 })
 
-watch(isTop, (old, newVal) => {
+watch(isTop, () => {
     contentUpdate(currentDoc)
 })
 
@@ -73,9 +72,7 @@ function contentUpdate(docUpdate: Doc) {
     if (docUpdate.title.length > 0) {
         updateTitle.value = docUpdate.title
     }
-
     docUpdate.isTop = isTop.value ? 1 : 0
-    message.info('isTop：' + `${docUpdate.isTop}`)
     if (docUpdate.id > 0) {
         updateDoc(docUpdate).catch(err => {
             message.error(err)

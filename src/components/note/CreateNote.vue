@@ -41,11 +41,11 @@
 
 </template>
 <script lang="ts" setup>
-import { computed, defineComponent, ref, watch, watchEffect } from 'vue'
-import type { FormInst } from 'naive-ui'
-import { useMessage } from 'naive-ui'
-import { createNote, updateNote, getNote } from "@/api/note"
+import { createNote, getNote, updateNote } from "@/api/note";
 import { Note } from '@/types/resource';
+import type { FormInst } from 'naive-ui';
+import { useMessage } from 'naive-ui';
+import { computed, ref, watchEffect } from 'vue';
 
 const props = defineProps<{
     id: number,

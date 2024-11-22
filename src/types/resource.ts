@@ -15,7 +15,7 @@ export interface DocGroup extends BaseResource {
     title: string,
     groupType: string,
     pid?: number,
-    children?: Array<DocGroup>
+    children?: Array<DocGroup>,
 }
 
 export interface LoginUser extends BaseResource {

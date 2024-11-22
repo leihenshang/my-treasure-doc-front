@@ -2,7 +2,7 @@
   <div class="homePage-wrapper">
     <n-layout has-sider class="menu-layout">
       <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="64" :width="288"
-        :collapsed="collapsed" @collapse="collapsed = true" @expand="collapsed = false">
+        :collapsed="leftMenuCollapsed" @collapse="leftMenuCollapsed = true" @expand="leftMenuCollapsed = false">
         <div style="text-align:center;"> <n-button icon-placement="right" text size="large"
             @click="router.push('/Dashboard')">
             <template #icon>
@@ -13,8 +13,8 @@
             treasure-doc
           </n-button>
         </div>
-        <n-menu v-model:value="activeKey" mode="horizontal" :options="horizontalMenuOptions"
-          @update:value="topMenuUpdate" :icon-size="18" ref="topMenuRef" />
+        <n-menu mode="horizontal" :options="horizontalMenuOptions" @update:value="topMenuUpdate" :icon-size="18"
+          ref="topMenuRef" />
         <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps" show-line="true"
           :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" />
       </n-layout-sider>
@@ -23,33 +23,17 @@
       </n-layout>
     </n-layout>
   </div>
-  <n-modal v-model:show="showModal" preset="dialog" title="Dialog" :show-icon="false" class="modal-dialog"
-    :mask-closable=false style="position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
-    <template #header>
-      <div>{{ getModalTileByType(groupHandleType) }}</div>
-    </template>
-    <div class="dialog-container">
-      <div class="dialog-content" v-if="groupHandleType != 'updateDoc'">
-        <label>名称</label>
-        <n-input v-model:value="updateModalName" type="text" placeholder="分组名称"></n-input>
-      </div>
-      <div class="dialog-content">
-        <label>层级</label>
-        <n-tree-select v-model:value="updateModalPid" clearable :options="options" :cascade="true" :show-path="true"
-          :allow-checking-not-loaded="true" :on-load="handleLoadWithUpdateGroupLocation" />
-      </div>
-    </div>
-    <template #action>
-      <n-button type="primary" @click="updateModal(groupHandleType)">确定</n-button>
-      <n-button @click="showModal = false">取消</n-button>
-    </template>
-  </n-modal>
+  <CreateGroup v-model:show-modal="showModal" v-model:update-group="updateGroup" v-model:handle-type="groupHandleType"
+    v-on:refresh-tree="refreshTree()" @add-tree-item="(op) => { treeData.push(op) }"
+    @recursion-reload="id => recursionReloadTreeNode(treeData, id)">
+  </CreateGroup>
 </template>
 
 <script lang="ts" setup>
-import { createDoc, deleteDoc, updateDoc } from "@/api/doc";
-import { createGroup, deleteGroup, getDocGroupTree, updateGroup as updateGroupData } from "@/api/doc_group";
+import { createDoc, deleteDoc } from "@/api/doc";
+import { deleteGroup, getDocGroupTree } from "@/api/doc_group";
 import { logOut } from '@/api/user';
+import CreateGroup from "@/components/home_page/CreateGroup.vue";
 import { Doc, DocGroup } from '@/types/resource';
 import eventBus from '@/utils/event_bus';
 import { DashboardOutlined, FolderAddOutlined } from '@vicons/antd';
@@ -75,7 +59,7 @@ import {
   NTree,
   TreeOption, useMessage
 } from 'naive-ui';
-import { Component, h, onMounted, reactive, ref } from 'vue';
+import { Component, h, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -84,128 +68,25 @@ const message = useMessage()
 const treeData = ref<Array<TreeOption>>([])
 const showModal = ref(false);
 const groupHandleType = ref('');
-const newGroup = reactive<DocGroup>({ title: '', groupType: '', id: 0, pid: -1 });
-const updateGroup = reactive<DocGroup>({ title: '', groupType: '', id: 0 });
-const updateModalName = ref('')
-const updateModalPid = ref(-1)
-const updateModalDocId = ref(0)
-const options = ref([
-  {
-    label: '顶层',
-    key: 0,
-    depth: 1,
-    isLeaf: false
-  }
-])
+const updateGroup = ref<DocGroup>({} as DocGroup);
+const leftMenuCollapsed = ref(false)
+
+onMounted(() => { refreshTree() })
 
 eventBus.on('updateDocTitle', (data: Doc) => {
   recursionUpdateTreeNodeTitle(treeData.value, data.id, data.title)
 })
 
-function updateModal(type: string) {
-  if (type === 'updateDoc') {
-    if (updateModalPid.value < 0) {
-      showModal.value = false
-      clearModal()
-      return
-    }
-
-    updateDoc({
-      id: updateModalDocId.value,
-      groupId: updateModalPid.value
-    } as Doc).then(() => {
-      showModal.value = false
-      clearModal()
-      refreshTree()
-    }).catch(err => {
-      console.log(err)
-    })
-  } else {
-    createOrUpdateGroup()
-  }
-}
-
-
-function clearModal() {
-  updateModalName.value = ''
-  updateModalPid.value = -1
-  updateModalDocId.value = 0
-}
-
-//TODO: recursion update
-function createOrUpdateGroup() {
-  showModal.value = false;
-  if (updateGroup.title !== "") {
-    updateGroup.title = updateModalName.value
-    if (updateModalPid.value > 0) {
-      updateGroup.pid = updateModalPid.value
-    }
-    updateGroupData(updateGroup).then((resp) => {
-      clearModal()
-      if (updateGroup.pid == 0) {
-        const newItem = Object.assign({}, updateGroup)
-        newItem.id = resp?.getData()?.id
-        treeData.value.push(buildTreeItem(newItem))
-      } else {
-        recursionReloadTreeNode(treeData.value, updateGroup.pid || 0)
-      }
-    }).catch(err => {
-      message.error(err)
-    })
-  } else {
-    newGroup.title = updateModalName.value
-    if (newGroup.pid as number < 0 && updateModalPid.value > 0) {
-      newGroup.pid = updateModalPid.value
-    }
-    createGroup(newGroup).then((resp) => {
-      clearModal()
-      if (newGroup.pid == 0) {
-        const newItem = Object.assign({}, newGroup)
-        newItem.id = resp?.getData()?.id
-        treeData.value.push(buildTreeItem(newItem))
-      } else {
-        recursionReloadTreeNode(treeData.value, newGroup.pid || 0)
-      }
-    }).catch(err => {
-      message.error(err)
-    })
-  }
-
-  updateGroup.title = ''
-  updateGroup.pid = 0
-};
-
-function getModalTileByType(type: string): string {
-  if (type === 'create') {
-    return `新增分组`
-  } else if (type === 'update') {
-    return `编辑分组`
-  } else if (type === 'updateDoc') {
-    return `编辑文档`
-  }
-  return ''
-}
 
 function renderSwitcherIcon() {
   return h(NIcon, null, { default: () => h(ChevronForward) })
 }
 
 const changeModal = (type: string, group?: DocGroup) => {
+  showModal.value = true;
   groupHandleType.value = type
-  updateGroup.title = group?.title || ''
-  updateGroup.pid = group?.pid || -1
-  if (type === 'update') {
-    updateModalName.value = updateGroup?.title || ''
-    updateModalPid.value = updateGroup?.pid || 0;
-    showModal.value = true;
-  } else if (type === 'create') {
-    newGroup.title = ''
-    newGroup.pid = group?.pid || 0;
-    showModal.value = true;
-  }
-  if (type === 'updateDoc') {
-    showModal.value = true;
-  }
+  console.log(group)
+  updateGroup.value = { ...group as DocGroup }
 };
 
 
@@ -302,13 +183,9 @@ function genDocTitle(suffix: string = "-速记") {
 }
 
 
-const activeKey = ref<string | null>(null)
-const collapsed = ref(false)
 
 
-onMounted(() => {
-  refreshTree()
-})
+
 
 function refreshTree() {
   treeData.value = []
@@ -348,29 +225,6 @@ function handleLoad(node: TreeOption) {
     getDocGroupTree(node.key as number, true).then((response) => {
       if (!response.data) {
         reject()
-        return
-      }
-
-      let arr: any = new Array<any>((response.data as Array<DocGroup>).length)
-      for (const e of response.data as Array<DocGroup>) {
-        arr.push(buildTreeItem(e))
-      }
-      node.children = arr
-      resolve()
-    }).catch((err) => {
-      console.log(err)
-    })
-  }).catch(err => {
-    console.log(err)
-  })
-}
-
-function handleLoadWithUpdateGroupLocation(node: TreeOption) {
-  return new Promise<void>((resolve) => {
-    getDocGroupTree(node.key as number, false).then((response) => {
-      if (!response.data) {
-        node.children = []
-        resolve()
         return
       }
 
@@ -437,8 +291,6 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
           }
           if (key === 'createFolder') {
             changeModal('create', {
-              id: 0,
-              groupType: '',
               pid: info.option.key
             } as DocGroup)
           }
@@ -447,14 +299,16 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
             changeModal('update', {
               id: info.option.key,
               title: info.option.label,
-              groupType: '',
               pid: info.option.pid
             } as DocGroup)
           }
 
           if (key === 'updateDoc') {
-            updateModalDocId.value = info.option.key as number
-            changeModal('updateDoc')
+            changeModal('updateDoc', {
+              id: info.option.key as number,
+              title: info.option.label,
+              pid: info.option.pid
+            } as DocGroup)
           }
         }
 
@@ -563,12 +417,10 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: number, title
   }
 }
 
-
 </script>
 
-
 <style scoped lang='scss'>
-@import "@/assets/style/helper";
+@import "@/assets/style/helper.scss";
 
 .homePage-wrapper {
   height: 100%;
