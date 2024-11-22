@@ -47,31 +47,37 @@
 </template>
 
 <script lang="ts" setup>
-import { h, ref, Component, onMounted, reactive } from 'vue';
-import {
-  MenuOption, TreeOption, useMessage, NButton, NButtonGroup,
-  NIcon, NDropdown, DropdownOption, NMenu, NLayout, NTree
-} from 'naive-ui';
-import { useRouter, RouterLink } from 'vue-router';
-import {
-  EllipsisHorizontalCircleOutline as EllipsisHorizontalCircle,
-  Pencil as Pen,
-  SearchSharp as Search,
-  MailOpen,
-  ArrowForwardCircleSharp,
-  MenuOutline,
-  AddCircleOutline
-} from '@vicons/ionicons5'
-import myHttp from '@/api/treasure_axios';
-import { DocGroup, Doc } from '@/types/resource';
-import { ArrowBack, Refresh, Menu, DocumentTextOutline, FolderOutline, ChevronForward } from '@vicons/ionicons5'
-import { FolderAddOutlined, DashboardOutlined } from '@vicons/antd'
-import { Delete24Filled } from "@vicons/fluent"
-import { createDoc, updateDoc, getDoc, deleteDoc } from "@/api/doc"
-import { getDocGroupTree, createGroup, deleteGroup, updateGroup as updateGroupData } from "@/api/doc_group"
-import eventBus from '@/utils/event_bus'
+import { createDoc, deleteDoc, updateDoc } from "@/api/doc";
+import { createGroup, deleteGroup, getDocGroupTree, updateGroup as updateGroupData } from "@/api/doc_group";
 import { logOut } from '@/api/user';
 import { useUserInfoStore } from '@/stores/user/user_info';
+import { Doc, DocGroup } from '@/types/resource';
+import eventBus from '@/utils/event_bus';
+import { DashboardOutlined, FolderAddOutlined } from '@vicons/antd';
+import { Delete24Filled } from "@vicons/fluent";
+import {
+  AddCircleOutline,
+  ArrowForwardCircleSharp,
+  ChevronForward,
+  DocumentTextOutline,
+  EllipsisHorizontalCircleOutline as EllipsisHorizontalCircle,
+  FolderOutline,
+  MenuOutline,
+  Pencil as Pen,
+  SearchSharp as Search
+} from '@vicons/ionicons5';
+import {
+  MenuOption,
+  NButton, NButtonGroup,
+  NDropdown,
+  NIcon,
+  NLayout,
+  NMenu,
+  NTree,
+  TreeOption, useMessage
+} from 'naive-ui';
+import { Component, h, onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const topMenuRef = ref(null)
@@ -320,9 +326,9 @@ function refreshTree() {
 
 function buildTreeItem(d: DocGroup) {
   return {
-    label: genTreeLab(d),
+    label: d.title,
     key: d.id,
-    isLeaf: docIsLeaf(d.groupType),
+    isLeaf: d.groupType == 'doc',
     groupType: d.groupType,
     prefix: () => getPrefixIcon(d.groupType),
     pid: d.pid
@@ -339,14 +345,6 @@ function getPrefixIcon(groupType: string) {
   }
 }
 
-function docIsLeaf(groupType: string) {
-  switch (groupType) {
-    case "doc":
-      return true
-    default:
-      return false
-  }
-}
 
 function handleLoad(node: TreeOption) {
   return new Promise<void>((resolve, reject) => {
@@ -393,9 +391,6 @@ function handleLoadWithUpdateGroupLocation(node: TreeOption) {
   })
 }
 
-function genTreeLab(group: DocGroup): string {
-  return group.title
-}
 
 function nodeProps({ option }: { option: TreeOption }) {
   return {

@@ -2,15 +2,14 @@
     <div id="vditor-container"></div>
 </template>
 <script lang="ts" setup>
+import { PATH_URL } from '@/api/service'
+import { useUserInfoStore } from "@/stores/user/user_info"
+import { Doc } from "@/types/resource"
+import eventBus from '@/utils/event_bus'
+import { useMessage } from "naive-ui"
 import Vditor from 'vditor'
 import "vditor/dist/index.css"
-import { ref, nextTick, reactive } from "vue"
-import { onMounted, watch, onBeforeUpdate, createApp } from "vue"
-import { useMessage } from "naive-ui"
-import { Doc } from "@/types/resource"
-import { useUserInfoStore } from "@/stores/user/user_info";
-import eventBus from '@/utils/event_bus'
-import { PATH_URL } from '@/api/service'
+import { nextTick, onMounted, reactive, ref, watch } from "vue"
 
 
 const props = defineProps<{ doc: Doc }>()

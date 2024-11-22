@@ -24,13 +24,13 @@
 </template>
 
 <script lang="ts" setup>
-import { FormInst, useMessage, NInput } from 'naive-ui';
+import { logIn } from '@/api/user';
+import { UserInfo } from '@/stores/user/types';
+import { useUserInfoStore } from "@/stores/user/user_info";
+import { LoginUser } from "@/types/resource";
+import { FormInst, NInput, useMessage } from 'naive-ui';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUserInfoStore } from "@/stores/user/user_info";
-import { UserInfo } from '@/stores/user/types'
-import { LoginUser } from "@/types/resource"
-import { logIn } from '@/api/user';
 
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)

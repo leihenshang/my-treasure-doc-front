@@ -2,18 +2,31 @@
     <div class="edit-box">
         <template v-if="props.id as number > 0">
             <div class="edit-banner">
-                <div class="icon-group">
-                    <n-icon size="20">
-                        <Menu></Menu>
-                    </n-icon>
-                    <n-icon size="20">
-                        <ArrowBack> </ArrowBack>
-                    </n-icon>
-                    <n-icon size="20">
-                        <Refresh></Refresh>
-                    </n-icon>
-                </div>
-                <span class="bar-title">{{ currentTitle }}</span>
+                <n-space>
+                    <div class="icon-group">
+                        <n-icon size="20">
+                            <Menu></Menu>
+                        </n-icon>
+                        <n-icon size="20">
+                            <ArrowBack> </ArrowBack>
+                        </n-icon>
+                        <n-icon size="20">
+                            <Refresh></Refresh>
+                        </n-icon>
+                    </div>
+                    <n-switch v-model:value="isTop" size="medium">
+                        <template #icon>
+                            {{ isTop ? '😄' : '🤔' }}
+                        </template>
+                        <template #unchecked>
+                            没置顶
+                        </template>
+                        <template #checked>
+                            置顶了
+                        </template>
+                    </n-switch>
+                    <span class="bar-title">{{ currentTitle }}</span>
+                </n-space>
             </div>
             <div class="edit-content">
                 <Vditor :doc="currentDoc" @update-doc="contentUpdate" />
@@ -30,12 +43,14 @@
 
 </template>
 <script lang="ts" setup>
-import { onMounted, ref, watch, reactive, nextTick, computed } from 'vue'
+import { onMounted, ref, watch, reactive, nextTick, computed, watchEffect } from 'vue'
 import { useMessage, NIcon } from 'naive-ui';
 import Vditor from '@/components/Vditor.vue';
 import { ArrowBack, Refresh, Menu } from '@vicons/ionicons5'
 import { Doc } from "@/types/resource"
 import { createDoc, updateDoc, getDoc } from "@/api/doc"
+import { ArrowBackOutline, ArrowForwardOutline } from '@vicons/ionicons5'
+
 
 const props = defineProps<{
     id: number | string,
@@ -44,9 +59,14 @@ const props = defineProps<{
 const currentDoc = reactive<Doc>({} as Doc)
 const updateTitle = ref('')
 const message = useMessage()
+const isTop = ref(false)
 
 const currentTitle = computed(() => {
     return updateTitle ?? ''
+})
+
+watch(isTop, (old, newVal) => {
+    contentUpdate(currentDoc)
 })
 
 function contentUpdate(docUpdate: Doc) {
@@ -54,6 +74,8 @@ function contentUpdate(docUpdate: Doc) {
         updateTitle.value = docUpdate.title
     }
 
+    docUpdate.isTop = isTop.value ? 1 : 0
+    message.info('isTop：' + `${docUpdate.isTop}`)
     if (docUpdate.id > 0) {
         updateDoc(docUpdate).catch(err => {
             message.error(err)
@@ -86,6 +108,7 @@ function getSetCurrentDoc(docId: number) {
         const doc = resp.data as Doc
         Object.assign(currentDoc, doc)
         updateTitle.value = doc.title
+        isTop.value = doc.isTop as number > 0
     }).catch(err => {
         message.error(err)
     })
