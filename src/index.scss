@@ -1,44 +1,41 @@
 @import "@/assets/style/helper";
 
-// * {
-//   margin: 0;
-//   padding: 0;
-//   box-sizing: border-box;
-// }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-// warning: setting this css property will be cause the list of numbers before vditor invalid
-// ul,
-// ol {
-//   list-style: none;
-// }
+ul, ol :not(#vditor-container.vditor *) {
+  list-style: none;
+}
 
-// a {
-//   text-decoration: none;
-//   color: inherit;
+a :not(#vditor-container.vditor *) {
+  text-decoration: none;
+  color: inherit;
+  &:hover {
+    border-bottom: 1px solid;
+    cursor: pointer;
+  }
+}
 
-//   &:hover {
-    //border-bottom: 1px solid;
-    // cursor: pointer;
-//   }
-// }
-
-// h1, h2, h3, h4, h5, h6 {
-//   font-weight: normal;
-// }
+h1, h2, h3, h4, h5, h6 :not(#vditor-container> *) {
+  font-weight: normal;
+}
 
 
 body {
-  // font-size: 14px;
-  // color: rgba(0, 0, 0, 0.85);
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.85);
   // 为什么这样写 font-family
   // 答案见 https://github.com/zenozeng/fonts.css/
   font-family: $font-hei;
 }
 
 //以下几行为了消除按钮按下时有阴影和border
-// button:focus { //电脑端
-//   outline: none;
-// }
+button:focus { //电脑端
+  outline: none;
+}
 
 * {
   -webkit-tap-highlight-color: transparent; //手机端

@@ -116,4 +116,8 @@ function getMarkdownH1Text(markdownContent: string): string {
 }
 </script>
 
-<style scoped lang='scss'></style>
+<style scoped lang='scss'>
+// ul,
+// ol {
+//     list-style: decimal;
+// }</style>
