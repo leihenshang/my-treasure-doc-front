@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import { ref, reactive, onMounted, h, nextTick, computed } from 'vue'
-import { NButton, useMessage } from 'naive-ui'
-import { useRouter, RouterLink } from 'vue-router';
+import { getDocList } from "@/api/doc";
 import SvgIcon from '@/components/public/SvgIcon.vue';
-import { getDocList } from "@/api/doc"
-import { Doc, DocGroup } from "@/types/resource"
-import { PaginationWithSort } from "@/types/treasure_response"
+import { Doc, DocGroup } from "@/types/resource";
+import { computed, onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const groupList = ref<DocGroup[]>([{ title: '全部', id: 0, groupType: "" }]);
 

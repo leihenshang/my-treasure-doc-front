@@ -3,8 +3,8 @@
     <n-layout has-sider class="menu-layout">
       <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="64" :width="288"
         :collapsed="leftMenuCollapsed" @collapse="leftMenuCollapsed = true" @expand="leftMenuCollapsed = false">
-        <div style="text-align:center;"> <n-button icon-placement="right" text size="large"
-            @click="router.push('/Dashboard')">
+        <div style="text-align:center;">
+          <n-button icon-placement="right" text size="large" @click="router.push('/Dashboard')">
             <template #icon>
               <n-icon>
                 <DashboardOutlined />
@@ -15,6 +15,11 @@
         </div>
         <n-menu mode="horizontal" :options="horizontalMenuOptions" @update:value="topMenuUpdate" :icon-size="18"
           ref="topMenuRef" />
+        置顶文档
+        <n-tree block-line :data="topDocList" :node-props="nodeProps" show-line="true" :render-suffix="treeNodeSuffix"
+          :render-switcher-icon="renderSwitcherIcon" />
+        <n-hr></n-hr>
+        我的文档
         <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps" show-line="true"
           :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" />
       </n-layout-sider>
@@ -29,7 +34,7 @@
 </template>
 
 <script lang="ts" setup>
-import { createDoc, deleteDoc } from "@/api/doc";
+import { createDoc, deleteDoc, getDocList } from "@/api/doc";
 import { deleteGroup, getDocGroupTree } from "@/api/doc_group";
 import { logOut } from '@/api/user';
 import CreateGroup from "@/components/home_page/CreateGroup.vue";
@@ -65,15 +70,23 @@ const router = useRouter();
 const topMenuRef = ref(null)
 const message = useMessage()
 const treeData = ref<Array<TreeOption>>([])
+const topDocList = ref<Array<TreeOption>>([])
 const showModal = ref(false);
 const groupHandleType = ref('');
 const updateGroup = ref<DocGroup>({} as DocGroup);
 const leftMenuCollapsed = ref(false)
 
-onMounted(() => { refreshTree() })
+onMounted(() => {
+  refreshTree();
+  refreshTopDoc();
+})
 
 eventBus.on('updateDocTitle', (data: Doc) => {
   recursionUpdateTreeNodeTitle(treeData.value, data.id, data.title)
+})
+
+eventBus.on('updateTopDoc', () => {
+  refreshTopDoc()
 })
 
 function addTreeItem(op: TreeOption) {
@@ -194,6 +207,21 @@ function refreshTree() {
   getDocGroupTree(0, true).then((response) => {
     for (const e of response.data as Array<DocGroup>) {
       treeData.value.push(buildTreeItem(e))
+    }
+  }).catch((err) => {
+    message.error(err)
+  })
+}
+
+function refreshTopDoc() {
+  topDocList.value = []
+  getDocList(-1, 1).then((response) => {
+    for (const l of response.list) {
+      topDocList.value.push(buildTreeItem({
+        title: l.title,
+        groupType: 'doc',
+        id: l.id,
+      }))
     }
   }).catch((err) => {
     message.error(err)

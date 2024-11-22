@@ -1,16 +1,17 @@
 import myHttp from "@/api/treasure_axios"
-import { TreasureResponse, TreasureResponseList, PaginationWithSort } from "@/types/treasure_response"
 import { Doc } from "@/types/resource"
+import { PaginationWithSort, TreasureResponse, TreasureResponseList } from "@/types/treasure_response"
 
 
-export function getDocList(groupId: number = 0, pagination: PaginationWithSort = new PaginationWithSort()): Promise<TreasureResponseList<Doc>> {
+export function getDocList(groupId: number = 0, isTop: number = 0, pagination: PaginationWithSort = new PaginationWithSort()): Promise<TreasureResponseList<Doc>> {
     return new Promise<TreasureResponseList<Doc>>((resolve, reject) => {
         myHttp.get<TreasureResponse<Doc>>({
             url: '/api/doc/list', params: {
                 page: pagination.page,
                 pageSize: pagination.pageSize,
                 orderBy: pagination.orderBy,
-                groupId: groupId
+                groupId: groupId,
+                isTop: isTop
             }
         }).then((response: any) => {
             if (response?.code) {

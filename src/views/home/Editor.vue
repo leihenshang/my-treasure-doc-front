@@ -46,11 +46,10 @@
 import { createDoc, getDoc, updateDoc } from "@/api/doc";
 import Vditor from '@/components/Vditor.vue';
 import { Doc } from "@/types/resource";
+import eventBus from '@/utils/event_bus';
 import { ArrowBack, Menu, Refresh } from '@vicons/ionicons5';
 import { NIcon, useMessage } from 'naive-ui';
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
-
-
 const props = defineProps<{
     id: number | string,
 }>()
@@ -66,6 +65,7 @@ const currentTitle = computed(() => {
 
 watch(isTop, () => {
     contentUpdate(currentDoc)
+
 })
 
 function contentUpdate(docUpdate: Doc) {
@@ -83,8 +83,8 @@ function contentUpdate(docUpdate: Doc) {
         }).catch(err => {
             message.error(err)
         })
-
     }
+    eventBus.emit('updateTopDoc')
 }
 
 // 为了保证当直接进入页面的时候不会获取到默认的缓存数据

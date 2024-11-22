@@ -18,7 +18,7 @@ class EventBus {
     }
 
     // 触发事件的方法，会遍历并执行该事件对应的所有回调函数
-    emit(eventName: string, data: any) {
+    emit(eventName: string, data?: any) {
         if (this.events[eventName]) {
             this.events[eventName].forEach(callback => callback(data));
         }
