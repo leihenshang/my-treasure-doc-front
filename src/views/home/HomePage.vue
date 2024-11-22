@@ -50,7 +50,6 @@
 import { createDoc, deleteDoc, updateDoc } from "@/api/doc";
 import { createGroup, deleteGroup, getDocGroupTree, updateGroup as updateGroupData } from "@/api/doc_group";
 import { logOut } from '@/api/user';
-import { useUserInfoStore } from '@/stores/user/user_info';
 import { Doc, DocGroup } from '@/types/resource';
 import eventBus from '@/utils/event_bus';
 import { DashboardOutlined, FolderAddOutlined } from '@vicons/antd';
@@ -98,8 +97,6 @@ const options = ref([
     isLeaf: false
   }
 ])
-
-const userInfoStore = useUserInfoStore()
 
 eventBus.on('updateDocTitle', (data: Doc) => {
   recursionUpdateTreeNodeTitle(treeData.value, data.id, data.title)
