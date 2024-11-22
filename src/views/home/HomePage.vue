@@ -23,9 +23,8 @@
       </n-layout>
     </n-layout>
   </div>
-  <CreateGroup v-model:show-modal="showModal" v-model:update-group="updateGroup" v-model:handle-type="groupHandleType"
-    v-on:refresh-tree="refreshTree()" @add-tree-item="(op) => { treeData.push(op) }"
-    @recursion-reload="id => recursionReloadTreeNode(treeData, id)">
+  <CreateGroup v-model:show="showModal" v-model:update-group="updateGroup" v-model:handle-type="groupHandleType"
+    @add-tree-item="addTreeItem" @recursion-reload="id => recursionReloadTreeNode(treeData, id)">
   </CreateGroup>
 </template>
 
@@ -77,6 +76,15 @@ eventBus.on('updateDocTitle', (data: Doc) => {
   recursionUpdateTreeNodeTitle(treeData.value, data.id, data.title)
 })
 
+function addTreeItem(op: TreeOption) {
+  for (let i = 0; i < treeData.value.length; i++) {
+    if (treeData.value[i].groupType == 'doc') {
+      treeData.value.splice(i, 0, op)
+      break;
+    }
+  }
+}
+
 
 function renderSwitcherIcon() {
   return h(NIcon, null, { default: () => h(ChevronForward) })
@@ -85,7 +93,6 @@ function renderSwitcherIcon() {
 const changeModal = (type: string, group?: DocGroup) => {
   showModal.value = true;
   groupHandleType.value = type
-  console.log(group)
   updateGroup.value = { ...group as DocGroup }
 };
 
@@ -181,11 +188,6 @@ function genDocTitle(suffix: string = "-速记") {
     today.getSeconds().toString().padStart(2, '0')) + suffix
   return todayTitleStr
 }
-
-
-
-
-
 
 function refreshTree() {
   treeData.value = []
@@ -304,6 +306,7 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
           }
 
           if (key === 'updateDoc') {
+            console.log('updateDoc', info.option)
             changeModal('updateDoc', {
               id: info.option.key as number,
               title: info.option.label,
@@ -391,6 +394,7 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
 
 function recursionReloadTreeNode(arr: Array<TreeOption>, key: number) {
   if (arr.length <= 0 || key <= 0) {
+    refreshTree()
     return
   }
 

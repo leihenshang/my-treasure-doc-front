@@ -37,13 +37,12 @@ import {
 import { h, reactive, ref } from 'vue';
 
 const emit = defineEmits<{
-    (e: 'refreshTree'): void,
     (e: 'addTreeItem', value: TreeOption): void
     (e: 'recursionReload', value: number): void
 
 }>()
 
-const showModalModel = defineModel('showModal')
+const showModalModel = defineModel('show')
 const updateGroup = defineModel('updateGroup')
 const handleType = defineModel('handleType', { type: String, required: true })
 const updateModalName = ref('')
@@ -72,6 +71,7 @@ function getModalTileByType(handleType: string): string {
 
 function updateModal(type: string) {
     const updateGroupObj = updateGroup.value as unknown as DocGroup
+    console.log(updateGroupObj)
     if (type === 'updateDoc') {
         if (updateModalPid.value < 0) {
             showModalModel.value = false
@@ -84,7 +84,7 @@ function updateModal(type: string) {
         } as Doc).then(() => {
             showModalModel.value = false
             clearModal()
-            emit('refreshTree')
+            emit('recursionReload', updateGroupObj.pid || 0)
         }).catch(err => {
             console.log(err)
         })
