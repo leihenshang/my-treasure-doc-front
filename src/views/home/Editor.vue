@@ -14,7 +14,7 @@
                             <Refresh></Refresh>
                         </n-icon>
                     </div>
-                    <n-switch v-model:value="isTop" size="small" @click="contentUpdate(currentDoc)">
+                    <n-switch v-model:value="isTop" size="small" @click="contentUpdate(currentDoc, true)">
                         <template #icon>
                             {{ isTop ? '😄' : '🤔' }}
                         </template>
@@ -58,13 +58,14 @@ const currentDoc = ref<Doc>({ title: '' } as Doc)
 const message = useMessage()
 const isTop = ref(false)
 
-function contentUpdate(docUpdate: Doc) {
-    console.log('doUpdateTItle', docUpdate)
+function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false) {
     currentDoc.value.title = docUpdate.title || ''
     docUpdate.isTop = isTop.value ? 1 : 2
     if (docUpdate.id > 0) {
         updateDoc(docUpdate).then(() => {
-            eventBus.emit('updateTopDoc')
+            if (onlyIsTop) {
+                eventBus.emit('updateTopDoc')
+            }
         }).catch(err => {
             message.error(err)
         })
