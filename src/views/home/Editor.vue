@@ -14,7 +14,7 @@
                             <Refresh></Refresh>
                         </n-icon>
                     </div>
-                    <n-switch v-model:value="isTop" size="small">
+                    <n-switch v-model:value="isTop" size="small" :on-update="message.info('isTop updadte')">
                         <template #icon>
                             {{ isTop ? '😄' : '🤔' }}
                         </template>
@@ -25,7 +25,7 @@
                             置顶了
                         </template>
                     </n-switch>
-                    <span class="bar-title">{{ currentTitle }}</span>
+                    <span class="bar-title">{{ currentDoc.title }}</span>
                 </n-space>
             </div>
             <div class="edit-content">
@@ -54,32 +54,21 @@ const props = defineProps<{
     id: number | string,
 }>()
 
-const currentDoc = reactive<Doc>({} as Doc)
-const updateTitle = ref('')
+const currentDoc = ref<Doc>({ title: '' } as Doc)
 const message = useMessage()
 const isTop = ref(false)
 
-const currentTitle = computed(() => {
-    return updateTitle ?? ''
-})
-
-watch(isTop, () => {
-    contentUpdate(currentDoc)
-
-})
-
 function contentUpdate(docUpdate: Doc) {
-    if (docUpdate.title.length > 0) {
-        updateTitle.value = docUpdate.title
-    }
-    docUpdate.isTop = isTop.value ? 1 : 0
+    console.log('doUpdateTItle', docUpdate)
+    currentDoc.value.title = docUpdate.title || ''
+    docUpdate.isTop = isTop.value ? 1 : 2
     if (docUpdate.id > 0) {
         updateDoc(docUpdate).catch(err => {
             message.error(err)
         })
-    } else if (docUpdate.title.length > 0 || docUpdate.content.length > 0) {
+    } else if (docUpdate.title != '') {
         createDoc(docUpdate).then(res => {
-            currentDoc.id = res.getData().id
+            currentDoc.value.id = res.getData().id
         }).catch(err => {
             message.error(err)
         })
@@ -103,9 +92,8 @@ function getSetCurrentDoc(docId: number) {
     }
     getDoc(docId).then(resp => {
         const doc = resp.data as Doc
-        Object.assign(currentDoc, doc)
-        updateTitle.value = doc.title
-        isTop.value = doc.isTop as number > 0
+        currentDoc.value = { ...doc }
+        isTop.value = doc.isTop as number == 1
     }).catch(err => {
         message.error(err)
     })
