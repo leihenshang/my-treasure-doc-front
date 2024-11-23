@@ -15,13 +15,16 @@
         </div>
         <n-menu mode="horizontal" :options="horizontalMenuOptions" @update:value="topMenuUpdate" :icon-size="18"
           ref="topMenuRef" />
-        置顶文档
-        <n-tree block-line :data="topDocList" :node-props="nodeProps" show-line="true" :render-suffix="treeNodeSuffix"
-          :render-switcher-icon="renderSwitcherIcon" />
-        <n-hr></n-hr>
-        我的文档
-        <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps" show-line="true"
-          :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" />
+        <n-collapse :default-expanded-names="['1', '2']">
+          <n-collapse-item title="置顶文档" name="1">
+            <n-tree block-line :data="topDocList" :node-props="nodeProps" show-line="true"
+              :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" />
+          </n-collapse-item>
+          <n-collapse-item title="我的文档" name="2">
+            <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps" show-line="true"
+              :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" />
+          </n-collapse-item>
+        </n-collapse>
       </n-layout-sider>
       <n-layout class="right">
         <router-view></router-view>

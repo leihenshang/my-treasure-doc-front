@@ -14,7 +14,7 @@
                             <Refresh></Refresh>
                         </n-icon>
                     </div>
-                    <n-switch v-model:value="isTop" size="small" :on-update="message.info('isTop updadte')">
+                    <n-switch v-model:value="isTop" size="small" @click="contentUpdate(currentDoc)">
                         <template #icon>
                             {{ isTop ? '😄' : '🤔' }}
                         </template>
@@ -63,17 +63,20 @@ function contentUpdate(docUpdate: Doc) {
     currentDoc.value.title = docUpdate.title || ''
     docUpdate.isTop = isTop.value ? 1 : 2
     if (docUpdate.id > 0) {
-        updateDoc(docUpdate).catch(err => {
+        updateDoc(docUpdate).then(() => {
+            eventBus.emit('updateTopDoc')
+        }).catch(err => {
             message.error(err)
         })
     } else if (docUpdate.title != '') {
         createDoc(docUpdate).then(res => {
             currentDoc.value.id = res.getData().id
+            eventBus.emit('updateTopDoc')
         }).catch(err => {
             message.error(err)
         })
     }
-    eventBus.emit('updateTopDoc')
+
 }
 
 // 为了保证当直接进入页面的时候不会获取到默认的缓存数据
