@@ -229,17 +229,17 @@ function refreshTree() {
 }
 
 function refreshTopDoc(recycleBin: boolean = false) {
-  topDocList.value = []
-
   getDocList(-1, recycleBin ? -1 : 1, recycleBin).then((response) => {
     response.list.map((val, idx) => {
       if (recycleBin) {
+        recycleBinList.value = []
         recycleBinList.value.push(buildTreeItem({
           title: val.title,
           groupType: 'doc',
           id: val.id,
         }, idx))
       } else {
+        topDocList.value = []
         topDocList.value.push(buildTreeItem({
           title: val.title,
           groupType: 'doc',
@@ -432,7 +432,7 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
 
 function deleteTreeNode(id: number, type: string) {
   if (type === 'doc') {
-    deleteDoc({ id } as Doc).then(() => { message.success('删除成功') }).catch(err => { console.log(err) })
+    deleteDoc({ id } as Doc).then(() => { message.success('删除成功'); refreshTopDoc(true); }).catch(err => { console.log(err) })
   } else {
     deleteGroup({ id } as DocGroup).then(() => { message.success('删除成功') }).catch(err => { console.log(err) })
   }
