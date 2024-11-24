@@ -25,8 +25,8 @@
               :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" />
           </n-collapse-item>
           <n-collapse-item title="回收站" name="3">
-            <n-tree block-line :data="recycleBinList" :node-props="nodeProps" :render-suffix="treeNodeSuffix"
-              :render-switcher-icon="renderSwitcherIcon" />
+            <n-tree block-line :data="recycleBinList" :node-props="nodeProps"
+              :render-suffix="treeNodeSuffixWithRecycleBin" :render-switcher-icon="renderSwitcherIcon" />
           </n-collapse-item>
         </n-collapse>
       </n-layout-sider>
@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { createDoc, deleteDoc, getDocList } from "@/api/doc";
+import { createDoc, deleteDoc, getDocList, updateDoc } from "@/api/doc";
 import { deleteGroup, getDocGroupTree } from "@/api/doc_group";
 import { logOut } from '@/api/user';
 import CreateGroup from "@/components/home_page/CreateGroup.vue";
@@ -229,17 +229,21 @@ function refreshTree() {
 }
 
 function refreshTopDoc(recycleBin: boolean = false) {
+  if (recycleBin) {
+    recycleBinList.value = []
+  } else {
+    topDocList.value = []
+  }
+
   getDocList(-1, recycleBin ? -1 : 1, recycleBin).then((response) => {
     response.list.map((val, idx) => {
       if (recycleBin) {
-        recycleBinList.value = []
         recycleBinList.value.push(buildTreeItem({
           title: val.title,
           groupType: 'doc',
           id: val.id,
         }, idx))
       } else {
-        topDocList.value = []
         topDocList.value.push(buildTreeItem({
           title: val.title,
           groupType: 'doc',
@@ -429,6 +433,57 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
     ),
   ])
 }
+
+
+const treeNodeSuffixWithRecycleBin = (info: { option: TreeOption, checked: boolean, selected: boolean }) => {
+  return h(NButtonGroup, {
+    size: "tiny",
+  }, () => [
+    h(
+      NDropdown,
+      {
+        options: [
+          {
+            icon: () => { return h(NIcon, null, { default: () => h(Delete24Filled) }) },
+            label: '恢复',
+            key: 'recover',
+          }
+        ],
+        onSelect: (key: string) => {
+          if (key === 'recover') {
+            updateDoc({
+              id: info.option.id as unknown as number,
+              isRecover: true
+            } as Doc).then(() => {
+              message.info('更新成功');
+              treeData.value.push(buildTreeItem({
+                id: info.option.id as unknown as number,
+                title: info.option.label,
+                groupType: "doc",
+              } as DocGroup, treeData.value.length + 1))
+
+              refreshTopDoc(true)
+            }).catch((err) => { message.error(`${err}`) })
+          }
+        }
+
+      },
+      () => h(
+        NButton,
+        {
+          text: true,
+          size: 'small',
+          onClick: e => {
+            e.preventDefault()
+            e.stopPropagation()
+          }
+        },
+        { icon: () => h(NIcon, null, { default: () => h(MenuOutline) }) }
+      )
+    )
+  ])
+}
+
 
 function deleteTreeNode(id: number, type: string) {
   if (type === 'doc') {
