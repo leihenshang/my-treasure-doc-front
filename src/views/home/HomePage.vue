@@ -17,8 +17,7 @@
           ref="topMenuRef" />
         <n-collapse :default-expanded-names="['1', '2']">
           <n-collapse-item title="置顶文档" name="1">
-            <n-tree block-line :data="topDocList" :node-props="nodeProps" :render-suffix="treeNodeSuffix"
-              :render-switcher-icon="renderSwitcherIcon" />
+            <n-tree block-line :data="topDocList" :node-props="nodeProps" :render-switcher-icon="renderSwitcherIcon" />
           </n-collapse-item>
           <n-collapse-item title="我的文档" name="2">
             <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
