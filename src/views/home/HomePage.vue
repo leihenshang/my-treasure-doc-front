@@ -172,7 +172,7 @@ function topMenuUpdate(key: string, item: MenuOption): void {
         id: doc.id,
         title: doc.title,
         groupType: "doc",
-      } as DocGroup))
+      } as DocGroup, treeData.value.length + 1))
       router.push({ path: `/Editor/${doc.id}` })
     }).catch(err => {
       message.error(err)
@@ -212,10 +212,11 @@ function genDocTitle(suffix: string = "-速记") {
 
 function refreshTree() {
   treeData.value = []
+
   getDocGroupTree(0, true).then((response) => {
-    for (const e of response.data as Array<DocGroup>) {
-      treeData.value.push(buildTreeItem(e))
-    }
+    (response.data as Array<DocGroup>).map((val, idx) => {
+      treeData.value.push(buildTreeItem(val, idx))
+    })
   }).catch((err) => {
     message.error(err)
   })
@@ -224,22 +225,23 @@ function refreshTree() {
 function refreshTopDoc() {
   topDocList.value = []
   getDocList(-1, 1).then((response) => {
-    for (const l of response.list) {
+    response.list.map((val, idx) => {
       topDocList.value.push(buildTreeItem({
-        title: l.title,
+        title: val.title,
         groupType: 'doc',
-        id: l.id,
-      }))
-    }
+        id: val.id,
+      }, idx))
+    })
   }).catch((err) => {
     message.error(err)
   })
 }
 
-function buildTreeItem(d: DocGroup) {
+function buildTreeItem(d: DocGroup, key: number) {
   return {
     label: d.title,
-    key: d.id,
+    key: key,
+    id: d.id,
     isLeaf: d.groupType == 'doc',
     groupType: d.groupType,
     prefix: () => getPrefixIcon(d.groupType),
@@ -260,16 +262,16 @@ function getPrefixIcon(groupType: string) {
 
 function handleLoad(node: TreeOption) {
   return new Promise<void>((resolve, reject) => {
-    getDocGroupTree(node.key as number, true).then((response) => {
+    getDocGroupTree(node.id as number, true).then((response) => {
       if (!response.data) {
         reject()
         return
       }
-
-      let arr: any = new Array<any>((response.data as Array<DocGroup>).length)
-      for (const e of response.data as Array<DocGroup>) {
-        arr.push(buildTreeItem(e))
-      }
+      const docGroupList = response.data as Array<DocGroup>
+      let arr: any = new Array<any>(docGroupList.length)
+      docGroupList.map((val, idx) => {
+        arr.push(buildTreeItem(val, idx))
+      })
       node.children = arr
       resolve()
     }).catch((err) => {
@@ -285,7 +287,7 @@ function nodeProps({ option }: { option: TreeOption }) {
   return {
     onClick() {
       if (option.groupType == "doc") {
-        router.push({ path: `/Editor/${option.key}` })
+        router.push({ path: `/Editor/${option.id}` })
       }
     },
   }
@@ -325,17 +327,17 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
         ],
         onSelect: (key: string) => {
           if (key === 'delete') {
-            recursionDeleteTreeNode(treeData.value, info.option.key as number)
+            recursionDeleteTreeNode(treeData.value, info.option.id as number)
           }
           if (key === 'createFolder') {
             changeModal('create', {
-              pid: info.option.key
+              pid: info.option.id
             } as DocGroup)
           }
 
           if (key === 'updateGroup') {
             changeModal('update', {
-              id: info.option.key,
+              id: info.option.id,
               title: info.option.label,
               pid: info.option.pid
             } as DocGroup)
@@ -344,7 +346,7 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
           if (key === 'updateDoc') {
             console.log('updateDoc', info.option)
             changeModal('updateDoc', {
-              id: info.option.key as number,
+              id: info.option.id as number,
               title: info.option.label,
               pid: info.option.pid
             } as DocGroup)
@@ -379,16 +381,23 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
             id: 0,
             content: `# ${title}`,
             title: title,
-            groupId: info.option.key as unknown as number
+            groupId: info.option.id as unknown as number
           }
+
+
+
           createDoc(newDoc).then(res => {
             const doc = res.getData()
+            let key = doc.id + 10000
+            if (info.option.children) {
+              key = info.option.children?.length + 1
+            }
             if (doc.groupId === 0) {
               treeData.value.push(buildTreeItem({
                 id: doc.id,
                 title: doc.title,
                 groupType: "doc",
-              } as DocGroup))
+              } as DocGroup, key))
             } else {
               recursionReloadTreeNode(treeData.value, doc.groupId || 0)
             }
@@ -418,8 +427,8 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
   }
 
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i]?.key && arr[i].key == key) {
-      deleteTreeNode(arr[i].key as number, arr[i].groupType as string)
+    if (arr[i]?.id && arr[i].id == key) {
+      deleteTreeNode(arr[i].id as number, arr[i].groupType as string)
       arr.splice(i, 1)
       router.push({ path: `/Editor/0` })
       break
@@ -435,7 +444,7 @@ function recursionReloadTreeNode(arr: Array<TreeOption>, key: number) {
   }
 
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i]?.key && arr[i].key == key) {
+    if (arr[i]?.id && arr[i].id == key) {
       handleLoad(arr[i])
       break
     }
@@ -449,7 +458,7 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: number, title
   }
 
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i]?.key == key) {
+    if (arr[i]?.id == key) {
       arr[i].label = title
       break
     }
