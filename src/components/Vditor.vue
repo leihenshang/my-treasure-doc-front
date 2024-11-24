@@ -39,6 +39,13 @@ onMounted(() => {
             vditorContainer.value?.setValue(props.doc.content)
             watch(() => props.doc.content, (newContent) => {
                 nextTick(() => {
+                    console.log(props.doc)
+                    if (props.doc.deletedAt != '') {
+                        vditorContainer.value.disabled()
+                    }
+                    if (props.doc.deletedAt === null) {
+                        vditorContainer.value.enable()
+                    }
                     if (newContent.length > 0) {
                         vditorContainer.value?.setValue(newContent)
                     }

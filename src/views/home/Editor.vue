@@ -14,7 +14,8 @@
                             <Refresh></Refresh>
                         </n-icon>
                     </div>
-                    <n-switch v-model:value="isTop" size="small" @click="contentUpdate(currentDoc, true)">
+                    <n-switch :disabled="currentDoc.deletedAt !== null" v-model:value="isTop" size="small"
+                        @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, true)">
                         <template #icon>
                             {{ isTop ? '😄' : '🤔' }}
                         </template>

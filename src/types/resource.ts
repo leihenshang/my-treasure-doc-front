@@ -1,7 +1,8 @@
 export interface BaseResource {
     id: number,
-    createTime?: string,
-    updateTime?: string,
+    createdAt?: string,
+    updatedAt?: string,
+    deletedAt?: string,
 }
 
 export interface Doc extends BaseResource {
