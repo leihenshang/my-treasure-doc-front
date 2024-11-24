@@ -17,12 +17,16 @@
           ref="topMenuRef" />
         <n-collapse :default-expanded-names="['1', '2']">
           <n-collapse-item title="置顶文档" name="1">
-            <n-tree block-line :data="topDocList" :node-props="nodeProps" show-line="true"
-              :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" />
+            <n-tree block-line :data="topDocList" :node-props="nodeProps" :render-suffix="treeNodeSuffix"
+              :render-switcher-icon="renderSwitcherIcon" />
           </n-collapse-item>
           <n-collapse-item title="我的文档" name="2">
-            <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps" show-line="true"
+            <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
               :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" />
+          </n-collapse-item>
+          <n-collapse-item title="回收站" name="3">
+            <n-tree block-line :data="recycleBinList" :node-props="nodeProps" :render-suffix="treeNodeSuffix"
+              :render-switcher-icon="renderSwitcherIcon" />
           </n-collapse-item>
         </n-collapse>
       </n-layout-sider>
@@ -74,6 +78,7 @@ const topMenuRef = ref(null)
 const message = useMessage()
 const treeData = ref<Array<TreeOption>>([])
 const topDocList = ref<Array<TreeOption>>([])
+const recycleBinList = ref<Array<TreeOption>>([])
 const showModal = ref(false);
 const groupHandleType = ref('');
 const updateGroup = ref<DocGroup>({} as DocGroup);
@@ -82,6 +87,7 @@ const leftMenuCollapsed = ref(false)
 onMounted(() => {
   refreshTree();
   refreshTopDoc();
+  refreshTopDoc(true);
 })
 
 eventBus.on('updateDocTitle', (data: Doc) => {
@@ -222,15 +228,26 @@ function refreshTree() {
   })
 }
 
-function refreshTopDoc() {
+function refreshTopDoc(recycleBin: boolean = false) {
   topDocList.value = []
-  getDocList(-1, 1).then((response) => {
+
+  getDocList(-1, recycleBin ? -1 : 1, recycleBin).then((response) => {
     response.list.map((val, idx) => {
-      topDocList.value.push(buildTreeItem({
-        title: val.title,
-        groupType: 'doc',
-        id: val.id,
-      }, idx))
+      if (recycleBin) {
+        recycleBinList.value.push(buildTreeItem({
+          title: val.title,
+          groupType: 'doc',
+          id: val.id,
+        }, idx))
+      } else {
+        topDocList.value.push(buildTreeItem({
+          title: val.title,
+          groupType: 'doc',
+          id: val.id,
+        }, idx))
+      }
+
+
     })
   }).catch((err) => {
     message.error(err)

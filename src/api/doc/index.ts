@@ -3,7 +3,12 @@ import { Doc } from "@/types/resource"
 import { PaginationWithSort, TreasureResponse, TreasureResponseList } from "@/types/treasure_response"
 
 
-export function getDocList(groupId: number = 0, isTop: number = 0, pagination: PaginationWithSort = new PaginationWithSort()): Promise<TreasureResponseList<Doc>> {
+export function getDocList(
+    groupId: number = 0,
+    isTop: number = 0,
+    recycleBin: boolean = false,
+    pagination: PaginationWithSort = new PaginationWithSort(),
+): Promise<TreasureResponseList<Doc>> {
     return new Promise<TreasureResponseList<Doc>>((resolve, reject) => {
         myHttp.get<TreasureResponse<Doc>>({
             url: '/api/doc/list', params: {
@@ -11,7 +16,8 @@ export function getDocList(groupId: number = 0, isTop: number = 0, pagination: P
                 pageSize: pagination.pageSize,
                 orderBy: pagination.orderBy,
                 groupId: groupId,
-                isTop: isTop
+                isTop: isTop,
+                recycleBin: recycleBin ? 1 : 2
             }
         }).then((response: any) => {
             if (response?.code) {
