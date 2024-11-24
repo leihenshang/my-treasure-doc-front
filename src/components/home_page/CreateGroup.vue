@@ -71,7 +71,6 @@ function getModalTileByType(handleType: string): string {
 
 function updateModal(type: string) {
     const updateGroupObj = updateGroup.value as unknown as DocGroup
-    console.log(updateGroupObj)
     if (type === 'updateDoc') {
         if (updateModalPid.value < 0) {
             showModalModel.value = false
