@@ -111,7 +111,6 @@ function updateModal(type: string) {
         }
         createGroup(newGroup).then((resp) => {
             clearModal()
-            message.info(`newGroup.pid: ${newGroup.pid}`)
             if (newGroup.pid == 0) {
                 const newItem = Object.assign({}, newGroup)
                 newItem.id = resp?.getData()?.id
