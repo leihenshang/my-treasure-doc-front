@@ -93,11 +93,16 @@ eventBus.on('updateTopDoc', () => {
 })
 
 function addTreeItem(op: TreeOption) {
+  let foundDoc = false
   for (let i = 0; i < treeData.value.length; i++) {
     if (treeData.value[i].groupType == 'doc') {
+      foundDoc = true
       treeData.value.splice(i, 0, op)
       break;
     }
+  }
+  if (!foundDoc) {
+    treeData.value.push(op)
   }
 }
 
