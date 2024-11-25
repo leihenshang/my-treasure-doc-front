@@ -177,7 +177,7 @@ function topMenuUpdate(key: string, item: MenuOption): void {
         id: doc.id,
         title: doc.title,
         groupType: "doc",
-      } as DocGroup, treeData.value.length + 1))
+      } as DocGroup))
       router.push({ path: `/Editor/${doc.id}` })
     }).catch(err => {
       message.error(err)
@@ -220,7 +220,7 @@ function refreshTree() {
 
   getDocGroupTree(0, true).then((response) => {
     (response.data as Array<DocGroup>).map((val, idx) => {
-      treeData.value.push(buildTreeItem(val, idx))
+      treeData.value.push(buildTreeItem(val))
     })
   }).catch((err) => {
     message.error(err)
@@ -241,13 +241,13 @@ function refreshTopDoc(recycleBin: boolean = false) {
           title: val.title,
           groupType: 'doc',
           id: val.id,
-        }, idx))
+        }))
       } else {
         topDocList.value.push(buildTreeItem({
           title: val.title,
           groupType: 'doc',
           id: val.id,
-        }, idx))
+        }))
       }
 
 
@@ -257,10 +257,10 @@ function refreshTopDoc(recycleBin: boolean = false) {
   })
 }
 
-function buildTreeItem(d: DocGroup, key: number) {
+function buildTreeItem(d: DocGroup): TreeOption {
   return {
     label: d.title,
-    key: key,
+    key: `${d.groupType}-${d.id}`,
     id: d.id,
     isLeaf: d.groupType == 'doc',
     groupType: d.groupType,
@@ -290,7 +290,7 @@ function handleLoad(node: TreeOption) {
       const docGroupList = response.data as Array<DocGroup>
       let arr: any = new Array<any>(docGroupList.length)
       docGroupList.map((val, idx) => {
-        arr.push(buildTreeItem(val, idx))
+        arr.push(buildTreeItem(val))
       })
       node.children = arr
       resolve()
@@ -417,7 +417,7 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
                 id: doc.id,
                 title: doc.title,
                 groupType: "doc",
-              } as DocGroup, key))
+              } as DocGroup))
             } else {
               recursionReloadTreeNode(treeData.value, doc.groupId || 0)
             }
@@ -459,7 +459,7 @@ const treeNodeSuffixWithRecycleBin = (info: { option: TreeOption, checked: boole
                 id: info.option.id as unknown as number,
                 title: info.option.label,
                 groupType: "doc",
-              } as DocGroup, treeData.value.length + 1))
+              } as DocGroup))
 
               refreshTopDoc(true)
             }).catch((err) => { message.error(`${err}`) })
