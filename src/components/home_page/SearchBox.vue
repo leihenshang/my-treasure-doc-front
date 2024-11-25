@@ -4,7 +4,9 @@
         style="min-width:80vh; position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
         <div class="dialog-container">
             <n-space vertical>
-                <n-auto-complete :options="autoCompleteOptions" placeholder="输入关键字" clear-after-select size="large"
+                <n-auto-complete :input-props="{
+                    autocomplete: 'disabled',
+                }" :options="autoCompleteOptions" placeholder="输入关键字" clear-after-select size="large" clearable
                     :on-select="handleSelect" :on-update:value="updateValue" />
             </n-space>
         </div>
@@ -32,19 +34,17 @@ function updateValue(value: string | null) {
     if (!value || value.length <= 0) {
         return
     }
+
     getDocList(-1, -1, false, value).then((resp) => {
-        const arr: Array<AutoCompleteOption> = new Array<AutoCompleteOption>(resp.list.length)
+        autoCompleteOptions.value = []
         resp.list.map((val) => {
-            arr.push({
+            autoCompleteOptions.value.push({
                 value: val.id.toString(),
-                label: val.title
+                label: val.title,
+                disabled: false,
             } as AutoCompleteOption)
         })
-        autoCompleteOptions.value = arr
     })
 }
-
-
-
 
 </script>
