@@ -4,9 +4,11 @@
             <div class="edit-banner">
                 <n-space>
                     <div class="icon-group">
-                        <n-icon size="20">
-                            <Menu></Menu>
-                        </n-icon>
+                        <n-button text style="font-size: 24px" @click="globalStore.leftMenuCollapseSwitch()">
+                            <n-icon size="20">
+                                <Menu></Menu>
+                            </n-icon>
+                        </n-button>
                         <n-icon size="20">
                             <ArrowBack> </ArrowBack>
                         </n-icon>
@@ -46,15 +48,17 @@
 <script lang="ts" setup>
 import { createDoc, getDoc, updateDoc } from "@/api/doc";
 import Vditor from '@/components/Vditor.vue';
+import { useGlobalStore } from '@/stores/global';
 import { Doc } from "@/types/resource";
 import eventBus from '@/utils/event_bus';
 import { ArrowBack, Menu, Refresh } from '@vicons/ionicons5';
 import { NIcon, useMessage } from 'naive-ui';
-import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 const props = defineProps<{
     id: number | string,
 }>()
 
+const globalStore = useGlobalStore()
 const currentDoc = ref<Doc>({ title: '' } as Doc)
 const message = useMessage()
 const isTop = ref(false)

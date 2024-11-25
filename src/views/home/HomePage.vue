@@ -1,8 +1,9 @@
 <template>
   <div class="homePage-wrapper">
     <n-layout has-sider class="menu-layout">
-      <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="64" :width="288"
-        :collapsed="leftMenuCollapsed" @collapse="leftMenuCollapsed = true" @expand="leftMenuCollapsed = false">
+      <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="0" :width="288"
+        :collapsed="leftMenuCollapsed" :collapse="globalStore.leftMenuCollapse"
+        @expand="globalStore.leftMenuCollapse = true">
         <div style="text-align:center;">
           <n-button icon-placement="right" text size="large" @click="router.push('/Dashboard')">
             <template #icon>
@@ -45,6 +46,7 @@ import { createDoc, deleteDoc, getDocList, updateDoc } from "@/api/doc";
 import { deleteGroup, getDocGroupTree } from "@/api/doc_group";
 import { logOut } from '@/api/user';
 import CreateGroup from "@/components/home_page/CreateGroup.vue";
+import { useGlobalStore } from '@/stores/global';
 import { Doc, DocGroup } from '@/types/resource';
 import eventBus from '@/utils/event_bus';
 import { DashboardOutlined, FolderAddOutlined } from '@vicons/antd';
@@ -70,9 +72,10 @@ import {
   NTree,
   TreeOption, useMessage
 } from 'naive-ui';
-import { Component, h, onMounted, ref } from 'vue';
+import { Component, computed, h, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+const globalStore = useGlobalStore()
 const router = useRouter();
 const topMenuRef = ref(null)
 const message = useMessage()
@@ -83,7 +86,7 @@ const showModal = ref(false);
 const showSearchBox = ref(false);
 const groupHandleType = ref('');
 const updateGroup = ref<DocGroup>({} as DocGroup);
-const leftMenuCollapsed = ref(false)
+const leftMenuCollapsed = computed(() => globalStore.leftMenuCollapse)
 
 onMounted(() => {
   refreshTree();
