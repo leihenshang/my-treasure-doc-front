@@ -7,6 +7,7 @@ export function getDocList(
     groupId: number = 0,
     isTop: number = 0,
     recycleBin: boolean = false,
+    keyword: string = '',
     pagination: PaginationWithSort = new PaginationWithSort(),
 ): Promise<TreasureResponseList<Doc>> {
     return new Promise<TreasureResponseList<Doc>>((resolve, reject) => {
@@ -17,7 +18,8 @@ export function getDocList(
                 orderBy: pagination.orderBy,
                 groupId: groupId,
                 isTop: isTop,
-                recycleBin: recycleBin ? 1 : 2
+                recycleBin: recycleBin ? 1 : 2,
+                keyword: keyword
             }
         }).then((response: any) => {
             if (response?.code) {

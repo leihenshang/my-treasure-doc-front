@@ -37,6 +37,7 @@
   <CreateGroup v-model:show="showModal" v-model:update-group="updateGroup" v-model:handle-type="groupHandleType"
     @add-tree-item="addTreeItem" @recursion-reload="id => recursionReloadTreeNode(treeData, id)">
   </CreateGroup>
+  <SearchBox v-model:show="showSearchBox"></SearchBox>
 </template>
 
 <script lang="ts" setup>
@@ -79,6 +80,7 @@ const treeData = ref<Array<TreeOption>>([])
 const topDocList = ref<Array<TreeOption>>([])
 const recycleBinList = ref<Array<TreeOption>>([])
 const showModal = ref(false);
+const showSearchBox = ref(false);
 const groupHandleType = ref('');
 const updateGroup = ref<DocGroup>({} as DocGroup);
 const leftMenuCollapsed = ref(false)
@@ -199,6 +201,8 @@ function topMenuUpdate(key: string, item: MenuOption): void {
       title: "",
       groupType: "",
     })
+  } else if (key === 'top-menu-search') {
+    showSearchBox.value = true
   }
 }
 
