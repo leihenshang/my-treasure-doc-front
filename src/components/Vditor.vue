@@ -1,5 +1,5 @@
 <template>
-    <div id="vditor-container"></div>
+    <div id="vditor-container" style="height: 100%;width: auto;"></div>
 </template>
 <script lang="ts" setup>
 import { PATH_URL } from '@/api/service'
@@ -27,8 +27,9 @@ onMounted(() => {
     const msg = message.loading("编辑器初始化...")
     vditorContainer.value = new Vditor("vditor-container", {
         theme: "classic",
-        minHeight: 900,
-        height: '100%-20px',
+        minHeight: 800,
+        height: '880px',
+        typewriterMode: true,
         toolbarConfig: {
             pin: true,
         },
@@ -125,8 +126,4 @@ function getMarkdownH1Text(markdownContent: string): string {
 }
 </script>
 
-<style scoped lang='scss'>
-// ul,
-// ol {
-//     list-style: decimal;
-// }</style>
+<style scoped lang='scss'></style>

@@ -115,7 +115,7 @@ function getSetCurrentDoc(docId: number) {
 <style scoped lang='scss'>
 .edit-box {
     padding: 5px 5px;
-    height: 100%;
+    height: 900px;
 
     .edit-banner {
         height: 20px;
@@ -144,9 +144,8 @@ function getSetCurrentDoc(docId: number) {
     }
 
     .edit-content {
-        height: 100%;
+        height: calc(100%-20px);
         width: 100%;
-
     }
 
     .div404 {
