@@ -34,7 +34,24 @@ onMounted(() => {
             pin: true,
         },
         counter: {
-            enable: true
+            enable: true,
+            type: 'text',
+        },
+        outline: {
+            enable: false,
+            position: 'right',
+        },
+        preview: {
+            markdown: {
+                toc: true,
+                mark: true,
+                footnotes: true,
+                autoSpace: true,
+            },
+            math: {
+                engine: 'KaTeX',
+                inlineDigit: true,
+            },
         },
         mode: 'wysiwyg',
         placeholder: '在这里写下你的第一行文字吧！',
@@ -55,10 +72,6 @@ onMounted(() => {
                     }
                 })
             })
-        },
-        outline: {
-            enable: false,
-            position: 'left'
         },
         cache: {
             enable: false
