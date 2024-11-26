@@ -32,6 +32,10 @@ onMounted(() => {
         toolbarConfig: {
             pin: true,
         },
+        counter: {
+            enable: true
+        },
+        mode: 'wysiwyg',
         placeholder: '在这里写下你的第一行文字吧！',
         value: props.doc.content,
         after: () => {
