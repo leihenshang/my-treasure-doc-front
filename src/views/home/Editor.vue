@@ -12,9 +12,7 @@
                         <n-icon size="20">
                             <ArrowBack> </ArrowBack>
                         </n-icon>
-                        <n-icon size="20">
-                            <Refresh></Refresh>
-                        </n-icon>
+
                     </div>
                     <n-switch :disabled="currentDoc.deletedAt !== null" v-model:value="isTop" size="small"
                         @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, true)">
@@ -29,6 +27,14 @@
                         </template>
                     </n-switch>
                     <span class="bar-title">{{ currentDoc.title }}</span>
+                    <n-button default round size="tiny" @click="showHistoryModal = !showHistoryModal">
+                        <template #icon>
+                            <n-icon size="18">
+                                <Refresh></Refresh>
+                            </n-icon>
+                        </template>
+                        历史
+                    </n-button>
                 </n-space>
             </div>
             <div class="edit-content">
@@ -43,11 +49,12 @@
             </n-result>
         </div>
     </div>
-
+    <DocHistory v-model:show="showHistoryModal"></DocHistory>
 </template>
 <script lang="ts" setup>
 import { createDoc, getDoc, updateDoc } from "@/api/doc";
 import Vditor from '@/components/Vditor.vue';
+import DocHistory from '@/components/doc/DocHistory.vue';
 import { useGlobalStore } from '@/stores/global';
 import { Doc } from "@/types/resource";
 import eventBus from '@/utils/event_bus';
@@ -62,6 +69,7 @@ const globalStore = useGlobalStore()
 const currentDoc = ref<Doc>({ title: '' } as Doc)
 const message = useMessage()
 const isTop = ref(false)
+const showHistoryModal = ref(false)
 
 function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false) {
     currentDoc.value.title = docUpdate.title || ''

@@ -13,6 +13,11 @@ export interface Doc extends BaseResource {
     isRecover?: boolean
 }
 
+export interface DocHistory extends BaseResource {
+    title: string,
+    content: string,
+}
+
 export interface DocGroup extends BaseResource {
     title: string,
     groupType: string,
