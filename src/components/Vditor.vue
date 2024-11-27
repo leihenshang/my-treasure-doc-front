@@ -48,10 +48,7 @@ onMounted(() => {
                 footnotes: true,
                 autoSpace: true,
             },
-            math: {
-                engine: 'KaTeX',
-                inlineDigit: true,
-            },
+
         },
         mode: 'wysiwyg',
         placeholder: '在这里写下你的第一行文字吧！',
