@@ -16,7 +16,7 @@
 
                 </template>
                 <template #2>
-                    <div ref="vditorContainerRef" style="margin:0 10px;"></div>
+                    <div ref="vditorContainerRef" style="margin:0 10px;height:600px"></div>
                 </template>
             </n-split>
         </div>
