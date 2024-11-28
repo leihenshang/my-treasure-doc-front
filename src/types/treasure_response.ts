@@ -1,6 +1,7 @@
 const DefaultPageNum = 1;
 const DefaultPageSize = 20;
 const FilterId = "id";
+const FilterCreatedAt = "createdAt";
 const OrderBySortDesc = "desc";
 const OrderBySortAsc = "asc";
 
@@ -33,7 +34,7 @@ class PaginationWithSort {
         public pageSize: number = DefaultPageSize,
         public orderBy: string = "",
     ) {
-        this.orderBy = JSON.stringify([{ field: FilterId, sort: OrderBySortDesc }])
+        this.orderBy = `${FilterCreatedAt}_${OrderBySortDesc}`
     }
 }
 
@@ -51,9 +52,7 @@ class TreasureResponseList<T> {
 
 
 
-export {
-    TreasureResponse, PaginationWithSort, TreasureResponseList
-}
+export { PaginationWithSort, TreasureResponse, TreasureResponseList };
 
 
 
