@@ -61,10 +61,11 @@ import eventBus from '@/utils/event_bus';
 import { ArrowBack, Menu, Refresh } from '@vicons/ionicons5';
 import { NIcon, useMessage } from 'naive-ui';
 import { nextTick, onMounted, ref, watch } from 'vue';
+
+
 const props = defineProps<{
     id: number | string,
 }>()
-
 const globalStore = useGlobalStore()
 const currentDoc = ref<Doc>({ title: '' } as Doc)
 const message = useMessage()

@@ -5,13 +5,13 @@
             历史
         </template>
         <div class="dialog-container">
-
             <n-split direction="horizontal" style="min-height: 600px" :max="0.75" :min="0.25">
                 <template #1>
-                    <n-data-table :columns="columns" :data="data" :pagination="pagination" :bordered="false" />
+                    <n-data-table :columns="columns" :data="data" :pagination="pagination" :bordered="false"
+                        style="margin-right:5px" />
                 </template>
                 <template #2>
-                    <div id="vditor-container1" ref="vditorContainerRef" style="height: 100%;width: auto;"></div>
+                    <div ref="vditorContainerRef" style="height: 100%;width: auto;"></div>
                 </template>
             </n-split>
         </div>
@@ -24,10 +24,11 @@
 <script lang="ts" setup>
 import type { DataTableColumns } from 'naive-ui';
 import { NButton, useMessage } from 'naive-ui';
+import Vditor from 'vditor';
 import "vditor/dist/index.css";
-import { h, onMounted, ref } from 'vue';
+import { h, onUpdated, useTemplateRef } from 'vue';
 
-const vditorContainerRef = ref()
+const vditorContainerRef = useTemplateRef('vditorContainerRef')
 const message = useMessage()
 
 interface Song {
@@ -86,16 +87,13 @@ const columns = createColumns({
 })
 
 const pagination = false as const
-
 const show = defineModel('show')
 
 function handleOkBtn() {
 
 }
 
-const vditorContainer = ref()
-
-onMounted(() => {
-
+onUpdated(() => {
+    Vditor.preview(vditorContainerRef.value as HTMLDivElement, `#1111 \n ## 222222`, { mode: "dark" })
 })
 </script>
