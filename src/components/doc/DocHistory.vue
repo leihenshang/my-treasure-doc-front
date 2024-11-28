@@ -5,12 +5,12 @@
             历史
         </template>
         <div class="dialog-container">
-            <n-split direction="horizontal" style="height: 630px" :max="0.75" :min="0.25">
+            <n-split direction="horizontal" style="height: 600px" :max="0.75" :min="0.25">
                 <template #1>
                     <div class="table-container" style="margin: 0 10px">
                         <n-config-provider>
                             <n-data-table :columns="columns" :data="tableRows" :pagination="pagination"
-                                :bordered="false" :loading="loading" remote style="height:620px" striped />
+                                :bordered="false" :loading="loading" remote style="height:580px" size="small" />
                         </n-config-provider>
                     </div>
 
@@ -74,7 +74,7 @@ const columns = [
         key: 'createdAt'
     },
     {
-        title: 'Action',
+        title: '操作',
         key: 'actions',
         render(row: rowData) {
             return h(
@@ -125,7 +125,6 @@ onUpdated(() => {
     if (!show.value) {
         return
     }
-    message.info(`onUpdated,docId:${docId.value}`)
     getTableRows(1)
 })
 
