@@ -16,6 +16,7 @@ export interface Doc extends BaseResource {
 export interface DocHistory extends BaseResource {
     title: string,
     content: string,
+    docId: number,
 }
 
 export interface DocGroup extends BaseResource {

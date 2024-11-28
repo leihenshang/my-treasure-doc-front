@@ -5,12 +5,18 @@
             历史
         </template>
         <div class="dialog-container">
-            <n-split direction="horizontal" style="min-height: 600px" :max="0.75" :min="0.25">
+            <n-split direction="horizontal" style="height: 630px" :max="0.75" :min="0.25">
                 <template #1>
-                    <n-data-table :columns="columns" :data="tableRows" :pagination="pagination" :bordered="false" />
+                    <div class="table-container" style="margin: 0 10px">
+                        <n-config-provider>
+                            <n-data-table :columns="columns" :data="tableRows" :pagination="pagination"
+                                :bordered="false" :loading="loading" remote style="height:620px" striped />
+                        </n-config-provider>
+                    </div>
+
                 </template>
                 <template #2>
-                    <div ref="vditorContainerRef"></div>
+                    <div ref="vditorContainerRef" style="margin:0 10px;"></div>
                 </template>
             </n-split>
         </div>
@@ -21,21 +27,37 @@
     </n-modal>
 </template>
 <script lang="ts" setup>
-import { getDocHistory, getDocHistoryList } from '@/api/doc/doc_history';
+import { getDocHistory, getDocHistoryList, recoveryDoc } from '@/api/doc/doc_history';
 import { DocHistory } from '@/types/resource';
-import { NButton, useMessage } from 'naive-ui';
+import { PaginationWithSort } from '@/types/treasure_response';
+import { NButton, PaginationProps, useMessage } from 'naive-ui';
 import Vditor from 'vditor';
 import "vditor/dist/index.css";
-import { h, onUpdated, ref, useTemplateRef } from 'vue';
+import { h, onUpdated, reactive, ref, useTemplateRef } from 'vue';
 
+const emit = defineEmits<{
+    (e: 'refreshDoc'): void
+}>()
 const vditorContainerRef = useTemplateRef('vditorContainerRef')
 const message = useMessage()
-const pagination = false
+const pagination = reactive({
+    page: 1,
+    pageSize: 10,
+    pageCount: 1,
+    itemCount: 0,
+    prefix: () => {
+        return '共 ' + pagination.itemCount + ' 项';
+    },
+    onChange: page => {
+        pagination.page = page;
+        getTableRows(pagination.page)
+    }
+} as PaginationProps)
 const show = defineModel('show')
 const docId = defineModel('docId')
 const tableRows = ref<Array<rowData>>([])
 const currentDocHistory = ref<DocHistory>()
-const selectedId = ref<number>()
+const loading = ref(true)
 
 interface rowData {
     id: number,
@@ -84,6 +106,18 @@ const columns = [
 
 
 function handleOkBtn() {
+    if (!currentDocHistory.value || currentDocHistory.value.id <= 0) {
+        return
+    }
+    const docId = currentDocHistory.value.docId
+    recoveryDoc(currentDocHistory.value.id).then(() => {
+        show.value = false
+        emit('refreshDoc')
+    }).catch(err => {
+        console.log(err)
+        message.error(`${err}`)
+    })
+
 
 }
 
@@ -91,21 +125,35 @@ onUpdated(() => {
     if (!show.value) {
         return
     }
-
     message.info(`onUpdated,docId:${docId.value}`)
+    getTableRows(1)
+})
+
+function getTableRows(currentPage: number) {
+    loading.value = !loading.value
     tableRows.value = []
-    getDocHistoryList(docId.value as number).then((resp) => {
-        console.log(resp.list)
+    getDocHistoryList(docId.value as number, {
+        page: currentPage,
+        pageSize: pagination.pageSize,
+        orderBy: `createdAt_desc`,
+    } as PaginationWithSort).then((resp) => {
+        console.log(resp)
+        pagination.page = resp.pagination?.page || 0
+        pagination.pageSize = resp.pagination?.pageSize || 0
+        pagination.itemCount = resp.pagination?.total || 0
+        pagination.pageCount = Math.ceil(pagination.itemCount / pagination.pageSize)
+        console.log(pagination)
         resp.list.map((val) => {
             tableRows.value.push({
                 id: val.id,
                 createdAt: val.createdAt as String,
             } as rowData)
         })
-
+        loading.value = false
     }).catch(err => {
         console.log(err)
         message.error(`${err}`)
     })
-})
+}
+
 </script>

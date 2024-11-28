@@ -49,7 +49,9 @@
             </n-result>
         </div>
     </div>
-    <DocHistory v-model:show="showHistoryModal" v-model:doc-id="currentDoc.id"></DocHistory>
+    <DocHistory v-model:show="showHistoryModal" v-model:doc-id="currentDoc.id"
+        v-on:refresh-doc="getSetCurrentDoc(props.id as number)">
+    </DocHistory>
 </template>
 <script lang="ts" setup>
 import { createDoc, getDoc, updateDoc } from "@/api/doc";
