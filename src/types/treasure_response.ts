@@ -14,11 +14,11 @@ class TreasureResponse<T> {
 
     }
 
-    getData() {
+    getData(): T {
         return this.data as T
     }
 
-    getDataList() {
+    getDataList(): TreasureResponseList<T> {
         return this.data as TreasureResponseList<T>
     }
 }

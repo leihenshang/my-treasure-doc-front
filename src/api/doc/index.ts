@@ -40,7 +40,7 @@ export function getDoc(id: number | string = 0): Promise<TreasureResponse<Doc>> 
             url: '/api/doc/detail', params: {
                 id
             }
-        }).then((response: any) => {
+        }).then((response: TreasureResponse<Doc>) => {
             if (response?.code) {
                 reject(response?.msg)
             }

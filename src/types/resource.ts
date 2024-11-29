@@ -10,6 +10,7 @@ export interface Doc extends BaseResource {
     content: string,
     groupId?: number,
     isTop?: number,
+    isPin?: number,
     isRecover?: boolean
 }
 
@@ -36,6 +37,7 @@ export interface Note extends BaseResource {
     title: string,
     content: string,
     noteType: string,
+    docId: number,
     isTop?: number,
     priority?: 0,
     color?: string,

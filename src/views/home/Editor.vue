@@ -91,6 +91,7 @@ const showHistoryModal = ref(false)
 function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false) {
     currentDoc.value.title = docUpdate.title || ''
     docUpdate.isTop = isTop.value ? 1 : 2
+    docUpdate.isPin = isPin.value ? 1 : 2
     if (docUpdate.id > 0) {
         updateDoc(docUpdate).then(() => {
             if (onlyIsTop) {

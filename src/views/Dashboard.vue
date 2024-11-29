@@ -30,7 +30,6 @@
                     </n-dropdown>
                 </div>
             </n-gi>
-
         </n-grid>
         <n-hr></n-hr>
         <n-grid :cols="5" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" :x-gap="12" :y-gap="8">
@@ -54,11 +53,34 @@
 
             </n-gi>
         </n-grid>
-    </div>
+        <n-hr></n-hr>
+        <n-grid :cols="5" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" :x-gap="12" :y-gap="8">
+            <n-gi v-for="i in noteListDoc" :key="i.id" :class="'green'">
+                <div @click="handleDocNote(i.docId)">
+                    <n-icon :size="iconSize" color="#D9A115">
+                        <StickyNote></StickyNote>
+                    </n-icon>
+                    <n-ellipsis style="max-width: 200px" :line-clamp="2">{{ i.title }}</n-ellipsis>
+                </div>
+                <div class="right-bottom"> <n-dropdown trigger="hover" :options="genDropMenuOptions(i.id)"
+                        @select="handleSelect">
+                        <n-button text>
+                            <template #icon>
+                                <n-icon>
+                                    <MenuSharp />
+                                </n-icon>
+                            </template>
+                        </n-button>
+                    </n-dropdown></div>
 
+            </n-gi>
+        </n-grid>
+    </div>
+    <DocNote v-model:show="showDocModal" v-model:doc-id="showDocModalDocId"></DocNote>
 </template>
 <script lang="ts" setup>
 import { deleteNote, getNoteList } from '@/api/note';
+import DocNote from '@/components/doc/DocNote.vue';
 import CreateNote from '@/components/note/CreateNote.vue';
 import { router } from '@/router';
 import { Note } from '@/types/resource';
@@ -69,6 +91,8 @@ import { computed, onMounted, ref } from 'vue';
 // 鼠标事件
 // @mouseenter="handleMouse(i.id, 'enter')" @mouseleave="handleMouse(i.id, 'leave')"
 
+const showDocModal = ref(false)
+const showDocModalDocId = ref<number>()
 const gridCollapsed = ref(false)
 const gridCollapsedRows = ref(1)
 const message = useMessage()
@@ -90,6 +114,16 @@ const noteListNote = computed(() => {
     const arr: Note[] = []
     noteList.value?.map((v) => {
         if (v.noteType === 'note') {
+            arr.push(v)
+        }
+    })
+    return arr
+})
+
+const noteListDoc = computed(() => {
+    const arr: Note[] = []
+    noteList.value?.map((v) => {
+        if (v.noteType === 'doc') {
             arr.push(v)
         }
     })
@@ -145,6 +179,11 @@ function handleSelect(key: string | number, option: DropdownOption) {
         showModal.value = true
         currentNoteId.value = id
     }
+}
+
+function handleDocNote(docId: number) {
+    showDocModalDocId.value = docId
+    showDocModal.value = true
 }
 
 </script>
