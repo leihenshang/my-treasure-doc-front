@@ -547,7 +547,7 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: number, title
 </script>
 
 <style scoped lang='scss'>
-@use "@/assets/style/helper.scss";
+@use "/src/assets/style/helper.scss";
 
 .homePage-wrapper {
   height: 100%;
