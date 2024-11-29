@@ -26,6 +26,18 @@
                             置顶了
                         </template>
                     </n-switch>
+                    <n-switch :disabled="currentDoc.deletedAt !== null" v-model:value="isPin" size="small"
+                        @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, true)">
+                        <template #icon>
+                            {{ isPin ? '😄' : '🥲' }}
+                        </template>
+                        <template #unchecked>
+                            没钉住
+                        </template>
+                        <template #checked>
+                            钉住了
+                        </template>
+                    </n-switch>
                     <span class="bar-title">{{ currentDoc.title }}</span>
                     <n-button default round size="tiny" @click="showHistoryModal = !showHistoryModal">
                         <template #icon>
@@ -35,6 +47,7 @@
                         </template>
                         历史
                     </n-button>
+
                 </n-space>
             </div>
             <div class="edit-content">
@@ -72,6 +85,7 @@ const globalStore = useGlobalStore()
 const currentDoc = ref<Doc>({ title: '' } as Doc)
 const message = useMessage()
 const isTop = ref(false)
+const isPin = ref(false)
 const showHistoryModal = ref(false)
 
 function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false) {
