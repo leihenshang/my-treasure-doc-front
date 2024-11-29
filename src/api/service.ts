@@ -15,14 +15,14 @@ const abortControllerMap: Map<string, AbortController> = new Map()
 const axiosInstance: AxiosInstance = axios.create(axiosConf)
 const userInfoStore = useUserInfoStore()
 
-axios.get('config.json')
-  .then(response => response.data)
-  .then(data => {
-    console.log('获取到的文本内容：', data);
-  })
-  .catch(error => {
-    console.error('获取文件时出错：', error);
-  });
+// axios.get('config.json')
+//   .then(response => response.data)
+//   .then(data => {
+//     console.log('获取到的文本内容：', data);
+//   })
+//   .catch(error => {
+//     console.error('获取文件时出错：', error);
+//   });
 
 axiosInstance.interceptors.request.use((res: InternalAxiosRequestConfig) => {
   const controller = new AbortController()

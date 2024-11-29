@@ -547,7 +547,7 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: number, title
 </script>
 
 <style scoped lang='scss'>
-@import "@/assets/style/helper.scss";
+@use "@/assets/style/helper.scss";
 
 .homePage-wrapper {
   height: 100%;
@@ -560,14 +560,14 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: number, title
     height: 100%;
 
     .menu-sider {
-      background: $menuBackground;
+      background: helper.$menuBackground;
 
       .menu-menu ::v-deep(.n-menu-item.n-menu-item--selected) {
         .n-menu-item-content {
 
           .n-menu-item-content__icon,
           .n-menu-item-content-header {
-            color: darken($mainColor, 0.5);
+            color: adjust(helper.$mainColor, 0.5);
           }
         }
 
@@ -575,7 +575,7 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: number, title
 
           .n-menu-item-content__icon,
           .n-menu-item-content-header {
-            color: darken($mainColor, 0.5);
+            color: adjust(helper.$mainColor, 0.5);
           }
         }
 
