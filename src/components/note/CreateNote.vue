@@ -17,7 +17,7 @@
                 <n-form-item label="标题" path="title" v-if="formValue.noteType == 'bookmark'">
                     <n-input v-model:value="formValue.title" placeholder="标题" />
                 </n-form-item>
-                <n-form-item label="内容" path="content">
+                <n-form-item label="内容" path="content" v-if="formValue.noteType != 'doc'">
                     <n-input type="textarea" v-model:value="formValue.content" placeholder="内容" />
                 </n-form-item>
                 <n-form-item label="置顶">
@@ -59,7 +59,8 @@ const initNote: Note = {
     title: '',
     content: '',
     isTop: 0,
-    priority: 0
+    priority: 0,
+    docId: 0
 }
 const showModal = defineModel('showModal')
 const formRef = ref<FormInst | null>(null)
@@ -99,6 +100,10 @@ const options = [
     {
         label: '备忘',
         value: 'note'
+    },
+    {
+        label: '文档',
+        value: 'doc'
     },
 ]
 
