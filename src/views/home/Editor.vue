@@ -12,8 +12,15 @@
                         <n-icon size="20">
                             <ArrowBack> </ArrowBack>
                         </n-icon>
-
                     </div>
+                    <n-button default round size="tiny" @click="showHistoryModal = !showHistoryModal">
+                        <template #icon>
+                            <n-icon size="20">
+                                <Refresh></Refresh>
+                            </n-icon>
+                        </template>
+                        历史
+                    </n-button>
                     <n-switch :disabled="currentDoc.deletedAt !== null" v-model:value="isTop" size="small"
                         @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, true)">
                         <template #icon>
@@ -38,15 +45,12 @@
                             钉住了
                         </template>
                     </n-switch>
-                    <span class="bar-title">{{ currentDoc.title }}</span>
-                    <n-button default round size="tiny" @click="showHistoryModal = !showHistoryModal">
-                        <template #icon>
-                            <n-icon size="18">
-                                <Refresh></Refresh>
-                            </n-icon>
-                        </template>
-                        历史
-                    </n-button>
+                    <n-breadcrumb>
+                        <n-breadcrumb-item>
+                            {{ currentDoc.title }}
+                        </n-breadcrumb-item>
+                    </n-breadcrumb>
+
 
                 </n-space>
             </div>
@@ -159,14 +163,7 @@ function getSetCurrentDoc(docId: number) {
             }
         }
 
-        .bar-title {
-            display: inline-block;
-            height: 20px;
-            line-height: 20px;
-            text-align: center;
-            overflow: hidden;
-            margin: 0 5px;
-        }
+
     }
 
     .edit-content {
