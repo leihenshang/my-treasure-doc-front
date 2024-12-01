@@ -395,9 +395,6 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
             title: title,
             groupId: info.option.id as unknown as number
           }
-
-
-
           createDoc(newDoc).then(res => {
             const doc = res.getData()
             let key = doc.id + 10000
