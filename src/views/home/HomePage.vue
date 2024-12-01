@@ -226,9 +226,8 @@ function genDocTitle(suffix: string = "-速记") {
 
 function refreshTree() {
   treeData.value = []
-
   getDocGroupTree(0, true).then((response) => {
-    (response.data as Array<DocGroup>).map((val, idx) => {
+    (response.data as Array<DocGroup>).map((val) => {
       treeData.value.push(buildTreeItem(val))
     })
   }).catch((err) => {
@@ -496,7 +495,7 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
 }
 
 function recursionReloadTreeNode(arr: Array<TreeOption>, key: number) {
-  if (arr.length <= 0 || key <= 0) {
+  if (key <= 0) {
     refreshTree()
     return
   }

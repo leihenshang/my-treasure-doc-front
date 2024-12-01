@@ -33,7 +33,7 @@ import {
     TreeOption,
     useMessage
 } from 'naive-ui';
-import { h, reactive, ref } from 'vue';
+import { h, reactive, ref, watch } from 'vue';
 import { buildTreeItem } from '@/utils/common'
 
 const emit = defineEmits<{
@@ -70,6 +70,13 @@ function getModalTileByType(handleType: string): string {
     }
     return ''
 }
+
+watch(updateGroup, (newGroup) => {
+    const group = newGroup as DocGroup
+    console.log(group)
+    updateModalName.value = group.title
+    updateModalPid.value = group.pid || -1
+})
 
 function updateModal(type: string) {
     const updateGroupObj = updateGroup.value as unknown as DocGroup
@@ -108,7 +115,7 @@ function updateModal(type: string) {
 
     if (type == 'create') {
         newGroup.title = updateModalName.value
-        if (newGroup.pid as number < 0 && updateModalPid.value > 0) {
+        if (updateModalPid.value > 0) {
             newGroup.pid = updateModalPid.value
         }
         createGroup(newGroup).then((resp) => {
@@ -121,7 +128,8 @@ function updateModal(type: string) {
                 emit('recursionReload', newGroup.pid || 0)
             }
         }).catch(err => {
-            message.error(err)
+            console.log(err)
+            message.error(`${err}`)
         })
     }
 
