@@ -13,7 +13,16 @@ class EventBus {
     // 取消订阅事件的方法
     off(eventName: string, callback: (data: any) => void) {
         if (this.events[eventName]) {
-            this.events[eventName] = this.events[eventName].filter(cb => cb !== callback);
+            this.events[eventName] = this.events[eventName].filter(cb => {
+                console.log(cb !== callback)
+                return cb !== callback
+            });
+        }
+    }
+
+    offAll(eventName: string) {
+        if (this.events[eventName]) {
+            this.events[eventName] = [];
         }
     }
 
@@ -21,6 +30,7 @@ class EventBus {
     emit(eventName: string, data?: any) {
         if (this.events[eventName]) {
             this.events[eventName].forEach(callback => callback(data));
+
         }
     }
 }

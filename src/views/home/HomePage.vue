@@ -72,7 +72,7 @@ import {
   NTree,
   TreeOption, useMessage
 } from 'naive-ui';
-import { Component, computed, h, onMounted, ref } from 'vue';
+import { Component, computed, h, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { buildTreeItem } from '@/utils/common'
 
@@ -102,6 +102,12 @@ eventBus.on('updateDocTitle', (data: Doc) => {
 
 eventBus.on('updateTopDoc', () => {
   refreshDocList()
+})
+
+
+onBeforeUnmount(() => {
+  eventBus.offAll('updateTopDoc')
+  eventBus.offAll('updateDocTitle')
 })
 
 function addTreeItem(op: TreeOption) {
