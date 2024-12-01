@@ -34,7 +34,7 @@
                         </template>
                     </n-switch>
                     <n-switch :disabled="currentDoc.deletedAt !== null" v-model:value="isPin" size="small"
-                        @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, true)">
+                        @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, false)">
                         <template #icon>
                             {{ isPin ? '😄' : '🥲' }}
                         </template>
@@ -105,7 +105,9 @@ function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false) {
     } else if (docUpdate.title != '') {
         createDoc(docUpdate).then(res => {
             currentDoc.value.id = res.getData().id
-            eventBus.emit('updateTopDoc')
+            if (isTop.value) {
+                eventBus.emit('updateTopDoc')
+            }
         }).catch(err => {
             message.error(err)
         })
@@ -131,6 +133,7 @@ function getSetCurrentDoc(docId: number) {
         const doc = resp.data as Doc
         currentDoc.value = { ...doc }
         isTop.value = doc.isTop as number == 1
+        isPin.value = doc.isPin as number == 1
     }).catch(err => {
         message.error(err)
     })
