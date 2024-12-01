@@ -92,8 +92,8 @@ const leftMenuCollapsed = computed(() => globalStore.leftMenuCollapse)
 
 onMounted(() => {
   refreshTree();
-  refreshTopDoc();
-  refreshTopDoc(true);
+  refreshDocList();
+  refreshDocList(true);
 })
 
 eventBus.on('updateDocTitle', (data: Doc) => {
@@ -101,7 +101,7 @@ eventBus.on('updateDocTitle', (data: Doc) => {
 })
 
 eventBus.on('updateTopDoc', () => {
-  refreshTopDoc()
+  refreshDocList()
 })
 
 function addTreeItem(op: TreeOption) {
@@ -236,7 +236,7 @@ function refreshTree() {
   })
 }
 
-function refreshTopDoc(recycleBin: boolean = false) {
+function refreshDocList(recycleBin: boolean = false) {
   if (recycleBin) {
     recycleBinList.value = []
   } else {
@@ -449,7 +449,7 @@ const treeNodeSuffixWithRecycleBin = (info: { option: TreeOption, checked: boole
                 groupType: "doc",
               } as DocGroup))
 
-              refreshTopDoc(true)
+              refreshDocList(true)
             }).catch((err) => { message.error(`${err}`) })
           }
         }
@@ -474,7 +474,7 @@ const treeNodeSuffixWithRecycleBin = (info: { option: TreeOption, checked: boole
 
 function deleteTreeNode(id: number, type: string) {
   if (type === 'doc') {
-    deleteDoc({ id } as Doc).then(() => { message.success('删除成功'); refreshTopDoc(true); }).catch(err => { console.log(err) })
+    deleteDoc({ id } as Doc).then(() => { message.success('删除成功'); refreshDocList(true); }).catch(err => { console.log(err) })
   } else {
     deleteGroup({ id } as DocGroup).then(() => { message.success('删除成功') }).catch(err => { console.log(err) })
   }
