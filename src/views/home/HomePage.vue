@@ -74,6 +74,8 @@ import {
 } from 'naive-ui';
 import { Component, computed, h, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { buildTreeItem } from '@/utils/common'
+
 
 const globalStore = useGlobalStore()
 const router = useRouter();
@@ -264,27 +266,6 @@ function refreshTopDoc(recycleBin: boolean = false) {
   })
 }
 
-function buildTreeItem(d: DocGroup): TreeOption {
-  return {
-    label: d.title,
-    key: `${d.groupType}-${d.id}`,
-    id: d.id,
-    isLeaf: d.groupType == 'doc',
-    groupType: d.groupType,
-    prefix: () => getPrefixIcon(d.groupType),
-    pid: d.pid
-  }
-}
-
-
-function getPrefixIcon(groupType: string) {
-  switch (groupType) {
-    case "doc":
-      return h(NIcon, { color: "#0e7a0d" }, { default: () => h(DocumentTextOutline) })
-    default:
-      return h(NIcon, { color: "#FCB334" }, { default: () => h(FolderOutline) })
-  }
-}
 
 
 function handleLoad(node: TreeOption) {

@@ -34,6 +34,7 @@ import {
     useMessage
 } from 'naive-ui';
 import { h, reactive, ref } from 'vue';
+import { buildTreeItem } from '@/utils/common'
 
 const emit = defineEmits<{
     (e: 'addTreeItem', value: TreeOption): void
@@ -155,17 +156,6 @@ function loadTree(node: TreeOption) {
     }).catch(err => {
         console.log(err)
     })
-}
-
-function buildTreeItem(d: DocGroup): TreeOption {
-    return {
-        label: d.title,
-        key: d.id,
-        isLeaf: d.groupType == 'doc',
-        groupType: d.groupType,
-        prefix: () => h(NIcon, { color: "#FCB334" }, { default: () => h(FolderOutline) }),
-        pid: d.pid
-    }
 }
 
 
