@@ -136,12 +136,10 @@ function getTableRows(currentPage: number) {
         pageSize: pagination.pageSize,
         orderBy: `createdAt_desc`,
     } as PaginationWithSort).then((resp) => {
-        console.log(resp)
         pagination.page = resp.pagination?.page || 0
         pagination.pageSize = resp.pagination?.pageSize || 0
         pagination.itemCount = resp.pagination?.total || 0
         pagination.pageCount = Math.ceil(pagination.itemCount / pagination.pageSize)
-        console.log(pagination)
         resp.list.map((val) => {
             tableRows.value.push({
                 id: val.id,

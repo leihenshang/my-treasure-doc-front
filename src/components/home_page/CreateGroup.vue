@@ -73,7 +73,6 @@ function getModalTileByType(handleType: string): string {
 
 watch(updateGroup, (newGroup) => {
     const group = newGroup as DocGroup
-    console.log(group)
     updateModalName.value = group.title
     updateModalPid.value = group.pid || -1
 })
