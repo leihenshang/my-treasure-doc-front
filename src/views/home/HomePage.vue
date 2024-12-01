@@ -85,7 +85,7 @@ const recycleBinList = ref<Array<TreeOption>>([])
 const showModal = ref(false);
 const showSearchBox = ref(false);
 const groupHandleType = ref('');
-const updateGroup = ref<DocGroup>({} as DocGroup);
+const updateGroup = ref<DocGroup>();
 const leftMenuCollapsed = computed(() => globalStore.leftMenuCollapse)
 
 onMounted(() => {
