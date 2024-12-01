@@ -50,8 +50,6 @@
                             {{ currentDoc.title }}
                         </n-breadcrumb-item>
                     </n-breadcrumb>
-
-
                 </n-space>
             </div>
             <div class="edit-content">
@@ -145,7 +143,7 @@ function getSetCurrentDoc(docId: number) {
 <style scoped lang='scss'>
 .edit-box {
     padding: 5px 5px;
-    height: 900px;
+    min-height: 800px;
 
     .edit-banner {
         height: 20px;
@@ -164,11 +162,6 @@ function getSetCurrentDoc(docId: number) {
         }
 
 
-    }
-
-    .edit-content {
-        height: calc(100% - 20px);
-        width: 100%;
     }
 
     .div404 {

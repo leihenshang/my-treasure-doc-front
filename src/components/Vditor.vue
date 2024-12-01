@@ -28,7 +28,7 @@ onMounted(() => {
     vditorContainer.value = new Vditor("vditor-container", {
         theme: "classic",
         minHeight: 800,
-        height: '880px',
+        height: '95vh',
         typewriterMode: true,
         toolbarConfig: {
             pin: true,
