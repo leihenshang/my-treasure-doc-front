@@ -352,7 +352,6 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
           }
 
           if (key === 'updateDoc') {
-            console.log('updateDoc', info.option)
             changeModal('updateDoc', {
               id: info.option.id as number,
               title: info.option.label,
