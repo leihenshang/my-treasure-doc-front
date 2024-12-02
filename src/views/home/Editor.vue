@@ -76,6 +76,7 @@ import { History16Filled } from "@vicons/fluent";
 import { Menu } from '@vicons/ionicons5';
 import { NIcon, useMessage } from 'naive-ui';
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useRouter } from "vue-router";
 
 
 const props = defineProps<{
@@ -87,6 +88,7 @@ const message = useMessage()
 const isTop = ref(false)
 const isPin = ref(false)
 const showHistoryModal = ref(false)
+const router = useRouter()
 
 function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false) {
     currentDoc.value.title = docUpdate.title || ''
@@ -117,21 +119,27 @@ function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false) {
 onMounted(async () => {
     getSetCurrentDoc(props.id as number)
     eventBus.on('updateGroupName', (group: DocGroup) => {
-        console.log('updateGroupName', group)
         currentDoc.value.groupPath?.some((val) => {
             if (val.id === group.id) {
                 val.title = group.title
                 return true
             }
         })
-
-
+    })
+    eventBus.on('deleteDocGroup', (id: number) => {
+        currentDoc.value.groupPath?.some((val) => {
+            if (val.id === id) {
+                router.push({ path: `/Editor/0` })
+                return true
+            }
+        })
     })
     await nextTick()
 })
 
 onBeforeUnmount(() => {
     eventBus.offAll('updateGroupName')
+    eventBus.offAll('deleteDocGroup')
 })
 
 watch(() => props.id, (newId: number | string) => {

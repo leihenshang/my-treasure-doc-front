@@ -72,11 +72,12 @@ import {
   TreeOption, useMessage
 } from 'naive-ui';
 import { Component, computed, h, onBeforeUnmount, onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 
 const globalStore = useGlobalStore()
 const router = useRouter();
+const route = useRoute();
 const topMenuRef = ref(null)
 const message = useMessage()
 const treeData = ref<Array<TreeOption>>([])
@@ -489,7 +490,8 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
     if (arr[i]?.id && arr[i].id == key) {
       deleteTreeNode(arr[i].id as number, arr[i].groupType as string)
       arr.splice(i, 1)
-      router.push({ path: `/Editor/0` })
+      // router.push({ path: `/Editor/0` })
+      eventBus.emit('deleteDocGroup', key)
       break
     }
     recursionDeleteTreeNode(arr[i]?.children || [], key)
