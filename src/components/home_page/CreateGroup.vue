@@ -12,8 +12,8 @@
             </div>
             <div class="dialog-content">
                 <label>层级</label>
-                <n-tree-select v-model:value="updateModalPid" clearable :options="options" :cascade="true"
-                    :show-path="true" :allow-checking-not-loaded="true" :on-load="loadTree" />
+                <n-tree-select v-model:value="updateModalPid" clearable :options="options" key-field="id"
+                    :cascade="true" :show-path="true" :allow-checking-not-loaded="true" :on-load="loadTree" />
             </div>
         </div>
         <template #action>
@@ -49,6 +49,7 @@ const options = ref([
     {
         label: '顶层',
         key: 0,
+        id: 0,
         depth: 1,
         isLeaf: false
     }
@@ -142,8 +143,9 @@ function clearModal() {
 
 
 function loadTree(node: TreeOption) {
+    console.log(node)
     return new Promise<void>((resolve) => {
-        getDocGroupTree(node.key as number, false).then((response) => {
+        getDocGroupTree(node.id as number, false).then((response) => {
             if (!response.data) {
                 node.children = []
                 resolve()

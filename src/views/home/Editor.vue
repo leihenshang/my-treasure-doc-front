@@ -43,6 +43,9 @@
                         </template>
                     </n-switch>
                     <n-breadcrumb>
+                        <n-breadcrumb-item v-for="group in currentDoc.groupPath">
+                            {{ group.title }}
+                        </n-breadcrumb-item>
                         <n-breadcrumb-item>
                             {{ currentDoc.title }}
                         </n-breadcrumb-item>

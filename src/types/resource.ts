@@ -11,7 +11,8 @@ export interface Doc extends BaseResource {
     groupId?: number,
     isTop?: number,
     isPin?: number,
-    isRecover?: boolean
+    isRecover?: boolean,
+    groupPath?: Array<DocGroup>
 }
 
 export interface DocHistory extends BaseResource {
