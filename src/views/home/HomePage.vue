@@ -210,6 +210,7 @@ function topMenuUpdate(key: string, item: MenuOption): void {
       title: "",
       groupType: "",
       isLeaf: true,
+      pid: 0
     })
   } else if (key === 'top-menu-search') {
     showSearchBox.value = true
