@@ -130,6 +130,7 @@ onMounted(async () => {
         currentDoc.value.groupPath?.some((val) => {
             if (val.id === id) {
                 router.push({ path: `/Editor/0` })
+                eventBus.emit('updateTopDoc')
                 return true
             }
         })
