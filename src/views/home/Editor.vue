@@ -42,6 +42,18 @@
                             钉住了
                         </template>
                     </n-switch>
+                    <n-switch :disabled="currentDoc.deletedAt !== null" v-model:value="readOnly" size="small"
+                        @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, false)">
+                        <template #icon>
+                            {{ readOnly ? '😄' : '🥲' }}
+                        </template>
+                        <template #unchecked>
+                            读写
+                        </template>
+                        <template #checked>
+                            只读
+                        </template>
+                    </n-switch>
                     <n-breadcrumb>
                         <n-breadcrumb-item v-for="group in currentDoc.groupPath" :clickable=false>
                             {{ group.title }}
@@ -87,6 +99,7 @@ const currentDoc = ref<Doc>({ title: '' } as Doc)
 const message = useMessage()
 const isTop = ref(false)
 const isPin = ref(false)
+const readOnly = ref(false)
 const showHistoryModal = ref(false)
 const router = useRouter()
 
@@ -94,6 +107,7 @@ function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false) {
     currentDoc.value.title = docUpdate.title || ''
     docUpdate.isTop = isTop.value ? 1 : 2
     docUpdate.isPin = isPin.value ? 1 : 2
+    docUpdate.readOnly = readOnly.value ? 1 : 2
     if (docUpdate.id > 0) {
         updateDoc(docUpdate).then(() => {
             if (onlyIsTop) {
@@ -156,6 +170,7 @@ function getSetCurrentDoc(docId: number) {
         currentDoc.value = { ...doc }
         isTop.value = doc.isTop as number == 1
         isPin.value = doc.isPin as number == 1
+        readOnly.value = doc.readOnly as number == 1
     }).catch(err => {
         message.error(err)
     })

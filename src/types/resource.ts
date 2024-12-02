@@ -13,6 +13,7 @@ export interface Doc extends BaseResource {
     isPin?: number,
     isRecover?: boolean,
     groupPath?: Array<DocGroup>
+    readOnly?: number
 }
 
 export interface DocHistory extends BaseResource {

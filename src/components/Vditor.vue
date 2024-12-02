@@ -55,16 +55,20 @@ onMounted(() => {
         after: () => {
             msg.destroy()
             vditorContainer.value?.setValue(props.doc.content)
-            watch(() => props.doc.content, (newContent) => {
+            watch(() => props.doc, (newDoc) => {
                 nextTick(() => {
                     if (props.doc.deletedAt != '') {
                         vditorContainer.value.disabled()
                     }
                     if (props.doc.deletedAt === null) {
-                        vditorContainer.value.enable()
+                        if (props.doc.readOnly === 1) {
+                            vditorContainer.value.disabled()
+                        } else {
+                            vditorContainer.value.enable()
+                        }
                     }
-                    if (newContent.length > 0) {
-                        vditorContainer.value?.setValue(newContent)
+                    if (newDoc.content.length > 0) {
+                        vditorContainer.value?.setValue(newDoc.content)
                     }
                 })
             })
