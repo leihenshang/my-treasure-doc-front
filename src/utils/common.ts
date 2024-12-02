@@ -28,7 +28,6 @@ export function buildTreeItem(d: DocGroup): TreeOption {
             if (d.groupType == 'doc') {
                 return true
             }
-            console.log(d.isLeaf)
             if (d.isLeaf !== undefined && d.isLeaf) {
                 return true
             }

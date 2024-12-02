@@ -3,20 +3,17 @@
         <template v-if="props.id as number > 0">
             <div class="edit-banner">
                 <n-space>
-                    <div class="icon-group">
-                        <n-button text style="font-size: 24px" @click="globalStore.leftMenuCollapseSwitch()">
+                    <n-button default round size="tiny" @click="globalStore.leftMenuCollapseSwitch()">
+                        <template #icon>
                             <n-icon size="20">
                                 <Menu></Menu>
                             </n-icon>
-                        </n-button>
-                        <n-icon size="20">
-                            <ArrowBack> </ArrowBack>
-                        </n-icon>
-                    </div>
+                        </template>
+                    </n-button>
                     <n-button default round size="tiny" @click="showHistoryModal = !showHistoryModal">
                         <template #icon>
                             <n-icon size="20">
-                                <Refresh></Refresh>
+                                <History16Filled></History16Filled>
                             </n-icon>
                         </template>
                         历史
@@ -72,7 +69,8 @@ import DocHistory from '@/components/doc/DocHistory.vue';
 import { useGlobalStore } from '@/stores/global';
 import { Doc } from "@/types/resource";
 import eventBus from '@/utils/event_bus';
-import { ArrowBack, Menu, Refresh } from '@vicons/ionicons5';
+import { History16Filled } from "@vicons/fluent";
+import { Menu } from '@vicons/ionicons5';
 import { NIcon, useMessage } from 'naive-ui';
 import { nextTick, onMounted, ref, watch } from 'vue';
 
@@ -151,17 +149,6 @@ function getSetCurrentDoc(docId: number) {
         height: 20px;
         line-height: 20px;
         margin: 5px 0 5px 0;
-
-        .icon-group {
-            display: inline-block;
-            height: 20px;
-            line-height: 20px;
-            overflow: hidden;
-
-            .n-icon {
-                margin: 0 5px;
-            }
-        }
     }
 
     .div404 {
