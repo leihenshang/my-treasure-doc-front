@@ -57,10 +57,7 @@
             </div>
         </template>
         <div v-else class="div404">
-            <n-result status="404" title="爱是什么？" description="爱可能是常觉亏欠，也可能是常觉亏钱" size="huge">
-                <template #footer>
-                    <n-button>需要哪种？</n-button>
-                </template>
+            <n-result status="404" title="爱是什么？" description="爱可能是常觉亏欠，也可能是常觉亏钱" size="medium">
             </n-result>
         </div>
     </div>
@@ -146,6 +143,9 @@ function getSetCurrentDoc(docId: number) {
 <style scoped lang='scss'>
 .edit-box {
     padding: 5px;
+    height: 100%;
+    width: auto;
+
 
     .edit-banner {
         height: 20px;
@@ -162,12 +162,14 @@ function getSetCurrentDoc(docId: number) {
                 margin: 0 5px;
             }
         }
-
-
     }
 
     .div404 {
-        margin-top: 10%
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }
 </style>
