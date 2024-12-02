@@ -27,6 +27,7 @@ import { updateDoc } from "@/api/doc";
 import { createGroup, getDocGroupTree, updateGroup as updateGroupData } from "@/api/doc_group";
 import { Doc, DocGroup } from '@/types/resource';
 import { buildTreeItem } from '@/utils/common';
+import eventBus from "@/utils/event_bus";
 import {
     NButton,
     TreeOption,
@@ -77,7 +78,7 @@ watch(updateGroup, (newGroup) => {
 })
 
 function updateModal(type: string) {
-    const updateGroupObj = updateGroup.value as unknown as DocGroup
+    const updateGroupCopy = updateGroup.value as unknown as DocGroup
     if (type === 'updateDoc') {
         if (updateModalPid.value < 0) {
             showModalModel.value = false
@@ -85,12 +86,12 @@ function updateModal(type: string) {
             return
         }
         updateDoc({
-            id: updateGroupObj.id,
+            id: updateGroupCopy.id,
             groupId: updateModalPid.value
         } as Doc).then(() => {
             showModalModel.value = false
             clearModal()
-            emit('recursionReload', updateGroupObj.pid || 0)
+            emit('recursionReload', updateGroupCopy.pid || 0)
         }).catch(err => {
             console.log(err)
         })
@@ -99,13 +100,14 @@ function updateModal(type: string) {
     }
 
     if (type == 'update') {
-        updateGroupObj.title = updateModalName.value
+        updateGroupCopy.title = updateModalName.value
         if (updateModalPid.value > 0) {
-            updateGroupObj.pid = updateModalPid.value
+            updateGroupCopy.pid = updateModalPid.value
         }
-        updateGroupData(updateGroupObj).then((resp) => {
+        updateGroupData(updateGroupCopy).then((resp) => {
             clearModal()
-            emit('recursionReload', updateGroupObj.pid || 0)
+            eventBus.emit('updateGroupName', updateGroupCopy)
+            emit('recursionReload', updateGroupCopy.pid || 0)
         }).catch(err => {
             message.error(err)
         })

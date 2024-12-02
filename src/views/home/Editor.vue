@@ -70,12 +70,12 @@ import { createDoc, getDoc, updateDoc } from "@/api/doc";
 import Vditor from '@/components/Vditor.vue';
 import DocHistory from '@/components/doc/DocHistory.vue';
 import { useGlobalStore } from '@/stores/global';
-import { Doc } from "@/types/resource";
+import { Doc, DocGroup } from "@/types/resource";
 import eventBus from '@/utils/event_bus';
 import { History16Filled } from "@vicons/fluent";
 import { Menu } from '@vicons/ionicons5';
 import { NIcon, useMessage } from 'naive-ui';
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 
 const props = defineProps<{
@@ -116,7 +116,22 @@ function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false) {
 // 为了保证当直接进入页面的时候不会获取到默认的缓存数据
 onMounted(async () => {
     getSetCurrentDoc(props.id as number)
+    eventBus.on('updateGroupName', (group: DocGroup) => {
+        console.log('updateGroupName', group)
+        currentDoc.value.groupPath?.some((val) => {
+            if (val.id === group.id) {
+                val.title = group.title
+                return true
+            }
+        })
+
+
+    })
     await nextTick()
+})
+
+onBeforeUnmount(() => {
+    eventBus.offAll('updateGroupName')
 })
 
 watch(() => props.id, (newId: number | string) => {
