@@ -25,6 +25,7 @@ export interface DocGroup extends BaseResource {
     groupType: string,
     pid?: number,
     children?: Array<DocGroup>,
+    isLeaf?: boolean,
 }
 
 export interface LoginUser extends BaseResource {

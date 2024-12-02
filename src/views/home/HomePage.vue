@@ -48,6 +48,7 @@ import { logOut } from '@/api/user';
 import CreateGroup from "@/components/home_page/CreateGroup.vue";
 import { useGlobalStore } from '@/stores/global';
 import { Doc, DocGroup } from '@/types/resource';
+import { buildTreeItem } from '@/utils/common';
 import eventBus from '@/utils/event_bus';
 import { DashboardOutlined, FolderAddOutlined } from '@vicons/antd';
 import { Delete24Filled } from "@vicons/fluent";
@@ -55,9 +56,7 @@ import {
   AddCircleOutline,
   ArrowForwardCircleSharp,
   ChevronForward,
-  DocumentTextOutline,
   EllipsisHorizontalCircleOutline as EllipsisHorizontalCircle,
-  FolderOutline,
   MenuOutline,
   Pencil as Pen,
   SearchSharp as Search
@@ -74,7 +73,6 @@ import {
 } from 'naive-ui';
 import { Component, computed, h, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { buildTreeItem } from '@/utils/common'
 
 
 const globalStore = useGlobalStore()
@@ -285,6 +283,9 @@ function handleLoad(node: TreeOption) {
       docGroupList.map((val, idx) => {
         arr.push(buildTreeItem(val))
       })
+      if (arr.length > 0) {
+        node.isLeaf = false
+      }
       node.children = arr
       resolve()
     }).catch((err) => {
@@ -397,10 +398,6 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
           }
           createDoc(newDoc).then(res => {
             const doc = res.getData()
-            let key = doc.id + 10000
-            if (info.option.children) {
-              key = info.option.children?.length + 1
-            }
             if (doc.groupId === 0) {
               treeData.value.push(buildTreeItem({
                 id: doc.id,

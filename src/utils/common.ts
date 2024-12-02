@@ -1,22 +1,13 @@
-import { Doc, DocGroup } from '@/types/resource';
+import { DocGroup } from '@/types/resource';
 import {
-    NButton,
-    NIcon,
-    TreeOption,
-    useMessage
-} from 'naive-ui';
-import { h, reactive, ref } from 'vue';
-import {
-    AddCircleOutline,
-    ArrowForwardCircleSharp,
-    ChevronForward,
     DocumentTextOutline,
-    EllipsisHorizontalCircleOutline as EllipsisHorizontalCircle,
-    FolderOutline,
-    MenuOutline,
-    Pencil as Pen,
-    SearchSharp as Search
+    FolderOutline
 } from '@vicons/ionicons5';
+import {
+    NIcon,
+    TreeOption
+} from 'naive-ui';
+import { h } from 'vue';
 
 
 function getPrefixIcon(groupType: string) {
@@ -33,7 +24,17 @@ export function buildTreeItem(d: DocGroup): TreeOption {
         label: d.title,
         key: `${d.groupType}-${d.id}`,
         id: d.id,
-        isLeaf: d.groupType == 'doc',
+        isLeaf: (() => {
+            if (d.groupType == 'doc') {
+                return true
+            }
+            console.log(d.isLeaf)
+            if (d.isLeaf !== undefined && d.isLeaf) {
+                return true
+            }
+
+            return false
+        })(),
         groupType: d.groupType,
         prefix: () => getPrefixIcon(d.groupType),
         pid: d.pid

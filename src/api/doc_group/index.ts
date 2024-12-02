@@ -1,6 +1,6 @@
 import myHttp from "@/api/treasure_axios"
-import { TreasureResponse, TreasureResponseList, PaginationWithSort } from "@/types/treasure_response"
 import { DocGroup } from "@/types/resource"
+import { PaginationWithSort, TreasureResponse, TreasureResponseList } from "@/types/treasure_response"
 
 export function getGroupList(pagination: PaginationWithSort = new PaginationWithSort()): Promise<TreasureResponseList<DocGroup>> {
     return new Promise<TreasureResponseList<DocGroup>>((resolve: any, reject: any) => {
@@ -24,11 +24,11 @@ export function getGroupList(pagination: PaginationWithSort = new PaginationWith
     })
 }
 
-export function getDocGroupTree(pid: number = 0, withChildren: boolean = false): Promise<TreasureResponse<DocGroup>> {
+export function getDocGroupTree(pid: number = 0, withDoc: boolean = false): Promise<TreasureResponse<DocGroup>> {
     return new Promise<TreasureResponse<DocGroup>>((resolve: any, reject: any) => {
         myHttp.get<TreasureResponse<DocGroup>>({
             url: '/api/doc-group/tree', params: {
-                pid, withChildren
+                pid, withDoc: withDoc
             }
         }).then((response: any) => {
             if (response?.code) {
