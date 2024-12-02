@@ -27,7 +27,6 @@ onMounted(() => {
     const msg = message.loading("编辑器初始化...")
     vditorContainer.value = new Vditor("vditor-container", {
         theme: "classic",
-        minHeight: 800,
         height: '95vh',
         typewriterMode: true,
         toolbarConfig: {

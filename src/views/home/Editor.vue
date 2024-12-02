@@ -145,8 +145,7 @@ function getSetCurrentDoc(docId: number) {
 
 <style scoped lang='scss'>
 .edit-box {
-    padding: 5px 5px;
-    min-height: 800px;
+    padding: 5px;
 
     .edit-banner {
         height: 20px;
