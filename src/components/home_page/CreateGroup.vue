@@ -26,15 +26,13 @@
 import { updateDoc } from "@/api/doc";
 import { createGroup, getDocGroupTree, updateGroup as updateGroupData } from "@/api/doc_group";
 import { Doc, DocGroup } from '@/types/resource';
-import { FolderOutline } from '@vicons/ionicons5';
+import { buildTreeItem } from '@/utils/common';
 import {
     NButton,
-    NIcon,
     TreeOption,
     useMessage
 } from 'naive-ui';
-import { h, reactive, ref, watch } from 'vue';
-import { buildTreeItem } from '@/utils/common'
+import { reactive, ref, watch } from 'vue';
 
 const emit = defineEmits<{
     (e: 'addTreeItem', value: TreeOption): void
@@ -122,6 +120,7 @@ function updateModal(type: string) {
             if (newGroup.pid == 0) {
                 const newItem = Object.assign({}, newGroup)
                 newItem.id = resp?.getData()?.id
+                newItem.isLeaf = true
                 emit('addTreeItem', buildTreeItem(newItem))
             } else {
                 emit('recursionReload', newGroup.pid || 0)
