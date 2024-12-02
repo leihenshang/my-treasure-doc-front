@@ -475,7 +475,7 @@ const treeNodeSuffixWithRecycleBin = (info: { option: TreeOption, checked: boole
 
 function deleteTreeNode(id: number, type: string) {
   if (type === 'doc') {
-    deleteDoc({ id } as Doc).then(() => { message.success('删除成功'); refreshDocList(true); }).catch(err => { console.log(err) })
+    deleteDoc({ id } as Doc).then(() => { message.success('删除成功'); refreshDocList(true); refreshDocList(false); }).catch(err => { console.log(err) })
   } else {
     deleteGroup({ id } as DocGroup).then(() => { message.success('删除成功') }).catch(err => { console.log(err) })
   }
