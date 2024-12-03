@@ -1,26 +1,28 @@
 <template>
-  <div class="log-in-wrap">
-    <div class="img">
-      <img src="../assets/images/logIn.png" alt="">
+  <n-config-provider :theme="lightTheme" abstract>
+    <div class="log-in-wrap">
+      <div class="img">
+        <img src="../assets/images/logIn.png" alt="">
+      </div>
+      <div class="log-in">
+        <h3>登陆</h3>
+        <n-form :model="userInfo" ref="formRef" label-placement="left" class="long-in-form" size="large">
+          <n-form-item path="account" :rule="getRules('用户名')">
+            <n-input v-model:value="userInfo.account" autofocus clearable placeholder="用户名" ref="usernameInput" />
+          </n-form-item>
+          <n-form-item path="password" :rule="getRules('密码')">
+            <n-input v-model:value="userInfo.password" type="password" clearable placeholder="密码" />
+          </n-form-item>
+          <n-form-item class="buttons-wrapper">
+            <div class="buttons">
+              <n-button default attr-type="button" @click="longIn">登录</n-button>
+              <n-button attr-type="button" @click="longIn">注册</n-button>
+            </div>
+          </n-form-item>
+        </n-form>
+      </div>
     </div>
-    <div class="log-in">
-      <h3>登陆</h3>
-      <n-form :model="userInfo" ref="formRef" label-placement="left" class="long-in-form" size="large">
-        <n-form-item path="account" :rule="getRules('用户名')">
-          <n-input v-model:value="userInfo.account" autofocus clearable placeholder="用户名" ref="usernameInput" />
-        </n-form-item>
-        <n-form-item path="password" :rule="getRules('密码')">
-          <n-input v-model:value="userInfo.password" type="password" clearable placeholder="密码" />
-        </n-form-item>
-        <n-form-item class="buttons-wrapper">
-          <div class="buttons">
-            <n-button attr-type="button" @click="longIn">登录</n-button>
-            <n-button attr-type="button" @click="longIn">注册</n-button>
-          </div>
-        </n-form-item>
-      </n-form>
-    </div>
-  </div>
+  </n-config-provider>
 </template>
 
 <script lang="ts" setup>
@@ -28,7 +30,7 @@ import { logIn } from '@/api/user';
 import { UserInfo } from '@/stores/user/types';
 import { useUserInfoStore } from "@/stores/user/user_info";
 import { LoginUser } from "@/types/resource";
-import { FormInst, NInput, useMessage } from 'naive-ui';
+import { FormInst, lightTheme, NInput, useMessage } from 'naive-ui';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -99,6 +101,7 @@ const getRules = (name: string) => {
     align-items: center;
     justify-content: center;
     width: 70%;
+    background-color: #FFFFFF;
   }
 
   >.log-in {
@@ -107,11 +110,12 @@ const getRules = (name: string) => {
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    // background: #686565;
+    background: #ececec;
 
     >h3 {
       font-size: 24px;
       text-align: center;
+      color: black;
     }
 
     >.long-in-form {
@@ -126,8 +130,8 @@ const getRules = (name: string) => {
 
             button {
               width: 150px;
-              // background-color: #21a497;
-              // color: #ffffff;
+              background-color: #21a497;
+              color: #ffffff;
 
               .n-button__border {
                 border: none;
