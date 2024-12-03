@@ -97,7 +97,6 @@ onMounted(() => {
             })
 
             storeGlobal.$subscribe((mutation, state) => {
-                console.log(state, darkTheme, lightTheme)
                 if (state.theme === 'light') {
                     vditorContainer.value.setTheme(lightTheme.editorTheme, lightTheme.previewTheme, lightTheme.codeTheme)
                 } else {
