@@ -52,7 +52,7 @@ onMounted(() => {
         mode: 'wysiwyg',
         placeholder: '在这里写下你的第一行文字吧！',
         after: () => {
-            if (props.doc.content.length > 0) {
+            if (props.doc && props.doc.content.length > 0) {
                 vditorContainer.value?.setValue(props.doc.content)
             }
 
