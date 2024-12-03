@@ -6,12 +6,11 @@ interface GlobalStore {
     theme: string
 }
 
-
 export const useGlobalStore = defineStore('global', {
     state: (): GlobalStore => {
         return {
             leftMenuCollapse: false,
-            theme: 'light',
+            theme: localStorage.getItem('globalState.theme') ?? 'light',
         }
     },
     actions: {
@@ -20,6 +19,7 @@ export const useGlobalStore = defineStore('global', {
         },
         themeSwitch() {
             this.theme === 'light' ? this.theme = 'dark' : this.theme = 'light'
+            localStorage.setItem('globalState.theme', this.theme)
         }
     },
     getters: {

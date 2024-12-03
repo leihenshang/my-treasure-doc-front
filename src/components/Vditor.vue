@@ -3,6 +3,7 @@
 </template>
 <script lang="ts" setup>
 import { PATH_URL } from '@/api/service'
+import { useGlobalStore } from "@/stores/global"
 import { useUserInfoStore } from "@/stores/user/user_info"
 import { Doc } from "@/types/resource"
 import eventBus from '@/utils/event_bus'
@@ -14,19 +15,31 @@ import { onMounted, reactive, ref, watch } from "vue"
 
 const props = defineProps<{ doc: Doc }>()
 
+interface vditorCustomerTheme {
+    editorTheme: string,
+    codeTheme: string,
+    previewTheme: string,
+}
+
 const storeUserInfo = useUserInfoStore()
+const storeGlobal = useGlobalStore()
 const vditorContainer = ref()
 const message = useMessage()
 const currentDoc = reactive({ ...props.doc } as Doc)
-const vditorTheme = reactive<{
-    editorTheme?: string,
-    codeTheme?: string,
-    previewTheme?: string,
-}>({
+const vditorTheme = ref<vditorCustomerTheme>()
+
+const darkTheme = {
     editorTheme: 'dark',
     codeTheme: 'monokai',
     previewTheme: 'dark',
-})
+}
+
+const lightTheme = {
+    editorTheme: 'classic',
+    codeTheme: 'github',
+    previewTheme: 'light',
+}
+
 
 const emit = defineEmits<{
     (e: 'updateDoc', updateDoc: Doc): void
@@ -34,8 +47,15 @@ const emit = defineEmits<{
 
 onMounted(() => {
     const msg = message.loading("编辑器初始化...")
-    vditorContainer.value = new Vditor("vditor-container", {
-        theme: "dark",
+
+    if (storeGlobal.theme === 'light') {
+        vditorTheme.value = { ...lightTheme }
+    } else {
+        vditorTheme.value = { ...darkTheme }
+    }
+
+    const vditorConf = {
+        theme: vditorTheme.value.editorTheme,
         height: '95vh',
         typewriterMode: true,
         toolbarConfig: {
@@ -50,9 +70,9 @@ onMounted(() => {
             position: 'right',
         },
         preview: {
-            theme: { current: 'dark' },
+            theme: { current: vditorTheme.value.previewTheme },
             hljs: {
-                style: 'monokai'
+                style: vditorTheme.value.codeTheme
             },
             markdown: {
                 toc: true,
@@ -68,7 +88,7 @@ onMounted(() => {
             if (props.doc && props.doc.content && props.doc.content.length > 0) {
                 vditorContainer.value?.setValue(props.doc.content)
             }
-            // vditorContainer.value.setTheme('dark', 'dark', 'vim')
+
             watch(() => props.doc, (newDoc) => {
                 if (newDoc.deletedAt != '') {
                     vditorContainer.value.disabled()
@@ -89,12 +109,20 @@ onMounted(() => {
                 readOnly ? vditorContainer.value.disabled() : vditorContainer.value.enable()
             })
 
+            storeGlobal.$subscribe((mutation, state) => {
+                console.log(state, darkTheme, lightTheme)
+                if (state.theme === 'light') {
+                    vditorContainer.value.setTheme(lightTheme.editorTheme, lightTheme.previewTheme, lightTheme.codeTheme)
+                } else {
+                    vditorContainer.value.setTheme(darkTheme.editorTheme, darkTheme.previewTheme, darkTheme.codeTheme)
+                }
+            })
             msg.destroy()
         },
         cache: {
             enable: false
         },
-        input(md) {
+        input(md: string) {
             currentDoc.content = md
             currentDoc.title = getMarkdownH1Text(currentDoc.content) ?? currentDoc.title
             currentDoc.id = props.doc.id
@@ -139,12 +167,16 @@ onMounted(() => {
                 vditorResp.data.succMap = succ
                 return JSON.stringify(vditorResp)
             },
-            error(msg) {
+            error(msg: any) {
                 message.error(msg)
             },
         },
+    }
 
-    })
+
+
+
+    vditorContainer.value = new Vditor("vditor-container", vditorConf as IOptions)
 })
 
 function getMarkdownH1Text(markdownContent: string): string {
