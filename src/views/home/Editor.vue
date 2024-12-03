@@ -108,6 +108,8 @@ function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false) {
     docUpdate.isTop = isTop.value ? 1 : 2
     docUpdate.isPin = isPin.value ? 1 : 2
     docUpdate.readOnly = readOnly.value ? 1 : 2
+    currentDoc.value.readOnly = docUpdate.readOnly
+    console.log(currentDoc.value)
     if (docUpdate.id > 0) {
         updateDoc(docUpdate).then(() => {
             if (onlyIsTop) {

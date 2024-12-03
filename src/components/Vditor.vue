@@ -9,7 +9,7 @@ import eventBus from '@/utils/event_bus'
 import { useMessage } from "naive-ui"
 import Vditor from 'vditor'
 import "vditor/dist/index.css"
-import { nextTick, onMounted, reactive, ref, watch } from "vue"
+import { onMounted, reactive, ref, watch } from "vue"
 
 
 const props = defineProps<{ doc: Doc }>()
@@ -54,23 +54,20 @@ onMounted(() => {
         value: props.doc.content,
         after: () => {
             msg.destroy()
-            vditorContainer.value?.setValue(props.doc.content)
             watch(() => props.doc, (newDoc) => {
-                nextTick(() => {
-                    if (props.doc.deletedAt != '') {
+                if (newDoc.deletedAt != '') {
+                    vditorContainer.value.disabled()
+                }
+                if (newDoc.deletedAt === null) {
+                    if (newDoc.readOnly === 1) {
                         vditorContainer.value.disabled()
+                    } else {
+                        vditorContainer.value.enable()
                     }
-                    if (props.doc.deletedAt === null) {
-                        if (props.doc.readOnly === 1) {
-                            vditorContainer.value.disabled()
-                        } else {
-                            vditorContainer.value.enable()
-                        }
-                    }
-                    if (newDoc.content.length > 0) {
-                        vditorContainer.value?.setValue(newDoc.content)
-                    }
-                })
+                }
+                if (newDoc.content.length > 0) {
+                    vditorContainer.value?.setValue(newDoc.content)
+                }
             })
         },
         cache: {
