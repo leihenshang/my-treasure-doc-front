@@ -34,9 +34,9 @@
 
 
       </n-layout-sider>
-      <n-layout class="right">
+      <n-layout-content class="right" :native-scrollbar="false">
         <router-view></router-view>
-      </n-layout>
+      </n-layout-content>
     </n-layout>
   </div>
   <CreateGroup v-model:show="showModal" v-model:update-group="updateGroup" v-model:handle-type="groupHandleType"
