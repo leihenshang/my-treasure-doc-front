@@ -3,8 +3,10 @@
 </template>
 <script lang="ts" setup>
 import { PATH_URL } from '@/api/service'
+import { darkTheme, lightTheme } from '@/constants'
 import { useGlobalStore } from "@/stores/global"
 import { useUserInfoStore } from "@/stores/user/user_info"
+import { vditorCustomerTheme } from '@/types/editor'
 import { Doc } from "@/types/resource"
 import eventBus from '@/utils/event_bus'
 import { useMessage } from "naive-ui"
@@ -15,11 +17,7 @@ import { onMounted, reactive, ref, watch } from "vue"
 
 const props = defineProps<{ doc: Doc }>()
 
-interface vditorCustomerTheme {
-    editorTheme: string,
-    codeTheme: string,
-    previewTheme: string,
-}
+
 
 const storeUserInfo = useUserInfoStore()
 const storeGlobal = useGlobalStore()
@@ -28,17 +26,6 @@ const message = useMessage()
 const currentDoc = reactive({ ...props.doc } as Doc)
 const vditorTheme = ref<vditorCustomerTheme>()
 
-const darkTheme = {
-    editorTheme: 'dark',
-    codeTheme: 'monokai',
-    previewTheme: 'dark',
-}
-
-const lightTheme = {
-    editorTheme: 'classic',
-    codeTheme: 'github',
-    previewTheme: 'light',
-}
 
 
 const emit = defineEmits<{

@@ -32,3 +32,16 @@ export const DEFAULT_FILTER_COLUMN = ['expand', 'selection']
  * 是否根据headers->content-type自动转换数据格式
  */
 export const TRANSFORM_REQUEST_DATA = false
+
+export const darkTheme = {
+    editorTheme: 'dark',
+    codeTheme: 'monokai',
+    previewTheme: 'dark',
+}
+
+export const lightTheme = {
+    editorTheme: 'classic',
+    codeTheme: 'github',
+    previewTheme: 'light',
+}
+
