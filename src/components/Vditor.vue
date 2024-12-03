@@ -51,9 +51,11 @@ onMounted(() => {
         },
         mode: 'wysiwyg',
         placeholder: '在这里写下你的第一行文字吧！',
-        value: props.doc.content,
         after: () => {
-            msg.destroy()
+            if (props.doc.content.length > 0) {
+                vditorContainer.value?.setValue(props.doc.content)
+            }
+
             watch(() => props.doc, (newDoc) => {
                 if (newDoc.deletedAt != '') {
                     vditorContainer.value.disabled()
@@ -74,6 +76,7 @@ onMounted(() => {
                 readOnly ? vditorContainer.value.disabled() : vditorContainer.value.enable()
             })
 
+            msg.destroy()
         },
         cache: {
             enable: false
