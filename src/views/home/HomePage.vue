@@ -414,7 +414,9 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
             } else {
               recursionReloadTreeNode(treeData.value, doc.groupId || 0)
             }
-            router.push({ path: `/Editor/${doc.id}` })
+            if (doc.id > 0) {
+              router.push({ path: `/Editor/${doc.id}` })
+            }
           }).catch(err => {
             console.log(err)
             message.error(err)

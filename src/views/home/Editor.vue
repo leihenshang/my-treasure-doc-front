@@ -45,7 +45,7 @@
                     <n-switch :disabled="currentDoc.deletedAt !== null" v-model:value="readOnly" size="small"
                         @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, false, true)">
                         <template #icon>
-                            {{ readOnly ? '😄' : '🥲' }}
+                            {{ readOnly ? '🥲' : '😄' }}
                         </template>
                         <template #unchecked>
                             读写
