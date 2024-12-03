@@ -103,11 +103,11 @@ const getRules = (name: string) => {
 
   >.log-in {
     width: 30%;
-    background: #ececec;
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: center;
+    // background: #686565;
 
     >h3 {
       font-size: 24px;
@@ -126,8 +126,8 @@ const getRules = (name: string) => {
 
             button {
               width: 150px;
-              background-color: #21a497;
-              color: #ffffff;
+              // background-color: #21a497;
+              // color: #ffffff;
 
               .n-button__border {
                 border: none;

@@ -18,6 +18,15 @@ const storeUserInfo = useUserInfoStore()
 const vditorContainer = ref()
 const message = useMessage()
 const currentDoc = reactive({ ...props.doc } as Doc)
+const vditorTheme = reactive<{
+    editorTheme?: string,
+    codeTheme?: string,
+    previewTheme?: string,
+}>({
+    editorTheme: 'dark',
+    codeTheme: 'monokai',
+    previewTheme: 'dark',
+})
 
 const emit = defineEmits<{
     (e: 'updateDoc', updateDoc: Doc): void
@@ -26,7 +35,7 @@ const emit = defineEmits<{
 onMounted(() => {
     const msg = message.loading("编辑器初始化...")
     vditorContainer.value = new Vditor("vditor-container", {
-        theme: "classic",
+        theme: "dark",
         height: '95vh',
         typewriterMode: true,
         toolbarConfig: {
@@ -41,6 +50,10 @@ onMounted(() => {
             position: 'right',
         },
         preview: {
+            theme: { current: 'dark' },
+            hljs: {
+                style: 'monokai'
+            },
             markdown: {
                 toc: true,
                 mark: true,
@@ -52,10 +65,10 @@ onMounted(() => {
         mode: 'wysiwyg',
         placeholder: '在这里写下你的第一行文字吧！',
         after: () => {
-            if (props.doc && props.doc.content.length > 0) {
+            if (props.doc && props.doc.content && props.doc.content.length > 0) {
                 vditorContainer.value?.setValue(props.doc.content)
             }
-
+            // vditorContainer.value.setTheme('dark', 'dark', 'vim')
             watch(() => props.doc, (newDoc) => {
                 if (newDoc.deletedAt != '') {
                     vditorContainer.value.disabled()

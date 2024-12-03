@@ -13,6 +13,7 @@
             </template>
             treasure-doc
           </n-button>
+          <n-button size="tiny" round @click="globalStore.themeSwitch()">切换主题</n-button>
         </div>
         <n-menu mode="horizontal" :options="horizontalMenuOptions" @update:value="topMenuUpdate" :icon-size="18"
           ref="topMenuRef" />
@@ -532,50 +533,11 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: number, title
 <style scoped lang='scss'>
 @use "/src/assets/style/helper.scss";
 
-.homePage-wrapper {
+.menu-layout {
   height: 100%;
-
-  .tree-button {
-    padding-left: 10px;
-  }
-
-  >.menu-layout {
-    height: 100%;
-
-    .menu-sider {
-      background: helper.$menuBackground;
-
-      .menu-menu ::v-deep(.n-menu-item.n-menu-item--selected) {
-        .n-menu-item-content {
-
-          .n-menu-item-content__icon,
-          .n-menu-item-content-header {
-            color: adjust(helper.$mainColor, 0.5);
-          }
-        }
-
-        .n-menu-item>.n-menu-item-content:hover {
-
-          .n-menu-item-content__icon,
-          .n-menu-item-content-header {
-            color: adjust(helper.$mainColor, 0.5);
-          }
-        }
-
-      }
-    }
-  }
 }
 
-.dialog-container {
-
-  .dialog-content {
-    margin-bottom: 5px;
-
-    >label {
-      display: inline-flex;
-      margin-bottom: 4px;
-    }
-  }
+.homePage-wrapper {
+  height: 100%;
 }
 </style>

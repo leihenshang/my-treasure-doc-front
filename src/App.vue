@@ -1,23 +1,18 @@
 <template>
-  <n-message-provider>
-    <router-view></router-view>
-  </n-message-provider>
+  <n-config-provider :theme="globalStore.uiTheme" :locale="zhCN" :date-locale="dateZhCN" style="height:100%">
+    <n-message-provider>
+      <router-view></router-view>
+      <n-global-style />
+    </n-message-provider>
+  </n-config-provider>
 </template>
 
 <script setup>
-import './assets/style/reset.scss'
-import { NMessageProvider } from "naive-ui"
-</script>
-<style type="text/css">
-.icon {
-  width: 1em;
-  height: 1em;
-  vertical-align: -0.15em;
-  fill: currentColor;
-  overflow: hidden;
-}
+import { useGlobalStore } from '@/stores/global';
+import { dateZhCN, NMessageProvider, zhCN } from "naive-ui";
+import './assets/style/reset.scss';
 
-body {
-  color: #262626;
-}
-</style>
+const globalStore = useGlobalStore()
+
+</script>
+<style type="text/css"></style>

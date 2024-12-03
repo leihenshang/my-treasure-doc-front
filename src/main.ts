@@ -1,9 +1,9 @@
+import { createPinia } from 'pinia'
+import 'vfonts/Lato.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import './index.scss'
 import { router } from './router'
-import { createPinia } from 'pinia'
-import 'vfonts/Lato.css'
 
 const pinia = createPinia()
 const app = createApp(App)
