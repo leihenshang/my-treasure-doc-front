@@ -69,6 +69,11 @@ onMounted(() => {
                     vditorContainer.value?.setValue(newDoc.content)
                 }
             })
+
+            eventBus.on('updateReadOnly', (readOnly: boolean) => {
+                readOnly ? vditorContainer.value.disabled() : vditorContainer.value.enable()
+            })
+
         },
         cache: {
             enable: false

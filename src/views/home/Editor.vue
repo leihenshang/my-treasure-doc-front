@@ -43,7 +43,7 @@
                         </template>
                     </n-switch>
                     <n-switch :disabled="currentDoc.deletedAt !== null" v-model:value="readOnly" size="small"
-                        @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, false)">
+                        @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, false, true)">
                         <template #icon>
                             {{ readOnly ? '😄' : '🥲' }}
                         </template>
@@ -103,17 +103,19 @@ const readOnly = ref(false)
 const showHistoryModal = ref(false)
 const router = useRouter()
 
-function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false) {
+function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false, isReadOnly: boolean = false) {
     currentDoc.value.title = docUpdate.title || ''
     docUpdate.isTop = isTop.value ? 1 : 2
     docUpdate.isPin = isPin.value ? 1 : 2
     docUpdate.readOnly = readOnly.value ? 1 : 2
-    currentDoc.value.readOnly = docUpdate.readOnly
     console.log(currentDoc.value)
     if (docUpdate.id > 0) {
         updateDoc(docUpdate).then(() => {
             if (onlyIsTop) {
                 eventBus.emit('updateTopDoc')
+            }
+            if (isReadOnly) {
+                eventBus.emit('updateReadOnly', readOnly.value)
             }
         }).catch(err => {
             message.error(err)
