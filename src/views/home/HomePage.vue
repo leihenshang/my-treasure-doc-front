@@ -13,7 +13,8 @@
             </template>
             treasure-doc
           </n-button>
-          <n-button size="tiny" round @click="globalStore.themeSwitch()">切换主题</n-button>
+          <n-button text size="medium" round @click="globalStore.themeSwitch()">{{ globalStore.theme === 'light' ? '☀️'
+            : '🌙' }}</n-button>
         </div>
         <n-menu mode="horizontal" :options="horizontalMenuOptions" @update:value="topMenuUpdate" :icon-size="18"
           ref="topMenuRef" />
@@ -30,6 +31,8 @@
               :render-suffix="treeNodeSuffixWithRecycleBin" :render-switcher-icon="renderSwitcherIcon" />
           </n-collapse-item>
         </n-collapse>
+
+
       </n-layout-sider>
       <n-layout class="right">
         <router-view></router-view>
