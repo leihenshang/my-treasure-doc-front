@@ -1,5 +1,5 @@
 <template>
-  <n-config-provider :theme="globalStore.uiTheme" :locale="zhCN" :date-locale="dateZhCN" abstract>
+  <n-config-provider :theme="globalStore.currentTheme" :locale="zhCN" :date-locale="dateZhCN" abstract>
     <n-message-provider>
       <router-view></router-view>
       <n-global-style />

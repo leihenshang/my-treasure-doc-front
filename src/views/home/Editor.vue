@@ -3,13 +3,6 @@
         <template v-if="props.id as number > 0">
             <div class="edit-banner">
                 <n-space>
-                    <n-button default round size="tiny" @click="globalStore.leftMenuCollapseSwitch()">
-                        <template #icon>
-                            <n-icon size="20">
-                                <Menu></Menu>
-                            </n-icon>
-                        </template>
-                    </n-button>
                     <n-button default round size="tiny" @click="showHistoryModal = !showHistoryModal">
                         <template #icon>
                             <n-icon size="20">
@@ -81,11 +74,9 @@
 import { createDoc, getDoc, updateDoc } from "@/api/doc";
 import Vditor from '@/components/Vditor.vue';
 import DocHistory from '@/components/doc/DocHistory.vue';
-import { useGlobalStore } from '@/stores/global';
 import { Doc, DocGroup } from "@/types/resource";
 import eventBus from '@/utils/event_bus';
 import { History16Filled } from "@vicons/fluent";
-import { Menu } from '@vicons/ionicons5';
 import { NIcon, useMessage } from 'naive-ui';
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRouter } from "vue-router";
@@ -94,7 +85,6 @@ import { useRouter } from "vue-router";
 const props = defineProps<{
     id: number | string,
 }>()
-const globalStore = useGlobalStore()
 const currentDoc = ref<Doc>({ title: '' } as Doc)
 const message = useMessage()
 const isTop = ref(false)

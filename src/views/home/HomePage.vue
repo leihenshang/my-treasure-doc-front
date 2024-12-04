@@ -1,9 +1,8 @@
 <template>
   <div class="homePage-wrapper">
     <n-layout has-sider class="menu-layout">
-      <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="0" :width="288"
-        :collapsed="leftMenuCollapsed" :collapse="globalStore.leftMenuCollapse"
-        @expand="globalStore.leftMenuCollapse = true" :native-scrollbar="false">
+      <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="0" :width="'35vh'"
+        show-trigger="arrow-circle" :native-scrollbar="false">
         <div style="text-align:center;">
           <n-button icon-placement="right" text size="large" @click="router.push('/Dashboard')">
             <template #icon>
@@ -18,7 +17,7 @@
         </div>
         <n-menu mode="horizontal" :options="horizontalMenuOptions" @update:value="topMenuUpdate" :icon-size="18"
           ref="topMenuRef" />
-        <n-collapse :default-expanded-names="['1', '2']">
+        <n-collapse :default-expanded-names="['1', '2']" style="padding: 0 10px 0 0;">
           <n-collapse-item title="置顶文档" name="1">
             <n-tree block-line :data="topDocList" :node-props="nodeProps" :render-switcher-icon="renderSwitcherIcon" />
           </n-collapse-item>
@@ -73,7 +72,7 @@ import {
   NTree,
   TreeOption, useMessage
 } from 'naive-ui';
-import { Component, computed, h, onBeforeUnmount, onMounted, ref } from 'vue';
+import { Component, h, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 
@@ -89,7 +88,6 @@ const showModal = ref(false);
 const showSearchBox = ref(false);
 const groupHandleType = ref('');
 const updateGroup = ref<DocGroup>();
-const leftMenuCollapsed = computed(() => globalStore.leftMenuCollapse)
 
 onMounted(() => {
   refreshTree();

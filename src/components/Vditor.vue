@@ -16,16 +16,12 @@ import { onMounted, reactive, ref, watch } from "vue"
 
 
 const props = defineProps<{ doc: Doc }>()
-
-
-
 const storeUserInfo = useUserInfoStore()
 const storeGlobal = useGlobalStore()
 const vditorContainer = ref()
 const message = useMessage()
 const currentDoc = reactive({ ...props.doc } as Doc)
 const vditorTheme = ref<vditorCustomerTheme>()
-
 
 
 const emit = defineEmits<{
