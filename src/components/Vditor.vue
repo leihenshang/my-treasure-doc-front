@@ -1,6 +1,6 @@
 <template>
     <n-scrollbar style="min-height: 800px">
-        <div id="vditor-container" style="height: 100%;width: auto;"></div>
+        <div id="vditor-container"></div>
     </n-scrollbar>
 </template>
 <script lang="ts" setup>
