@@ -158,10 +158,6 @@ onMounted(() => {
             },
         },
     }
-
-
-
-
     vditorContainer.value = new Vditor("vditor-container", vditorConf as IOptions)
 })
 
