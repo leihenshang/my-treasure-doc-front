@@ -2,7 +2,7 @@
   <div class="homePage-wrapper">
     <n-layout has-sider class="menu-layout">
       <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="0" :width="'35vh'"
-        show-trigger="arrow-circle" :native-scrollbar="false">
+        show-trigger="bar" :native-scrollbar="false">
         <div style="text-align:center;">
           <n-button icon-placement="right" text size="large" @click="router.push('/Dashboard')">
             <template #icon>
