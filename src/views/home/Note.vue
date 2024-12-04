@@ -42,7 +42,6 @@ type search = {
 }
 
 const router = useRouter()
-
 const data = ref<Doc[]>([])
 const loading = ref(false)
 const pagination = reactive({

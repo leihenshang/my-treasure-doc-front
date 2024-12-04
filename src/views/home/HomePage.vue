@@ -3,7 +3,7 @@
     <n-layout has-sider class="menu-layout">
       <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="0" :width="288"
         :collapsed="leftMenuCollapsed" :collapse="globalStore.leftMenuCollapse"
-        @expand="globalStore.leftMenuCollapse = true">
+        @expand="globalStore.leftMenuCollapse = true" :native-scrollbar="false">
         <div style="text-align:center;">
           <n-button icon-placement="right" text size="large" @click="router.push('/Dashboard')">
             <template #icon>
@@ -31,8 +31,6 @@
               :render-suffix="treeNodeSuffixWithRecycleBin" :render-switcher-icon="renderSwitcherIcon" />
           </n-collapse-item>
         </n-collapse>
-
-
       </n-layout-sider>
       <n-layout-content class="right" :native-scrollbar="false">
         <router-view></router-view>

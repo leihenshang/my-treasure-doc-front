@@ -2,12 +2,11 @@
     <div class="dashboard">
         <n-grid :cols="2">
             <n-form-item-gi>
-                <n-button @click.prevent="router.push('/Start')">返回首页</n-button>
+                <n-button @click="router.push({ path: '/Start' })">首页</n-button>
             </n-form-item-gi>
             <n-form-item-gi>
                 <n-button @click.prevent="currentNoteId = 0; showModal = !showModal;">新建</n-button>
-                <CreateNote :id="currentNoteId" v-model:show-modal="showModal" @refresh-list="refreshList">
-                </CreateNote>
+
             </n-form-item-gi>
         </n-grid>
         <n-grid :cols="10" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" :x-gap="12" :y-gap="8">
@@ -76,6 +75,8 @@
             </n-gi>
         </n-grid>
     </div>
+    <CreateNote :id="currentNoteId" v-model:show-modal="showModal" @refresh-list="refreshList">
+    </CreateNote>
     <DocNote v-model:show="showDocModal" v-model:doc-id="showDocModalDocId"></DocNote>
 </template>
 <script lang="ts" setup>
