@@ -2,7 +2,7 @@
     <div class="dashboard">
         <n-grid :cols="2">
             <n-form-item-gi>
-                <n-button @click="router.push({ path: '/Start' })">首页</n-button>
+                <n-button @click.prevent="router.push({ path: '/Start' })">首页</n-button>
             </n-form-item-gi>
             <n-form-item-gi>
                 <n-button @click.prevent="currentNoteId = 0; showModal = !showModal;">新建</n-button>
