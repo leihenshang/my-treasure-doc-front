@@ -1,5 +1,5 @@
 <template>
-    <n-scrollbar style="min-height: 800px">
+    <n-scrollbar style="min-height: 820px" content-style="overflow:hidden;">
         <div id="vditor-container"></div>
     </n-scrollbar>
 </template>
