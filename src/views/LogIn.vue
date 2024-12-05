@@ -65,7 +65,7 @@ const longIn = (e: MouseEvent) => {
         return
       }
 
-      // local storage
+
       localStorage.setItem('userInfo', JSON.stringify(response?.data))
       storeUserInfo.updateUserInfo(response?.data as UserInfo)
       msg.destroy()
@@ -73,13 +73,13 @@ const longIn = (e: MouseEvent) => {
       router.push({ name: 'HomePage' }).then(() => {
         logInMsg.destroy()
       })
-    }).catch((err: any) => {
+    }).catch((err: Error) => {
       msg.destroy()
-      console.log("axios:", err)
+      console.log(err)
       message.error(`${err}`)
     })
 
-  }).catch((err: any) => {
+  }).catch((err: Error) => {
     console.log(err)
   })
 }
