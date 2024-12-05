@@ -7,9 +7,9 @@
   </div>
 </template>
 <script setup lang="ts">
-import { defineComponent, ref } from 'vue'
-import { useMessage } from 'naive-ui'
-import { addDays, isYesterday } from 'date-fns'
+import { addDays, isYesterday } from 'date-fns';
+import { useMessage } from 'naive-ui';
+import { ref } from 'vue';
 
 const message = useMessage()
 const value = ref(addDays(Date.now(), 1).valueOf())
