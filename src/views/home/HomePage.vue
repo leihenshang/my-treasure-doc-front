@@ -73,12 +73,11 @@ import {
   TreeOption, useMessage
 } from 'naive-ui';
 import { Component, h, onBeforeUnmount, onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 
 const globalStore = useGlobalStore()
 const router = useRouter();
-const route = useRoute();
 const topMenuRef = ref(null)
 const message = useMessage()
 const treeData = ref<Array<TreeOption>>([])
@@ -176,7 +175,7 @@ const horizontalMenuOptions: MenuOption[] = [
   }
 ]
 
-function topMenuUpdate(key: string, item: MenuOption): void {
+function topMenuUpdate(key: string): void {
   const title = genDocTitle()
   if (key === 'top-menu-write') {
     createDoc({
@@ -250,7 +249,7 @@ function refreshDocList(recycleBin: boolean = false) {
   }
 
   getDocList(-1, recycleBin ? -1 : 1, recycleBin).then((response) => {
-    response.list.map((val, idx) => {
+    response.list.map((val) => {
       if (recycleBin) {
         recycleBinList.value.push(buildTreeItem({
           title: val.title,
@@ -282,8 +281,8 @@ function handleLoad(node: TreeOption) {
         return
       }
       const docGroupList = response.data as Array<DocGroup>
-      let arr: any = new Array<any>(docGroupList.length)
-      docGroupList.map((val, idx) => {
+      const arr = new Array<TreeOption>(docGroupList.length)
+      docGroupList.map((val) => {
         arr.push(buildTreeItem(val))
       })
       if (arr.length > 0) {
