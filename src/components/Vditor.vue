@@ -91,9 +91,12 @@ onMounted(() => {
             })
 
             eventBus.on('updateReadOnly', (readOnly: boolean) => {
-                readOnly ? vditorContainer.value.disabled() : vditorContainer.value.enable()
+                if (readOnly) {
+                    vditorContainer.value.disabled()
+                } else {
+                    vditorContainer.value.enable()
+                }
             })
-
             storeGlobal.$subscribe((mutation, state) => {
                 if (state.theme === 'light') {
                     vditorContainer.value.setTheme(lightTheme.editorTheme, lightTheme.previewTheme, lightTheme.codeTheme)
@@ -151,12 +154,13 @@ onMounted(() => {
                 vditorResp.data.succMap = succ
                 return JSON.stringify(vditorResp)
             },
-            error(msg: any) {
-                message.error(msg)
+            error(msg: string) {
+                message.error(`${msg}`)
             },
         },
-    }
-    vditorContainer.value = new Vditor("vditor-container", vditorConf as IOptions)
+    } as IOptions
+
+    vditorContainer.value = new Vditor("vditor-container", vditorConf)
 })
 
 function getMarkdownH1Text(markdownContent: string): string {

@@ -48,7 +48,7 @@
                         </template>
                     </n-switch>
                     <n-breadcrumb>
-                        <n-breadcrumb-item v-for="group in currentDoc.groupPath" :clickable=false>
+                        <n-breadcrumb-item v-for="group in currentDoc.groupPath" :clickable=false :key="group.id">
                             {{ group.title }}
                         </n-breadcrumb-item>
                         <n-breadcrumb-item>
