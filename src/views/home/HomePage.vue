@@ -27,7 +27,8 @@
           </n-collapse-item>
           <n-collapse-item title="回收站" name="3">
             <n-tree block-line :data="recycleBinList" :node-props="nodeProps"
-              :render-suffix="treeNodeSuffixWithRecycleBin" :render-switcher-icon="renderSwitcherIcon" />
+              :render-suffix="treeNodeSuffixWithRecycleBin" :render-switcher-icon="renderSwitcherIcon"
+              :override-default-node-click-behavior="override" />
           </n-collapse-item>
         </n-collapse>
       </n-layout-sider>
@@ -70,7 +71,7 @@ import {
   NLayout,
   NMenu,
   NTree,
-  TreeOption, useMessage
+  TreeOption, TreeOverrideNodeClickBehavior, useMessage
 } from 'naive-ui';
 import { Component, h, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -107,6 +108,14 @@ onBeforeUnmount(() => {
   eventBus.offAll('updateTopDoc')
   eventBus.offAll('updateDocTitle')
 })
+
+const override: TreeOverrideNodeClickBehavior = ({ option }) => {
+  console.log(option)
+  if (option.groupType === 'group') {
+    return 'toggleExpand'
+  }
+  return 'default'
+}
 
 function addTreeItem(op: TreeOption) {
   let foundDoc = false
