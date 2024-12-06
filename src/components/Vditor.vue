@@ -41,7 +41,7 @@ onMounted(() => {
 
     const vditorConf = {
         theme: vditorTheme.value.editorTheme,
-        height: '95vh',
+        height: '98vh',
         typewriterMode: true,
         toolbarConfig: {
             pin: true,
