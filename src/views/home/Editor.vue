@@ -101,7 +101,6 @@ function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false, isReadOnly: b
     docUpdate.version = currentDoc.value.version
     if (docUpdate.id > 0) {
         updateDoc(docUpdate).then((resp) => {
-            console.log(resp)
             if (onlyIsTop) {
                 eventBus.emit('updateTopDoc')
             }
