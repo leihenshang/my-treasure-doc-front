@@ -8,12 +8,13 @@ export interface BaseResource {
 export interface Doc extends BaseResource {
     title: string,
     content: string,
+    version: number,
     groupId?: number,
     isTop?: number,
     isPin?: number,
     isRecover?: boolean,
     groupPath?: Array<DocGroup>
-    readOnly?: number
+    readOnly?: number,
 }
 
 export interface DocHistory extends BaseResource {

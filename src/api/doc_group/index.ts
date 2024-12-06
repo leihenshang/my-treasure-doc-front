@@ -10,7 +10,7 @@ export function getGroupList(pagination: PaginationWithSort = new PaginationWith
                 pageSize: pagination.pageSize,
                 orderBy: pagination.orderBy,
             }
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }
@@ -30,7 +30,7 @@ export function getDocGroupTree(pid: number = 0, withDoc: boolean = false): Prom
             url: '/api/doc-group/tree', params: {
                 pid, withDoc: withDoc
             }
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }
@@ -48,7 +48,7 @@ export async function deleteGroup(groupObj: DocGroup) {
     return new Promise<TreasureResponse<DocGroup>>((resolve: any, reject: any) => {
         myHttp.post<TreasureResponse<DocGroup>>({
             url: '/api/doc-group/delete', data: groupObj
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }
@@ -65,7 +65,7 @@ export async function createGroup(groupObj: DocGroup) {
     return new Promise<TreasureResponse<DocGroup>>((resolve: any, reject: any) => {
         myHttp.post<TreasureResponse<DocGroup>>({
             url: '/api/doc-group/create', data: groupObj
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }
@@ -82,7 +82,7 @@ export async function updateGroup(groupObj: DocGroup) {
     return new Promise<TreasureResponse<DocGroup>>((resolve: any, reject: any) => {
         myHttp.post<TreasureResponse<DocGroup>>({
             url: '/api/doc-group/update', data: groupObj
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }

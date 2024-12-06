@@ -1,7 +1,8 @@
-import { useUserInfoStore } from '@/stores/user/user_info'
 import { CONTENT_TYPE } from '@/constants'
+import { useUserInfoStore } from '@/stores/user/user_info'
+import { TreasureResponse } from '@/types/treasure_response'
+import { AxiosConfig } from "../types/treasure_request"
 import service from './service'
-import { AxiosConfig, IResponse } from "../types/treasure_request"
 
 const userStore = useUserInfoStore()
 const request = (option: AxiosConfig) => {
@@ -22,17 +23,17 @@ const request = (option: AxiosConfig) => {
 }
 
 export default {
-    get: <T = any>(option: AxiosConfig) => {
+    get: <T = unknown>(option: AxiosConfig) => {
         return request({ method: 'get', ...option }) as Promise<T>
     },
-    post: <T = any>(option: AxiosConfig) => {
-        return request({ method: 'post', ...option }) as Promise<IResponse<T>>
+    post: <T = unknown>(option: AxiosConfig) => {
+        return request({ method: 'post', ...option }) as Promise<TreasureResponse<T>>
     },
-    delete: <T = any>(option: AxiosConfig) => {
-        return request({ method: 'delete', ...option }) as Promise<IResponse<T>>
+    delete: <T = unknown>(option: AxiosConfig) => {
+        return request({ method: 'delete', ...option }) as Promise<TreasureResponse<T>>
     },
-    put: <T = any>(option: AxiosConfig) => {
-        return request({ method: 'put', ...option }) as Promise<IResponse<T>>
+    put: <T = unknown>(option: AxiosConfig) => {
+        return request({ method: 'put', ...option }) as Promise<TreasureResponse<T>>
     },
     cancelRequest: (url: string | string[]) => {
         return service.cancelRequest(url)

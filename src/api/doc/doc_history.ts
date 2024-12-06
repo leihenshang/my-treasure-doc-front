@@ -15,7 +15,7 @@ export function getDocHistoryList(
                 orderBy: pagination.orderBy,
                 docId
             }
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }
@@ -34,7 +34,7 @@ export function getDocHistory(id: number | string = 0): Promise<TreasureResponse
             url: '/api/doc-history/detail', params: {
                 id
             }
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }
@@ -48,7 +48,7 @@ export function recoveryDoc(id: number): Promise<TreasureResponse<DocHistory>> {
     return new Promise<TreasureResponse<DocHistory>>((resolve, reject) => {
         myHttp.post<TreasureResponse<DocHistory>>({
             url: '/api/doc-history/recover', data: { id }
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }

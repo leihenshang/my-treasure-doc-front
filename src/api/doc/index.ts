@@ -21,15 +21,11 @@ export function getDocList(
                 recycleBin: recycleBin ? 1 : 2,
                 keyword: keyword
             }
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }
-
-            const resp: TreasureResponseList<Doc> = new TreasureResponseList()
-            resp.list = response?.data?.list
-            resp.pagination = response?.data?.pagination
-            resolve(resp)
+            resolve(response.data as TreasureResponseList<Doc>)
         })
     })
 }
@@ -51,9 +47,9 @@ export function getDoc(id: number | string = 0): Promise<TreasureResponse<Doc>> 
 
 export function createDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
-        myHttp.post<TreasureResponse<Doc>>({
+        myHttp.post<Doc>({
             url: '/api/doc/create', data: doc
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }
@@ -68,34 +64,26 @@ export function createDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
 
 export function updateDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
-        myHttp.post<TreasureResponse<Doc>>({
+        myHttp.post<Doc>({
             url: '/api/doc/update', data: doc
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
-                reject(response?.msg)
+                reject(response)
             }
-            const resp: TreasureResponse<Doc> = new TreasureResponse()
-            resp.data = response?.data
-            resp.msg = response?.msg
-            resp.code = response?.code
-            resolve(resp)
+            resolve(response)
         })
     })
 }
 
 export function deleteDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
-        myHttp.post<TreasureResponse<Doc>>({
+        myHttp.post<Doc>({
             url: '/api/doc/delete', data: doc
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }
-            const resp: TreasureResponse<Doc> = new TreasureResponse()
-            resp.data = response?.data
-            resp.msg = response?.msg
-            resp.code = response?.code
-            resolve(resp)
+            resolve(response)
         })
     })
 }

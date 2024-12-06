@@ -98,16 +98,26 @@ function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false, isReadOnly: b
     docUpdate.isTop = isTop.value ? 1 : 2
     docUpdate.isPin = isPin.value ? 1 : 2
     docUpdate.readOnly = readOnly.value ? 1 : 2
+    docUpdate.version = currentDoc.value.version
     if (docUpdate.id > 0) {
-        updateDoc(docUpdate).then(() => {
+        updateDoc(docUpdate).then((resp) => {
+            console.log(resp)
             if (onlyIsTop) {
                 eventBus.emit('updateTopDoc')
             }
             if (isReadOnly) {
                 eventBus.emit('updateReadOnly', readOnly.value)
             }
+            currentDoc.value.version = (resp.data as Doc).version || 0
         }).catch(err => {
-            message.error(err)
+            if (err?.code === 10000) {
+                message.error(err?.msg)
+                getSetCurrentDoc(props.id as number)
+                return
+            }
+
+            console.log(err)
+            message.error(`${err}`)
         })
     } else if (docUpdate.title != '') {
         createDoc(docUpdate).then(res => {
@@ -158,12 +168,15 @@ function getSetCurrentDoc(docId: number) {
     if (docId <= 0) {
         return
     }
+    const msg = message.loading('获取文档...')
     getDoc(docId).then(resp => {
         const doc = resp.data as Doc
         currentDoc.value = { ...doc }
         isTop.value = doc.isTop as number == 1
         isPin.value = doc.isPin as number == 1
         readOnly.value = doc.readOnly as number == 1
+    }).then(() => {
+        msg.destroy()
     }).catch(err => {
         message.error(err)
     })

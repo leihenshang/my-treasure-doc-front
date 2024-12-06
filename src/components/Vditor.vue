@@ -158,9 +158,9 @@ onMounted(() => {
                 message.error(`${msg}`)
             },
         },
-    } as IOptions
+    }
 
-    vditorContainer.value = new Vditor("vditor-container", vditorConf)
+    vditorContainer.value = new Vditor("vditor-container", vditorConf as IOptions)
 })
 
 function getMarkdownH1Text(markdownContent: string): string {

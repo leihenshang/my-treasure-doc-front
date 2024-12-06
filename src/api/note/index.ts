@@ -1,6 +1,6 @@
 import myHttp from "@/api/treasure_axios"
-import { TreasureResponse, TreasureResponseList, PaginationWithSort } from "@/types/treasure_response"
 import { Note } from "@/types/resource"
+import { PaginationWithSort, TreasureResponse, TreasureResponseList } from "@/types/treasure_response"
 
 
 export function getNoteList(pagination: PaginationWithSort = new PaginationWithSort()): Promise<TreasureResponseList<Note>> {
@@ -11,7 +11,7 @@ export function getNoteList(pagination: PaginationWithSort = new PaginationWithS
                 pageSize: pagination.pageSize,
                 orderBy: pagination.orderBy
             }
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }
@@ -30,7 +30,7 @@ export function getNote(id: number | string = 0): Promise<TreasureResponse<Note>
             url: '/api/note/detail', params: {
                 id
             }
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }
@@ -43,7 +43,7 @@ export function createNote(note: Note): Promise<TreasureResponse<Note>> {
     return new Promise<TreasureResponse<Note>>((resolve, reject) => {
         myHttp.post<TreasureResponse<Note>>({
             url: '/api/note/create', data: note
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }
@@ -60,7 +60,7 @@ export function updateNote(note: Note): Promise<TreasureResponse<Note>> {
     return new Promise<TreasureResponse<Note>>((resolve, reject) => {
         myHttp.post<TreasureResponse<Note>>({
             url: '/api/note/update', data: note
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }
@@ -77,7 +77,7 @@ export function deleteNote(note: Note): Promise<TreasureResponse<Note>> {
     return new Promise<TreasureResponse<Note>>((resolve, reject) => {
         myHttp.post<TreasureResponse<Note>>({
             url: '/api/note/delete', data: note
-        }).then((response: any) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }

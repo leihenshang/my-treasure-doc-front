@@ -1,20 +1,20 @@
 import type {
-  InternalAxiosRequestConfig,
-  AxiosResponse,
-  AxiosRequestConfig,
-  AxiosInstance,
-  AxiosRequestHeaders,
   AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosRequestHeaders,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
   RawAxiosRequestHeaders
 } from 'axios'
 
 interface RequestInterceptors<T> {
   // 请求拦截
   requestInterceptors?: (config: InternalAxiosRequestConfig) => InternalAxiosRequestConfig
-  requestInterceptorsCatch?: (err: any) => any
+  requestInterceptorsCatch?: (err: unknown) => unknown
   // 响应拦截
   responseInterceptors?: (config: T) => T
-  responseInterceptorsCatch?: (err: any) => any
+  responseInterceptorsCatch?: (err: unknown) => unknown
 }
 
 interface RequestConfig<T = AxiosResponse> extends AxiosRequestConfig {
@@ -22,8 +22,8 @@ interface RequestConfig<T = AxiosResponse> extends AxiosRequestConfig {
 }
 
 interface AxiosConfig {
-  params?: any
-  data?: any
+  params?: unknown
+  data?: unknown
   url?: string
   method?: AxiosMethod
   headers?: RawAxiosRequestHeaders
@@ -33,31 +33,8 @@ interface AxiosConfig {
 type AxiosMethod = 'get' | 'post' | 'delete' | 'put'
 type AxiosResponseType = 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' | 'stream'
 
-export interface IResponse<T = any> {
-  code: number
-  data: T extends any ? T : T & any
-  msg: string
-}
-
-export interface HttpClient {
-  get: Function,
-  post: Function,
-  postForm: Function,
-}
-
-export interface MyResponse {
-  code: number,
-  msg: string,
-  data?: any
-}
 
 export {
-  AxiosResponse,
-  RequestInterceptors,
-  RequestConfig,
-  AxiosInstance,
-  InternalAxiosRequestConfig,
-  AxiosRequestHeaders,
-  AxiosError,
-  AxiosConfig
+  AxiosConfig, AxiosError, AxiosInstance, AxiosRequestHeaders, AxiosResponse, InternalAxiosRequestConfig, RequestConfig, RequestInterceptors
 }
+
