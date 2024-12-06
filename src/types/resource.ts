@@ -8,7 +8,7 @@ export interface BaseResource {
 export interface Doc extends BaseResource {
     title: string,
     content: string,
-    version: number,
+    version?: number,
     groupId?: number,
     isTop?: number,
     isPin?: number,
