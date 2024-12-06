@@ -23,12 +23,12 @@
           </n-collapse-item>
           <n-collapse-item title="我的文档" name="2">
             <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
-              :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" />
+              :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon"
+              :override-default-node-click-behavior="override" />
           </n-collapse-item>
           <n-collapse-item title="回收站" name="3">
             <n-tree block-line :data="recycleBinList" :node-props="nodeProps"
-              :render-suffix="treeNodeSuffixWithRecycleBin" :render-switcher-icon="renderSwitcherIcon"
-              :override-default-node-click-behavior="override" />
+              :render-suffix="treeNodeSuffixWithRecycleBin" :render-switcher-icon="renderSwitcherIcon" />
           </n-collapse-item>
         </n-collapse>
       </n-layout-sider>
@@ -71,10 +71,11 @@ import {
   NLayout,
   NMenu,
   NTree,
-  TreeOption, TreeOverrideNodeClickBehavior, useMessage
+  TreeOption, useMessage
 } from 'naive-ui';
 import { Component, h, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import type { TreeOverrideNodeClickBehavior } from 'naive-ui'
 
 
 const globalStore = useGlobalStore()
@@ -110,7 +111,6 @@ onBeforeUnmount(() => {
 })
 
 const override: TreeOverrideNodeClickBehavior = ({ option }) => {
-  console.log(option)
   if (option.groupType === 'group') {
     return 'toggleExpand'
   }
