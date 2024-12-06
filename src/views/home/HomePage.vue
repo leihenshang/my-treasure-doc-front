@@ -24,7 +24,7 @@
           <n-collapse-item title="我的文档" name="2">
             <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
               :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon"
-              :override-default-node-click-behavior="override" />
+              :override-default-node-click-behavior="override" :default-expanded-keys="expandedKeys" />
           </n-collapse-item>
           <n-collapse-item title="回收站" name="3">
             <n-tree block-line :data="recycleBinList" :node-props="nodeProps"
@@ -89,6 +89,8 @@ const showModal = ref(false);
 const showSearchBox = ref(false);
 const groupHandleType = ref('');
 const updateGroup = ref<DocGroup>();
+
+const expandedKeys = ref<Array<string>>([])
 
 onMounted(() => {
   refreshTree();
@@ -407,6 +409,7 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
             title: title,
             groupId: info.option.id as unknown as number
           }
+          expandedKeys.value?.push(info.option.key as string)
           createDoc(newDoc).then(res => {
             const doc = res.getData()
             if (doc.groupId === 0) {
