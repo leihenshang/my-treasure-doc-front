@@ -112,7 +112,6 @@ function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false, isReadOnly: b
         }).catch(err => {
             if (err?.code === 10000) {
                 message.error(err?.msg)
-                getSetCurrentDoc(props.id as number)
                 return
             }
 
