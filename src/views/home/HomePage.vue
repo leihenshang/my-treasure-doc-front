@@ -24,7 +24,8 @@
           <n-collapse-item title="我的文档" name="2">
             <n-tree block-line :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
               :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon"
-              :override-default-node-click-behavior="override" :default-expanded-keys="expandedKeys" />
+              :override-default-node-click-behavior="override" :default-expanded-keys="expandedKeys"
+              :selected-keys="selectedKeys" />
           </n-collapse-item>
           <n-collapse-item title="回收站" name="3">
             <n-tree block-line :data="recycleBinList" :node-props="nodeProps"
@@ -89,8 +90,8 @@ const showModal = ref(false);
 const showSearchBox = ref(false);
 const groupHandleType = ref('');
 const updateGroup = ref<DocGroup>();
-
 const expandedKeys = ref<Array<string>>([])
+const selectedKeys = ref<Array<string>>([])
 
 onMounted(() => {
   refreshTree();
@@ -314,6 +315,9 @@ function nodeProps({ option }: { option: TreeOption }) {
   return {
     onClick() {
       if (option.groupType == "doc") {
+        selectedKeys.value = []
+        selectedKeys.value.push(option.key as string)
+        console.log(selectedKeys)
         router.push({ path: `/Editor/${option.id}` })
       }
     },
@@ -402,6 +406,7 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
         type: "default",
         onClick: e => {
           e.stopPropagation()
+          e.preventDefault()
           const title = genDocTitle()
           const newDoc: Doc = {
             id: 0,
