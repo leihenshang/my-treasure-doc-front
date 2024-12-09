@@ -2,7 +2,7 @@
   <n-config-provider :theme="lightTheme" abstract>
     <div class="log-in-wrap">
       <div class="img">
-        <img src="../assets/images/logIn.png" alt="">
+        <div class="my-icon">📒</div>
       </div>
       <div class="log-in">
         <h3>登陆</h3>
@@ -102,6 +102,10 @@ const getRules = (name: string) => {
     justify-content: center;
     width: 70%;
     background-color: #FFFFFF;
+
+    >.my-icon {
+      font-size:30vh;
+    }
   }
 
   >.log-in {
