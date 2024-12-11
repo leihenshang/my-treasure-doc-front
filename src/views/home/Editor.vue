@@ -72,8 +72,8 @@
 </template>
 <script lang="ts" setup>
 import { createDoc, getDoc, updateDoc } from "@/api/doc";
-import Vditor from '@/components/Vditor.vue';
 import DocHistory from '@/components/doc/DocHistory.vue';
+import Vditor from '@/components/editor/Vditor.vue';
 import { Doc, DocGroup } from "@/types/resource";
 import eventBus from '@/utils/event_bus';
 import { History16Filled } from "@vicons/fluent";
