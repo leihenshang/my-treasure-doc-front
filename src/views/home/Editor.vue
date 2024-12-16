@@ -99,6 +99,7 @@ function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false, isReadOnly: b
     docUpdate.isPin = isPin.value ? 1 : 2
     docUpdate.readOnly = readOnly.value ? 1 : 2
     docUpdate.version = currentDoc.value.version
+    docUpdate.groupId = currentDoc.value.groupId
     if (docUpdate.id > 0) {
         updateDoc(docUpdate).then((resp) => {
             if (onlyIsTop) {
