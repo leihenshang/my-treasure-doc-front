@@ -88,12 +88,6 @@ const columns = [
         key: 'actions',
         render(row: rowData) {
 
-            if (storeGlobal.theme === 'light') {
-                vditorTheme.value = { ...lightTheme }
-            } else {
-                vditorTheme.value = { ...darkTheme }
-            }
-
             return h(
                 NButton,
                 {
@@ -101,18 +95,22 @@ const columns = [
                     tertiary: true,
                     size: 'small',
                     onClick: () => {
-                        const msgLoading = message.loading('加载文档...')
-                        Vditor.preview(vditorContainerRef.value as HTMLDivElement, '', {
-                            // mode: vditorTheme.value?.editorTheme as string === "light" ? "light" : "dark",
-                            mode: "light",
-                            hljs: {
-                                style: vditorTheme.value?.codeTheme
-                            },
-                            theme: { current: vditorTheme.value?.previewTheme as string },
-                        })
+                        if (storeGlobal.theme === 'light') {
+                            vditorTheme.value = { ...lightTheme }
+                        } else {
+                            vditorTheme.value = { ...darkTheme }
+                        }
+                        console.log(vditorTheme.value)
+                        const msgLoading = message.loading('加载...')
                         getDoc(row.id).then(resp => {
                             currentDoc.value = resp.data as Doc
-                            Vditor.preview(vditorContainerRef.value as HTMLDivElement, currentDoc.value.content, { mode: "dark" })
+                            Vditor.preview(vditorContainerRef.value as HTMLDivElement, currentDoc.value.content, {
+                                mode: vditorTheme.value?.editorTheme as string === "dark" ? "dark" : "light",
+                                hljs: {
+                                    style: vditorTheme.value?.codeTheme
+                                },
+                                theme: { current: vditorTheme.value?.previewTheme as string },
+                            })
                             msgLoading.destroy()
                         }).catch(err => {
                             console.log(err)

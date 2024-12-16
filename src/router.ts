@@ -1,6 +1,6 @@
-import { createWebHashHistory, createRouter } from 'vue-router';
+import { UserInfo } from '@/stores/user/types';
 import { useUserInfoStore } from "@/stores/user/user_info";
-import { UserInfo } from '@/stores/user/types'
+import { createRouter, createWebHashHistory } from 'vue-router';
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -12,7 +12,7 @@ const router = createRouter({
     },
     {
       path: '/HomePage', name: 'HomePage', component: () => import('./views/home/HomePage.vue'),
-      redirect: { name: 'Start' },
+      redirect: { path: 'Editor/0' },
       children: [
         { path: '/Start', name: 'Start', component: () => import('./views/home/Start.vue') },
         { path: '/Collection', name: 'Collection', component: () => import('./views/home/Collection.vue') },
@@ -59,4 +59,4 @@ router.beforeEach(async (to, from) => {
   }
 })
 
-export { router }
+export { router };

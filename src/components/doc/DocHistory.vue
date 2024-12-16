@@ -28,6 +28,9 @@
 </template>
 <script lang="ts" setup>
 import { getDocHistory, getDocHistoryList, recoveryDoc } from '@/api/doc/doc_history';
+import { darkTheme, lightTheme } from '@/constants';
+import { useGlobalStore } from "@/stores/global";
+import { vditorCustomerTheme } from '@/types/editor';
 import { DocHistory } from '@/types/resource';
 import { PaginationWithSort } from '@/types/treasure_response';
 import { NButton, PaginationProps, useMessage } from 'naive-ui';
@@ -58,6 +61,9 @@ const docId = defineModel('docId')
 const tableRows = ref<Array<rowData>>([])
 const currentDocHistory = ref<DocHistory>()
 const loading = ref(true)
+const vditorTheme = ref<vditorCustomerTheme>()
+const storeGlobal = useGlobalStore()
+
 
 interface rowData {
     id: number,
@@ -84,11 +90,21 @@ const columns = [
                     tertiary: true,
                     size: 'small',
                     onClick: () => {
-                        const msgLoading = message.loading('加载历史...')
-                        Vditor.preview(vditorContainerRef.value as HTMLDivElement, '', { mode: "dark" })
+                        const msgLoading = message.loading('加载...')
+                        if (storeGlobal.theme === 'light') {
+                            vditorTheme.value = { ...lightTheme }
+                        } else {
+                            vditorTheme.value = { ...darkTheme }
+                        }
                         getDocHistory(row.id).then(resp => {
                             currentDocHistory.value = resp.data as DocHistory
-                            Vditor.preview(vditorContainerRef.value as HTMLDivElement, currentDocHistory.value.content, { mode: "dark" })
+                            Vditor.preview(vditorContainerRef.value as HTMLDivElement, currentDocHistory.value.content, {
+                                mode: vditorTheme.value?.editorTheme as string === "dark" ? "dark" : "light",
+                                hljs: {
+                                    style: vditorTheme.value?.codeTheme
+                                },
+                                theme: { current: vditorTheme.value?.previewTheme as string },
+                            })
                             msgLoading.destroy()
                         }).catch(err => {
                             console.log(err)
