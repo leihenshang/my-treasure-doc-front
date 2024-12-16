@@ -51,9 +51,13 @@ class TreasureResponseList<T> {
 }
 
 
+function GenTreasureResponse<T>(resp: unknown): TreasureResponse<T> {
+    const res = resp as TreasureResponse<T>
+    return new TreasureResponse<T>(res?.code, res?.msg, res?.data)
+}
 
 
-export { PaginationWithSort, TreasureResponse, TreasureResponseList };
+export { GenTreasureResponse, PaginationWithSort, TreasureResponse, TreasureResponseList };
 
 
 

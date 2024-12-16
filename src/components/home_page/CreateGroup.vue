@@ -26,6 +26,7 @@
 import { getDoc, updateDoc } from "@/api/doc";
 import { createGroup, getDocGroupTree, updateGroup as updateGroupData } from "@/api/doc_group";
 import { Doc, DocGroup } from '@/types/resource';
+import { TreasureResponse } from "@/types/treasure_response";
 import { buildTreeItem } from '@/utils/common';
 import eventBus from "@/utils/event_bus";
 import {
@@ -87,6 +88,8 @@ function updateModal(type: string) {
         }
 
         getDoc(updateGroupCopy.id).then((resp) => {
+            const newDoc = new TreasureResponse<Doc>(resp?.code, resp?.msg, resp?.data)
+            console.log(newDoc.getData())
             const docDetail = resp.data as Doc
             updateDoc({
                 id: docDetail.id,
