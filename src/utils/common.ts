@@ -21,7 +21,7 @@ function getPrefixIcon(groupType: string) {
 
 export function buildTreeItem(d: DocGroup): TreeOption {
     return {
-        label: d.title,
+        label: truncateString(d.title),
         key: `${d.groupType}-${d.id}`,
         id: d.id,
         isLeaf: (() => {
@@ -38,5 +38,12 @@ export function buildTreeItem(d: DocGroup): TreeOption {
         prefix: () => getPrefixIcon(d.groupType),
         pid: d.pid
     }
+}
+
+function truncateString(str: string, maxLength: number = 20) {
+    if (str.length > maxLength) {
+        return str.substring(0, maxLength) + '...';
+    }
+    return str;
 }
 
