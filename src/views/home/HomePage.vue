@@ -64,6 +64,7 @@ import {
   Pencil as Pen,
   SearchSharp as Search
 } from '@vicons/ionicons5';
+import type { TreeOverrideNodeClickBehavior } from 'naive-ui';
 import {
   MenuOption,
   NButton, NButtonGroup,
@@ -76,7 +77,6 @@ import {
 } from 'naive-ui';
 import { Component, h, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import type { TreeOverrideNodeClickBehavior } from 'naive-ui'
 
 
 const globalStore = useGlobalStore()
@@ -378,7 +378,7 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
             changeModal('updateDoc', {
               id: info.option.id as number,
               title: info.option.label,
-              pid: info.option.pid
+              pid: info.option.pid,
             } as DocGroup)
           }
         }

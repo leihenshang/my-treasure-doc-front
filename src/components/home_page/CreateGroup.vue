@@ -23,7 +23,7 @@
     </n-modal>
 </template>
 <script setup lang="ts">
-import { updateDoc } from "@/api/doc";
+import { getDoc, updateDoc } from "@/api/doc";
 import { createGroup, getDocGroupTree, updateGroup as updateGroupData } from "@/api/doc_group";
 import { Doc, DocGroup } from '@/types/resource';
 import { buildTreeItem } from '@/utils/common';
@@ -85,16 +85,27 @@ function updateModal(type: string) {
             clearModal()
             return
         }
-        updateDoc({
-            id: updateGroupCopy.id,
-            groupId: updateModalPid.value
-        } as Doc).then(() => {
-            showModalModel.value = false
-            clearModal()
-            emit('recursionReload', updateGroupCopy.pid || 0)
+
+        getDoc(updateGroupCopy.id).then((resp) => {
+            const docDetail = resp.data as Doc
+            updateDoc({
+                id: docDetail.id,
+                groupId: updateModalPid.value,
+                version: docDetail.version
+            } as Doc).then(() => {
+                showModalModel.value = false
+                clearModal()
+                emit('recursionReload', updateGroupCopy.pid || 0)
+            }).catch(err => {
+                message.error(`${err.msg}`)
+                console.log(err)
+            })
+
         }).catch(err => {
+            message.error(`${err}`)
             console.log(err)
         })
+
 
 
     }
@@ -104,7 +115,7 @@ function updateModal(type: string) {
         if (updateModalPid.value > 0) {
             updateGroupCopy.pid = updateModalPid.value
         }
-        updateGroupData(updateGroupCopy).then((resp) => {
+        updateGroupData(updateGroupCopy).then(() => {
             clearModal()
             eventBus.emit('updateGroupName', updateGroupCopy)
             emit('recursionReload', updateGroupCopy.pid || 0)
@@ -154,7 +165,7 @@ function loadTree(node: TreeOption) {
                 return
             }
 
-            let arr: any = new Array<any>((response.data as Array<DocGroup>).length)
+            let arr = new Array<TreeOption>((response.data as Array<DocGroup>).length)
             for (const e of response.data as Array<DocGroup>) {
                 arr.push(buildTreeItem(e))
             }
