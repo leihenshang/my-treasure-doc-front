@@ -196,7 +196,7 @@ function topMenuUpdate(key: string): void {
   if (key === 'top-menu-write') {
     createDoc({
       id: 0,
-      content: ``,
+      content: `# ${title}`,
       title: title
     } as Doc).then(res => {
       const doc = res.getData()
@@ -234,7 +234,7 @@ function topMenuUpdate(key: string): void {
   }
 }
 
-function genDocTitle(suffix: string = "-速记") {
+function genDocTitle(suffix: string = "-新页面") {
   const today = new Date()
   let todayTitleStr = "".concat(
     today.getFullYear().toString(),
@@ -398,7 +398,7 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
           const title = genDocTitle()
           const newDoc: Doc = {
             id: 0,
-            content: ``,
+            content: `# ${title}`,
             title: title,
             groupId: info.option.id as unknown as number
           }
