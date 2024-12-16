@@ -2,7 +2,7 @@
     <n-modal v-model:show="show as boolean" preset="dialog" title="Dialog" :show-icon="false" class="modal-dialog"
         :mask-closable=false style="min-width: 1200px;">
         <template #header>
-            历史
+            回收站
         </template>
         <div class="dialog-container">
             <n-split direction="horizontal" style="height: 600px" :max="0.75" :min="0.25">
@@ -16,19 +16,19 @@
 
                 </template>
                 <template #2>
-                    <div ref="vditorContainerRef" style="margin:0 10px;height:600px"></div>
+                    <div ref="vditorPreviewRef" style="margin:0 10px;height:600px"></div>
                 </template>
             </n-split>
         </div>
         <template #action>
-            <n-button type="primary" @click="handleOkBtn">恢复此版本</n-button>
+            <n-button type="primary" @click="handleOkBtn">恢复</n-button>
             <n-button @click="show = false">取消</n-button>
         </template>
     </n-modal>
 </template>
 <script lang="ts" setup>
-import { getDocHistory, getDocHistoryList, recoveryDoc } from '@/api/doc/doc_history';
-import { DocHistory } from '@/types/resource';
+import { getDoc, getDocList, updateDoc } from '@/api/doc';
+import { Doc } from '@/types/resource';
 import { PaginationWithSort } from '@/types/treasure_response';
 import { NButton, PaginationProps, useMessage } from 'naive-ui';
 import Vditor from 'vditor';
@@ -38,7 +38,7 @@ import { h, onUpdated, reactive, ref, useTemplateRef } from 'vue';
 const emit = defineEmits<{
     (e: 'refreshDoc'): void
 }>()
-const vditorContainerRef = useTemplateRef('vditorContainerRef')
+const vditorContainerRef = useTemplateRef('vditorPreviewRef')
 const message = useMessage()
 const pagination = reactive({
     page: 1,
@@ -54,9 +54,8 @@ const pagination = reactive({
     }
 } as PaginationProps)
 const show = defineModel('show')
-const docId = defineModel('docId')
 const tableRows = ref<Array<rowData>>([])
-const currentDocHistory = ref<DocHistory>()
+const currentDoc = ref<Doc>()
 const loading = ref(true)
 
 interface rowData {
@@ -68,6 +67,10 @@ const columns = [
     {
         title: 'ID',
         key: 'id'
+    },
+    {
+        title: '标题',
+        key: 'title'
     },
     {
         title: '日期',
@@ -84,17 +87,16 @@ const columns = [
                     tertiary: true,
                     size: 'small',
                     onClick: () => {
-                        const msgLoading = message.loading('加载历史...')
+                        const msgLoading = message.loading('加载文档...')
                         Vditor.preview(vditorContainerRef.value as HTMLDivElement, '', { mode: "dark" })
-                        getDocHistory(row.id).then(resp => {
-                            currentDocHistory.value = resp.data as DocHistory
-                            Vditor.preview(vditorContainerRef.value as HTMLDivElement, currentDocHistory.value.content, { mode: "dark" })
+                        getDoc(row.id).then(resp => {
+                            currentDoc.value = resp.data as Doc
+                            Vditor.preview(vditorContainerRef.value as HTMLDivElement, currentDoc.value.content, { mode: "dark" })
                             msgLoading.destroy()
                         }).catch(err => {
                             console.log(err)
                             message.error(`${err}`)
                         })
-
                     }
                 },
                 { default: () => '查看' }
@@ -106,18 +108,19 @@ const columns = [
 
 
 function handleOkBtn() {
-    if (!currentDocHistory.value || currentDocHistory.value.id <= 0) {
+    if (!currentDoc.value || currentDoc.value.id <= 0) {
         return
     }
-    recoveryDoc(currentDocHistory.value.id).then(() => {
+
+    updateDoc({
+        id: currentDoc.value.id,
+        isRecover: true,
+        version: currentDoc.value.version
+    } as Doc).then(() => {
         show.value = false
         emit('refreshDoc')
-    }).catch(err => {
-        console.log(err)
-        message.error(`${err}`)
-    })
-
-
+        message.info('更新成功');
+    }).catch((err) => { message.error(`${err}`) })
 }
 
 onUpdated(() => {
@@ -130,10 +133,10 @@ onUpdated(() => {
 function getTableRows(currentPage: number) {
     loading.value = !loading.value
     tableRows.value = []
-    getDocHistoryList(docId.value as number, {
+    getDocList(-1, -1, true, '', {
         page: currentPage,
         pageSize: pagination.pageSize,
-        orderBy: `createdAt_desc`,
+        orderBy: `updatedAt_desc`,
     } as PaginationWithSort).then((resp) => {
         pagination.page = resp.pagination?.page || 0
         pagination.pageSize = resp.pagination?.pageSize || 0
@@ -142,6 +145,7 @@ function getTableRows(currentPage: number) {
         resp.list.map((val) => {
             tableRows.value.push({
                 id: val.id,
+                title: val.title,
                 createdAt: val.createdAt as string,
             } as rowData)
         })
@@ -151,5 +155,6 @@ function getTableRows(currentPage: number) {
         message.error(`${err}`)
     })
 }
+
 
 </script>

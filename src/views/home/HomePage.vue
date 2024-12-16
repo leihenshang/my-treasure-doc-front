@@ -27,10 +27,6 @@
               :override-default-node-click-behavior="override" :default-expanded-keys="expandedKeys"
               :selected-keys="selectedKeys" />
           </n-collapse-item>
-          <n-collapse-item title="回收站" name="3">
-            <n-tree block-line :data="recycleBinList" :node-props="nodeProps"
-              :render-suffix="treeNodeSuffixWithRecycleBin" :render-switcher-icon="renderSwitcherIcon" />
-          </n-collapse-item>
         </n-collapse>
       </n-layout-sider>
       <n-layout-content class="right" :native-scrollbar="false">
@@ -42,18 +38,23 @@
     @add-tree-item="addTreeItem" @recursion-reload="id => recursionReloadTreeNode(treeData, id)">
   </CreateGroup>
   <SearchBox v-model:show="showSearchBox"></SearchBox>
+  <DocRecycleBin v-model:show="showRecycleBinModal" v-on:refresh-doc=" refreshDocList(); refreshTree();">
+  </DocRecycleBin>
 </template>
 
 <script lang="ts" setup>
-import { createDoc, deleteDoc, getDocList, updateDoc } from "@/api/doc";
+import { createDoc, deleteDoc, getDocList } from "@/api/doc";
 import { deleteGroup, getDocGroupTree } from "@/api/doc_group";
 import { logOut } from '@/api/user';
+import { } from '@/components/doc/DocCycleBin.vue';
+import DocRecycleBin from '@/components/doc/DocRecycleBin.vue';
 import CreateGroup from "@/components/home_page/CreateGroup.vue";
 import { useGlobalStore } from '@/stores/global';
 import { Doc, DocGroup } from '@/types/resource';
 import { buildTreeItem } from '@/utils/common';
 import eventBus from '@/utils/event_bus';
 import { DashboardOutlined, FolderAddOutlined } from '@vicons/antd';
+import { Trash } from "@vicons/fa";
 import { Delete24Filled } from "@vicons/fluent";
 import {
   AddCircleOutline,
@@ -78,7 +79,6 @@ import {
 import { Component, h, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-
 const globalStore = useGlobalStore()
 const router = useRouter();
 const route = useRoute()
@@ -86,18 +86,17 @@ const topMenuRef = ref(null)
 const message = useMessage()
 const treeData = ref<Array<TreeOption>>([])
 const topDocList = ref<Array<TreeOption>>([])
-const recycleBinList = ref<Array<TreeOption>>([])
 const showModal = ref(false);
 const showSearchBox = ref(false);
 const groupHandleType = ref('');
 const updateGroup = ref<DocGroup>();
 const expandedKeys = ref<Array<string>>([])
 const selectedKeys = ref<Array<string>>([])
+const showRecycleBinModal = ref(false)
 
 onMounted(() => {
   refreshTree();
   refreshDocList();
-  refreshDocList(true);
 })
 
 eventBus.on('updateDocTitle', (data: Doc) => {
@@ -181,9 +180,12 @@ const horizontalMenuOptions: MenuOption[] = [
         label: '退出登录',
         key: 'login-out',
         icon: renderIcon(ArrowForwardCircleSharp),
-
       },
-
+      {
+        label: '回收站',
+        key: 'recycle-bin',
+        icon: renderIcon(Trash),
+      },
     ]
   }
 ]
@@ -215,7 +217,6 @@ function topMenuUpdate(key: string): void {
       } else {
         console.log(err)
       }
-
     })
   } else if (key === 'top-menu-folder') {
     changeModal('create', {
@@ -227,6 +228,8 @@ function topMenuUpdate(key: string): void {
     })
   } else if (key === 'top-menu-search') {
     showSearchBox.value = true
+  } else if (key === 'recycle-bin') {
+    showRecycleBinModal.value = true
   }
 }
 
@@ -254,37 +257,20 @@ function refreshTree() {
   })
 }
 
-function refreshDocList(recycleBin: boolean = false) {
-  if (recycleBin) {
-    recycleBinList.value = []
-  } else {
-    topDocList.value = []
-  }
-
-  getDocList(-1, recycleBin ? -1 : 1, recycleBin).then((response) => {
+function refreshDocList() {
+  topDocList.value = []
+  getDocList(-1, 1).then((response) => {
     response.list.map((val) => {
-      if (recycleBin) {
-        recycleBinList.value.push(buildTreeItem({
-          title: val.title,
-          groupType: 'doc',
-          id: val.id,
-        }))
-      } else {
-        topDocList.value.push(buildTreeItem({
-          title: val.title,
-          groupType: 'doc',
-          id: val.id,
-        }))
-      }
-
-
+      topDocList.value.push(buildTreeItem({
+        title: val.title,
+        groupType: 'doc',
+        id: val.id,
+      }))
     })
   }).catch((err) => {
     message.error(err)
   })
 }
-
-
 
 function handleLoad(node: TreeOption) {
   return new Promise<void>((resolve, reject) => {
@@ -442,62 +428,12 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
 }
 
 
-const treeNodeSuffixWithRecycleBin = (info: { option: TreeOption, checked: boolean, selected: boolean }) => {
-  return h(NButtonGroup, {
-    size: "tiny",
-  }, () => [
-    h(
-      NDropdown,
-      {
-        options: [
-          {
-            icon: () => { return h(NIcon, null, { default: () => h(Delete24Filled) }) },
-            label: '恢复',
-            key: 'recover',
-          }
-        ],
-        onSelect: (key: string) => {
-          if (key === 'recover') {
-            updateDoc({
-              id: info.option.id as unknown as number,
-              isRecover: true
-            } as Doc).then(() => {
-              message.info('更新成功');
-              treeData.value.push(buildTreeItem({
-                id: info.option.id as unknown as number,
-                title: info.option.label,
-                groupType: "doc",
-              } as DocGroup))
-
-              refreshDocList(true)
-            }).catch((err) => { message.error(`${err}`) })
-          }
-        }
-
-      },
-      () => h(
-        NButton,
-        {
-          text: true,
-          size: 'small',
-          onClick: e => {
-            e.preventDefault()
-            e.stopPropagation()
-          }
-        },
-        { icon: () => h(NIcon, null, { default: () => h(MenuOutline) }) }
-      )
-    )
-  ])
-}
-
 
 function deleteTreeNode(id: number, type: string) {
   if (type === 'doc') {
     deleteDoc({ id } as Doc).then(() => {
       message.success('删除成功');
-      refreshDocList(true);
-      refreshDocList(false);
+      refreshDocList();
       if (route.params.id && parseInt(route.params.id as string) === id) {
         router.push({ path: `/Editor/0` })
       }

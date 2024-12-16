@@ -19,11 +19,7 @@ export function getDocHistoryList(
             if (response?.code) {
                 reject(response?.msg)
             }
-
-            const resp: TreasureResponseList<DocHistory> = new TreasureResponseList()
-            resp.list = response?.data?.list
-            resp.pagination = response?.data?.pagination
-            resolve(resp)
+            resolve(response?.data as TreasureResponseList<DocHistory>)
         })
     })
 }
@@ -53,7 +49,7 @@ export function recoveryDoc(id: number): Promise<TreasureResponse<DocHistory>> {
                 reject(response?.msg)
             }
             const resp: TreasureResponse<DocHistory> = new TreasureResponse()
-            resp.data = response?.data
+            resp.data = response?.data as unknown as DocHistory
             resp.msg = response?.msg
             resp.code = response?.code
             resolve(resp)
