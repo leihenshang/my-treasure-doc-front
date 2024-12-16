@@ -2,11 +2,29 @@
     <div class="dashboard">
         <n-grid :cols="2">
             <n-form-item-gi>
-                <n-button @click.prevent="router.push({ path: '/HomePage' })">首页</n-button>
+                <n-button @click.prevent="router.push({ path: '/Editor/0' })">
+                    文档 <template #icon>
+                        <n-icon>
+                            <ArrowBackCircleSharp></ArrowBackCircleSharp>
+                        </n-icon>
+                    </template>
+                </n-button>
             </n-form-item-gi>
             <n-form-item-gi>
-                <n-button @click.prevent="currentNoteId = 0; showModal = !showModal;">新建</n-button>
-
+                <n-button @click.prevent="currentNoteId = 0; showModal = !showModal;">
+                    <template #icon>
+                        <n-icon>
+                            <Bookmarks></Bookmarks>
+                        </n-icon>
+                    </template>
+                    新建</n-button>
+                <!-- <n-button @click.prevent="currentNoteId = 0; showModal = !showModal;">
+                    <template #icon>
+                        <n-icon>
+                            <HeartHalf></HeartHalf>
+                        </n-icon>
+                    </template>
+                    树洞</n-button> -->
             </n-form-item-gi>
         </n-grid>
         <n-grid :cols="10" :collapsed="gridCollapsed" :collapsed-rows="gridCollapsedRows" :x-gap="12" :y-gap="8">
@@ -86,7 +104,7 @@ import CreateNote from '@/components/note/CreateNote.vue';
 import { router } from '@/router';
 import { Note } from '@/types/resource';
 import { ExternalLinkSquareAlt, StickyNote } from '@vicons/fa';
-import { MenuSharp } from '@vicons/ionicons5';
+import { ArrowBackCircleSharp, Bookmarks, MenuSharp } from '@vicons/ionicons5';
 import { DropdownOption, useMessage } from 'naive-ui';
 import { computed, onMounted, ref } from 'vue';
 // 鼠标事件

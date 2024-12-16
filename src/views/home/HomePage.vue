@@ -30,7 +30,7 @@
           </n-collapse-item>
         </n-collapse>
       </n-layout-sider>
-      <n-layout-content class="right" :native-scrollbar="false">
+      <n-layout-content class="right" :native-scrollbar="false" content-style="display: flex;width:100%; height:100%;">
         <router-view></router-view>
       </n-layout-content>
     </n-layout>

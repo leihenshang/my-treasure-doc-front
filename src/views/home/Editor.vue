@@ -61,9 +61,14 @@
                 <Vditor :doc="currentDoc" @update-doc="contentUpdate" />
             </div>
         </template>
-        <div v-else class="div404">
-            <n-result status="404" title="爱是什么？" description="爱可能是常觉亏欠，也可能是常觉亏钱" size="medium">
-            </n-result>
+        <div v-else class="empty-doc">
+            <n-empty description="我们终其一生都在追寻的是什么？" size="huge">
+                <template #extra>
+                    <n-button size="small">
+                        先写一个文档试试 ~
+                    </n-button>
+                </template>
+            </n-empty>
         </div>
     </div>
     <DocHistory v-model:show="showHistoryModal" v-model:doc-id="currentDoc.id"
@@ -187,18 +192,15 @@ function getSetCurrentDoc(docId: number) {
 
 <style scoped lang='scss'>
 .edit-box {
-    padding: 5px;
+    padding: 5px 0 0 5px;
     height: 100%;
-    width: auto;
-
+    width: 100%;
 
     .edit-banner {
-        height: 20px;
-        line-height: 20px;
-        margin: 5px 0 5px 0;
+        height: 25px;
     }
 
-    .div404 {
+    .empty-doc {
         height: 100%;
         width: 100%;
         display: flex;

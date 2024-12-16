@@ -1,7 +1,5 @@
 <template>
-    <n-scrollbar style="min-height: 820px" content-style="overflow:hidden;">
-        <div id="vditor-container"></div>
-    </n-scrollbar>
+    <div id="vditor-container"></div>
 </template>
 <script lang="ts" setup>
 import { PATH_URL } from '@/api/service'
@@ -41,7 +39,7 @@ onMounted(() => {
 
     const vditorConf = {
         theme: vditorTheme.value.editorTheme,
-        height: '98vh',
+        height: 'calc( 100vh - 25px )',
         typewriterMode: true,
         toolbarConfig: {
             pin: true,
