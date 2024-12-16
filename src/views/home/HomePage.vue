@@ -234,7 +234,7 @@ function topMenuUpdate(key: string): void {
   }
 }
 
-function genDocTitle(suffix: string = "-新页面") {
+function genDocTitle(suffix: string = "-新") {
   const today = new Date()
   let todayTitleStr = "".concat(
     today.getFullYear().toString(),
