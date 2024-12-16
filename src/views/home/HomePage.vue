@@ -201,11 +201,14 @@ function topMenuUpdate(key: string): void {
     } as Doc).then(res => {
       const doc = res.getData()
       router.push({ path: `/Editor/${doc.id}` })
-      treeData.value.push(buildTreeItem({
+      const option = buildTreeItem({
         id: doc.id,
         title: doc.title,
         groupType: "doc",
-      } as DocGroup))
+      } as DocGroup)
+      treeData.value.push(option)
+      selectedKeys.value = []
+      selectedKeys.value.push(option.key as string)
     }).catch(err => {
       message.error(err)
     })
@@ -305,7 +308,6 @@ function nodeProps({ option }: { option: TreeOption }) {
       if (option.groupType == "doc") {
         selectedKeys.value = []
         selectedKeys.value.push(option.key as string)
-        console.log(selectedKeys)
         router.push({ path: `/Editor/${option.id}` })
       }
     },
@@ -415,6 +417,8 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
               recursionReloadTreeNode(treeData.value, doc.groupId || 0)
             }
             if (doc.id > 0) {
+              selectedKeys.value = []
+              selectedKeys.value.push(`doc-${doc.id}`)
               router.push({ path: `/Editor/${doc.id}` })
             }
           }).catch(err => {

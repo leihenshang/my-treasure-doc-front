@@ -85,9 +85,7 @@ onMounted(() => {
                         vditorContainer.value.enable()
                     }
                 }
-                if (newDoc.content.length > 0) {
-                    vditorContainer.value?.setValue(newDoc.content)
-                }
+                vditorContainer.value?.setValue(newDoc.content)
             })
 
             eventBus.on('updateReadOnly', (readOnly: boolean) => {
