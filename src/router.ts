@@ -24,22 +24,22 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach(async (to, from) => {
+router.beforeEach(async (to) => {
   let isAuthenticated: boolean = false
   const storeUserinfo = useUserInfoStore()
   if (storeUserinfo.userId > 0) {
     isAuthenticated = true
   } else {
-    let localUserInfo: string | null = localStorage.getItem('userInfo')
+    const localUserInfo: string | null = localStorage.getItem('userInfo')
     if (localUserInfo) {
       try {
-        let userInfo: UserInfo = JSON.parse(localUserInfo)
+        const userInfo: UserInfo = JSON.parse(localUserInfo)
         if (userInfo && userInfo.id > 0) {
           storeUserinfo.updateUserInfo(userInfo)
           isAuthenticated = true
         }
-      } catch (error) {
-        console.log("failed to parse userinfo from local storage")
+      } catch (err) {
+        console.log("failed to parse userinfo from local storage", err)
       }
     }
   }
