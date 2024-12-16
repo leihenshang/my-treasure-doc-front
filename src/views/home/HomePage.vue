@@ -196,16 +196,16 @@ function topMenuUpdate(key: string): void {
   if (key === 'top-menu-write') {
     createDoc({
       id: 0,
-      content: `# ${title}`,
+      content: ``,
       title: title
     } as Doc).then(res => {
       const doc = res.getData()
+      router.push({ path: `/Editor/${doc.id}` })
       treeData.value.push(buildTreeItem({
         id: doc.id,
         title: doc.title,
         groupType: "doc",
       } as DocGroup))
-      router.push({ path: `/Editor/${doc.id}` })
     }).catch(err => {
       message.error(err)
     })
@@ -398,7 +398,7 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
           const title = genDocTitle()
           const newDoc: Doc = {
             id: 0,
-            content: `# ${title}`,
+            content: ``,
             title: title,
             groupId: info.option.id as unknown as number
           }
