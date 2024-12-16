@@ -76,11 +76,12 @@ import {
   TreeOption, useMessage
 } from 'naive-ui';
 import { Component, h, onBeforeUnmount, onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 
 const globalStore = useGlobalStore()
 const router = useRouter();
+const route = useRoute()
 const topMenuRef = ref(null)
 const message = useMessage()
 const treeData = ref<Array<TreeOption>>([])
@@ -493,7 +494,14 @@ const treeNodeSuffixWithRecycleBin = (info: { option: TreeOption, checked: boole
 
 function deleteTreeNode(id: number, type: string) {
   if (type === 'doc') {
-    deleteDoc({ id } as Doc).then(() => { message.success('删除成功'); refreshDocList(true); refreshDocList(false); }).catch(err => { console.log(err) })
+    deleteDoc({ id } as Doc).then(() => {
+      message.success('删除成功');
+      refreshDocList(true);
+      refreshDocList(false);
+      if (route.params.id && parseInt(route.params.id as string) === id) {
+        router.push({ path: `/Editor/0` })
+      }
+    }).catch(err => { console.log(err) })
   } else {
     deleteGroup({ id } as DocGroup).then(() => { message.success('删除成功') }).catch(err => { console.log(err) })
   }
