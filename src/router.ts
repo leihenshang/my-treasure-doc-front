@@ -12,12 +12,12 @@ const router = createRouter({
     },
     {
       path: '/HomePage', name: 'HomePage', component: () => import('./views/home/HomePage.vue'),
-      redirect: { path: 'Editor/0' },
+      redirect: { path: '/Editor' },
       children: [
         { path: '/Start', name: 'Start', component: () => import('./views/home/Start.vue') },
         { path: '/Collection', name: 'Collection', component: () => import('./views/home/Collection.vue') },
         { path: '/Plan', name: 'Plan', component: () => import('./views/home/Plan.vue') },
-        { path: '/Editor/:id', name: 'Editor', component: () => import('./views/home/Editor.vue'), props: true },
+        { path: '/Editor/:id?', name: 'Editor', component: () => import('./views/home/Editor.vue'), props: true },
         { path: '/Note', name: 'Note', component: () => import('./views/home/Note.vue') },
       ],
     }
@@ -60,3 +60,4 @@ router.beforeEach(async (to, from) => {
 })
 
 export { router };
+

@@ -2,7 +2,7 @@
     <div class="dashboard">
         <n-grid :cols="2">
             <n-form-item-gi>
-                <n-button @click.prevent="router.push({ path: '/Editor/0' })">
+                <n-button @click.prevent="router.push({ path: '/Editor' })">
                     文档 <template #icon>
                         <n-icon>
                             <ArrowBackCircleSharp></ArrowBackCircleSharp>

@@ -150,7 +150,7 @@ onMounted(async () => {
     eventBus.on('deleteDocGroup', (id: number) => {
         currentDoc.value.groupPath?.some((val) => {
             if (val.id === id) {
-                router.push({ path: `/Editor/0` })
+                router.push({ path: `/Editor` })
                 eventBus.emit('updateTopDoc')
                 return true
             }

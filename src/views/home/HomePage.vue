@@ -440,7 +440,7 @@ function deleteTreeNode(id: number, type: string) {
       message.success('删除成功');
       refreshDocList();
       if (route.params.id && parseInt(route.params.id as string) === id) {
-        router.push({ path: `/Editor/0` })
+        router.push({ path: `/Editor` })
       }
     }).catch(err => { console.log(err) })
   } else {
@@ -457,7 +457,7 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
     if (arr[i]?.id && arr[i].id == key) {
       deleteTreeNode(arr[i].id as number, arr[i].groupType as string)
       arr.splice(i, 1)
-      // router.push({ path: `/Editor/0` })
+      // router.push({ path: `/Editor` })
       eventBus.emit('deleteDocGroup', key)
       break
     }
