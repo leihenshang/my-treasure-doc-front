@@ -28,6 +28,9 @@
 </template>
 <script lang="ts" setup>
 import { getDoc, getDocList, updateDoc } from '@/api/doc';
+import { darkTheme, lightTheme } from '@/constants';
+import { useGlobalStore } from "@/stores/global";
+import { vditorCustomerTheme } from '@/types/editor';
 import { Doc } from '@/types/resource';
 import { PaginationWithSort } from '@/types/treasure_response';
 import { NButton, PaginationProps, useMessage } from 'naive-ui';
@@ -57,6 +60,10 @@ const show = defineModel('show')
 const tableRows = ref<Array<rowData>>([])
 const currentDoc = ref<Doc>()
 const loading = ref(true)
+const vditorTheme = ref<vditorCustomerTheme>()
+const storeGlobal = useGlobalStore()
+
+
 
 interface rowData {
     id: number,
@@ -80,6 +87,13 @@ const columns = [
         title: '操作',
         key: 'actions',
         render(row: rowData) {
+
+            if (storeGlobal.theme === 'light') {
+                vditorTheme.value = { ...lightTheme }
+            } else {
+                vditorTheme.value = { ...darkTheme }
+            }
+
             return h(
                 NButton,
                 {
@@ -88,7 +102,14 @@ const columns = [
                     size: 'small',
                     onClick: () => {
                         const msgLoading = message.loading('加载文档...')
-                        Vditor.preview(vditorContainerRef.value as HTMLDivElement, '', { mode: "dark" })
+                        Vditor.preview(vditorContainerRef.value as HTMLDivElement, '', {
+                            // mode: vditorTheme.value?.editorTheme as string === "light" ? "light" : "dark",
+                            mode: "light",
+                            hljs: {
+                                style: vditorTheme.value?.codeTheme
+                            },
+                            theme: { current: vditorTheme.value?.previewTheme as string },
+                        })
                         getDoc(row.id).then(resp => {
                             currentDoc.value = resp.data as Doc
                             Vditor.preview(vditorContainerRef.value as HTMLDivElement, currentDoc.value.content, { mode: "dark" })

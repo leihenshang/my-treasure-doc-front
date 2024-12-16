@@ -29,7 +29,7 @@ const emit = defineEmits<{
 }>()
 
 onMounted(() => {
-    const msg = message.loading("编辑器初始化...")
+    const msg = message.loading("初始化...")
 
     if (storeGlobal.theme === 'light') {
         vditorTheme.value = { ...lightTheme }
