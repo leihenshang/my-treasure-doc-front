@@ -27,7 +27,7 @@
           </n-collapse-item>
           <n-collapse-item title="我的文档" name="2">
             <n-tree class="tree-wrapper" :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
-                    :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon"
+                    :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" @mouseover="xxx"
                     :override-default-node-click-behavior="override" :default-expanded-keys="expandedKeys"
                     :selected-keys="selectedKeys"/>
           </n-collapse-item>
@@ -96,6 +96,7 @@ const updateGroup = ref<DocGroup>();
 const expandedKeys = ref<Array<string>>([])
 const selectedKeys = ref<Array<string>>([])
 const showRecycleBinModal = ref(false)
+const hoverMenuId = ref()
 
 onMounted(() => {
   refreshTree();
@@ -122,7 +123,6 @@ const override: TreeOverrideNodeClickBehavior = ({option}) => {
   }
   return 'default'
 }
-
 function addTreeItem(op: TreeOption) {
   let foundDoc = false
   for (let i = 0; i < treeData.value.length; i++) {
@@ -313,10 +313,17 @@ function nodeProps({option}: { option: TreeOption }) {
         router.push({path: `/Editor/${option.id}`})
       }
     },
+    onMouseover(){
+      hoverMenuId.value = option.id
+    },
+    onMouseleave(){
+      hoverMenuId.value = 0
+    }
   }
 }
 
 const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: boolean }) => {
+  if (hoverMenuId.value!==info.option.id) return
   return h(NButtonGroup, {
     size: "tiny",
   }, () => [
