@@ -47,7 +47,6 @@
 import { createDoc, deleteDoc, getDocList } from "@/api/doc";
 import { deleteGroup, getDocGroupTree } from "@/api/doc_group";
 import { logOut } from '@/api/user';
-import { } from '@/components/doc/DocCycleBin.vue';
 import DocRecycleBin from '@/components/doc/DocRecycleBin.vue';
 import CreateGroup from "@/components/home_page/CreateGroup.vue";
 import { useGlobalStore } from '@/stores/global';
