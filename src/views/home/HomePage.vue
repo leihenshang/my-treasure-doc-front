@@ -18,6 +18,7 @@
             }}
           </n-button>
         </div>
+        <HeaderToolList></HeaderToolList>
         <n-menu mode="horizontal" :options="horizontalMenuOptions" @update:value="topMenuUpdate" :icon-size="18"
                 ref="topMenuRef"/>
         <n-collapse :default-expanded-names="['1', '2']" style="padding: 0 10px 0 0;">
@@ -81,6 +82,7 @@ import {
 } from 'naive-ui';
 import {Component, h, onBeforeUnmount, onMounted, ref} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
+import HeaderToolList from "@/components/home_page/nav/HeaderToolList.vue";
 
 const globalStore = useGlobalStore()
 const router = useRouter();
