@@ -97,6 +97,8 @@ const expandedKeys = ref<Array<string>>([])
 const selectedKeys = ref<Array<string>>([])
 const showRecycleBinModal = ref(false)
 const hoverMenuId = ref()
+let handleMouseOverFn:ReturnType<typeof setTimeout>
+
 
 onMounted(() => {
   refreshTree();
@@ -303,7 +305,6 @@ function handleLoad(node: TreeOption) {
   })
 }
 
-
 function nodeProps({option}: { option: TreeOption }) {
   return {
     onClick() {
@@ -314,10 +315,13 @@ function nodeProps({option}: { option: TreeOption }) {
       }
     },
     onMouseover(){
+      clearTimeout(handleMouseOverFn)
       hoverMenuId.value = option.id
     },
     onMouseleave(){
-      hoverMenuId.value = 0
+      handleMouseOverFn = setTimeout(()=>{
+        hoverMenuId.value = 0
+      },250)
     }
   }
 }
@@ -363,6 +367,13 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
               show: (info.option.groupType === "doc")
             },
           ],
+          onMouseover:()=>{
+            clearTimeout(handleMouseOverFn)
+            hoverMenuId.value = info.option.id
+          },
+          onMouseleave(){
+            hoverMenuId.value = 0
+          },
           onSelect: (key: string) => {
             if (key === 'delete') {
               recursionDeleteTreeNode(treeData.value, info.option.id as number)
