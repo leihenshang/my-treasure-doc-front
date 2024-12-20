@@ -66,7 +66,8 @@ const storeGlobal = useGlobalStore()
 
 
 interface rowData {
-    id: number,
+    id: string,
+    title: string,
     createdAt: string,
 }
 
@@ -127,7 +128,7 @@ const columns = [
 
 
 function handleOkBtn() {
-    if (!currentDoc.value || currentDoc.value.id <= 0) {
+    if (!currentDoc.value || !currentDoc.value.id) {
         return
     }
 
@@ -166,7 +167,7 @@ function getTableRows(currentPage: number) {
                 id: val.id,
                 title: val.title,
                 createdAt: val.createdAt as string,
-            } as rowData)
+            })
         })
         loading.value = false
     }).catch(err => {

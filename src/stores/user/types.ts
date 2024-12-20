@@ -1,5 +1,5 @@
 export type UserInfo = {
-    id: number,
+    id: string,
     createdAt?: string,
     updatedAt?: string,
     deletedAt?: string,
@@ -13,7 +13,4 @@ export type UserInfo = {
     avatar?: string,
     bio?: string,
     token?: string,
-    tokenExpire?: string,
-    lastLoginIp?: string,
-    lastLoginTime?: string,
 }

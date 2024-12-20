@@ -66,7 +66,7 @@ const storeGlobal = useGlobalStore()
 
 
 interface rowData {
-    id: number,
+    id: string,
     createdAt: string,
 }
 
@@ -122,7 +122,7 @@ const columns = [
 
 
 function handleOkBtn() {
-    if (!currentDocHistory.value || currentDocHistory.value.id <= 0) {
+    if (!currentDocHistory.value || !currentDocHistory.value.id) {
         return
     }
     recoveryDoc(currentDocHistory.value.id).then(() => {
@@ -159,7 +159,7 @@ function getTableRows(currentPage: number) {
             tableRows.value.push({
                 id: val.id,
                 createdAt: val.createdAt as string,
-            } as rowData)
+            })
         })
         loading.value = false
     }).catch(err => {

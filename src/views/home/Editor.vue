@@ -105,7 +105,7 @@ function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false, isReadOnly: b
     docUpdate.readOnly = readOnly.value ? 1 : 2
     docUpdate.version = currentDoc.value.version
     docUpdate.groupId = currentDoc.value.groupId
-    if (docUpdate.id > 0) {
+    if (docUpdate.id) {
         updateDoc(docUpdate).then((resp) => {
             if (onlyIsTop) {
                 eventBus.emit('updateTopDoc')
@@ -147,7 +147,7 @@ onMounted(async () => {
             }
         })
     })
-    eventBus.on('deleteDocGroup', (id: number) => {
+    eventBus.on('deleteDocGroup', (id: string) => {
         currentDoc.value.groupPath?.some((val) => {
             if (val.id === id) {
                 router.push({ path: `/Editor` })

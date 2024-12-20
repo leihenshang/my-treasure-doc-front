@@ -39,7 +39,7 @@ const formRef = ref<FormInst | null>(null)
 const router = useRouter()
 const storeUserInfo = useUserInfoStore()
 const userInfo = ref<LoginUser>({
-  id: 0,
+  id: '',
   account: '',
   password: '',
   verifyCode: '123456'
@@ -104,7 +104,7 @@ const getRules = (name: string) => {
     background-color: #FFFFFF;
 
     >.my-icon {
-      font-size:30vh;
+      font-size: 30vh;
     }
   }
 

@@ -37,7 +37,7 @@ import { reactive, ref, watch } from 'vue';
 
 const emit = defineEmits<{
     (e: 'addTreeItem', value: TreeOption): void
-    (e: 'recursionReload', value: number): void
+    (e: 'recursionReload', value: string): void
 
 }>()
 
@@ -45,7 +45,7 @@ const showModalModel = defineModel('show')
 const updateGroup = defineModel('updateGroup')
 const handleType = defineModel('handleType', { type: String, required: true })
 const updateModalName = ref('')
-const updateModalPid = ref(0)
+const updateModalPid = ref('')
 const options = ref([
     {
         label: '顶层',
@@ -57,7 +57,7 @@ const options = ref([
 ])
 
 
-const newGroup = reactive<DocGroup>({ title: '', groupType: '', id: 0, pid: 0 });
+const newGroup = reactive<DocGroup>({ title: '', groupType: '', id: '', pid: '' });
 const message = useMessage()
 
 function getModalTileByType(handleType: string): string {
@@ -74,13 +74,13 @@ function getModalTileByType(handleType: string): string {
 watch(updateGroup, (newGroup) => {
     const group = newGroup as DocGroup
     updateModalName.value = group.title
-    updateModalPid.value = group.pid || -1
+    updateModalPid.value = group.pid || ''
 })
 
 function updateModal(type: string) {
     const updateGroupCopy = updateGroup.value as unknown as DocGroup
     if (type === 'updateDoc') {
-        if (updateModalPid.value < 0) {
+        if (!updateModalPid.value) {
             showModalModel.value = false
             clearModal()
             return
@@ -95,7 +95,7 @@ function updateModal(type: string) {
             } as Doc).then(() => {
                 showModalModel.value = false
                 clearModal()
-                emit('recursionReload', updateGroupCopy.pid || 0)
+                emit('recursionReload', updateGroupCopy.pid || '')
             }).catch(err => {
                 message.error(`${err.msg}`)
                 console.log(err)
@@ -112,13 +112,13 @@ function updateModal(type: string) {
 
     if (type == 'update') {
         updateGroupCopy.title = updateModalName.value
-        if (updateModalPid.value > 0) {
+        if (updateModalPid.value) {
             updateGroupCopy.pid = updateModalPid.value
         }
         updateGroupData(updateGroupCopy).then(() => {
             clearModal()
             eventBus.emit('updateGroupName', updateGroupCopy)
-            emit('recursionReload', updateGroupCopy.pid || 0)
+            emit('recursionReload', updateGroupCopy.pid || '')
         }).catch(err => {
             message.error(err)
         })
@@ -126,18 +126,18 @@ function updateModal(type: string) {
 
     if (type == 'create') {
         newGroup.title = updateModalName.value
-        if (updateModalPid.value > 0) {
+        if (updateModalPid.value) {
             newGroup.pid = updateModalPid.value
         }
         createGroup(newGroup).then((resp) => {
             clearModal()
-            if (newGroup.pid == 0) {
+            if (newGroup.pid) {
                 const newItem = Object.assign({}, newGroup)
                 newItem.id = resp?.getData()?.id
                 newItem.isLeaf = true
                 emit('addTreeItem', buildTreeItem(newItem))
             } else {
-                emit('recursionReload', newGroup.pid || 0)
+                emit('recursionReload', newGroup.pid || '')
             }
         }).catch(err => {
             console.log(err)
@@ -151,7 +151,7 @@ function updateModal(type: string) {
 
 function clearModal() {
     updateModalName.value = ''
-    updateModalPid.value = -1
+    updateModalPid.value = ''
 }
 
 

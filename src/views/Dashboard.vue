@@ -111,12 +111,12 @@ import { computed, onMounted, ref } from 'vue';
 // @mouseenter="handleMouse(i.id, 'enter')" @mouseleave="handleMouse(i.id, 'leave')"
 
 const showDocModal = ref(false)
-const showDocModalDocId = ref<number>()
+const showDocModalDocId = ref('')
 const gridCollapsed = ref(false)
 const gridCollapsedRows = ref(1)
 const message = useMessage()
 const noteList = ref<Note[]>()
-const currentNoteId = ref(0)
+const currentNoteId = ref('')
 const iconSize = ref(24)
 const showModal = ref(false)
 const noteListBookmark = computed(() => {
@@ -154,7 +154,7 @@ onMounted(() => {
     refreshList()
 })
 
-function genDropMenuOptions(id: number) {
+function genDropMenuOptions(id: string) {
     return [
         {
             label: '编辑',
@@ -169,7 +169,7 @@ function genDropMenuOptions(id: number) {
 }
 
 function refreshList() {
-    currentNoteId.value = 0
+    currentNoteId.value = ''
     getNoteList().then((resp) => {
         noteList.value = resp.list
     }).catch(err => {
@@ -178,7 +178,7 @@ function refreshList() {
 }
 
 function handleSelect(key: string | number, option: DropdownOption) {
-    const id = option.id as number
+    const id = option.id as string
     if (!id) {
         message.info('id 不能为空')
         return
@@ -200,7 +200,7 @@ function handleSelect(key: string | number, option: DropdownOption) {
     }
 }
 
-function handleDocNote(docId: number) {
+function handleDocNote(docId: string) {
     showDocModalDocId.value = docId
     showDocModal.value = true
 }

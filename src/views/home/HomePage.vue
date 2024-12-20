@@ -28,7 +28,7 @@
           </n-collapse-item>
           <n-collapse-item title="我的文档" name="2">
             <n-tree class="tree-wrapper" :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
-              :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" @mouseover=""
+              :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" @mouseover.stop=""
               :override-default-node-click-behavior="override" :default-expanded-keys="expandedKeys"
               :selected-keys="selectedKeys" />
           </n-collapse-item>

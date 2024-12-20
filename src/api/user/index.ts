@@ -6,8 +6,8 @@ import { TreasureResponse } from "@/types/treasure_response";
 const userInfoStore = useUserInfoStore()
 
 export async function logOut() {
-    return new Promise<TreasureResponse<UserInfo>>((resolve: any, reject: any) => {
-        myHttp.post<TreasureResponse<UserInfo>>({
+    return new Promise<TreasureResponse<UserInfo> | void>((resolve, reject) => {
+        myHttp.post<UserInfo>({
             url: '/api/user/logout', data: {}
         }).then((response) => {
             if (response?.code) {
@@ -23,8 +23,8 @@ export async function logOut() {
 }
 
 export async function logIn(userInfo: UserInfo) {
-    return new Promise<TreasureResponse<UserInfo>>((resolve: any, reject: any) => {
-        myHttp.post<TreasureResponse<UserInfo>>({
+    return new Promise<TreasureResponse<UserInfo>>((resolve, reject) => {
+        myHttp.post<UserInfo>({
             url: '/api/user/login', data: { ...userInfo }
         }).then((response) => {
             if (response?.code) {

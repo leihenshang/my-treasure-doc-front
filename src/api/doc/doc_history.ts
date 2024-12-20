@@ -40,7 +40,7 @@ export function getDocHistory(id: number | string = 0): Promise<TreasureResponse
 }
 
 
-export function recoveryDoc(id: number): Promise<TreasureResponse<DocHistory>> {
+export function recoveryDoc(id: string): Promise<TreasureResponse<DocHistory>> {
     return new Promise<TreasureResponse<DocHistory>>((resolve, reject) => {
         myHttp.post<TreasureResponse<DocHistory>>({
             url: '/api/doc-history/recover', data: { id }
