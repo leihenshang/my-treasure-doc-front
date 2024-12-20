@@ -47,3 +47,16 @@ export interface Note extends BaseResource {
     color?: string,
     icon?: string
 }
+
+export interface UserInfo extends BaseResource {
+    nickname?: string,
+    account: string,
+    email?: string,
+    password?: string,
+    userType?: number,
+    userStatus?: number,
+    mobile?: string,
+    avatar?: string,
+    bio?: string,
+    token?: string,
+}

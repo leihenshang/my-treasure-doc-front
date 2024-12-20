@@ -27,9 +27,8 @@
 
 <script lang="ts" setup>
 import { logIn } from '@/api/user';
-import { UserInfo } from '@/stores/user/types';
 import { useUserInfoStore } from "@/stores/user/user_info";
-import { LoginUser } from "@/types/resource";
+import { LoginUser, UserInfo } from '@/types/resource';
 import { FormInst, lightTheme, NInput, useMessage } from 'naive-ui';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
