@@ -1,4 +1,7 @@
 <template>
+
+
+
     <div class="user-manage">
         <n-grid :cols="2">
             <n-form-item-gi>
@@ -27,10 +30,11 @@
             </n-config-provider>
         </div>
     </div>
-
+    <CreateUser :show-modal="showModal"></CreateUser>
 </template>
 <script setup lang="ts">
 import { getUserInfoList } from '@/api/user/user_manage';
+import CreateUser from '@/components/user_manage/CreateUser.vue';
 import { UserInfo } from '@/types/resource';
 import { PaginationWithSort } from '@/types/treasure_response';
 import { AddCircleOutline, ArrowBackCircleSharp, Bookmarks } from '@vicons/ionicons5';
@@ -141,6 +145,8 @@ const columns = [
                             onClick: e => {
                                 e.preventDefault()
                                 e.stopPropagation()
+                                showModal.value = !showModal.value
+
                             },
                         },
                         { icon: () => h(NIcon, null, { default: () => h(AddCircleOutline) }), default: () => '详情' }
