@@ -154,7 +154,7 @@ const columns = [
                                 e.stopPropagation()
                             },
                         },
-                        { icon: () => h(NIcon, null, { default: () => h(AddCircleOutline) }), default: () => '删除' }
+                        { icon: () => h(NIcon, null, { default: () => h(AddCircleOutline) }), default: () => '禁用' }
                     ),
                     h(
                         NButton,
