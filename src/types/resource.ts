@@ -33,7 +33,9 @@ export interface DocGroup extends BaseResource {
 
 export interface LoginUser extends BaseResource {
     account: string
+    email: string
     password: string
+    rePassword: string
     verifyCode: string
 }
 

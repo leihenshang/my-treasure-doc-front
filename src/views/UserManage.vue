@@ -14,7 +14,7 @@
                 </n-button>
             </n-form-item-gi>
             <n-form-item-gi>
-                <n-button @click.prevent="currentUserId = ''; showModal = !showModal;">
+                <n-button @click=" showModal = !showModal;">
                     <template #icon>
                         <n-icon>
                             <Bookmarks></Bookmarks>
@@ -30,16 +30,16 @@
             </n-config-provider>
         </div>
     </div>
-    <CreateUser :show-modal="showModal"></CreateUser>
+    <CreateUser v-model:show-modal="showModal"></CreateUser>
 </template>
 <script setup lang="ts">
-import { getUserInfoList } from '@/api/user/user_manage';
+import {getUserInfoList, updateUserInfo} from '@/api/user/user_manage';
 import CreateUser from '@/components/user_manage/CreateUser.vue';
 import { UserInfo } from '@/types/resource';
 import { PaginationWithSort } from '@/types/treasure_response';
 import { AddCircleOutline, ArrowBackCircleSharp, Bookmarks } from '@vicons/ionicons5';
 import { NButton, NButtonGroup, NIcon, PaginationProps, useMessage } from 'naive-ui';
-import { h, onMounted, reactive, ref } from 'vue';
+import {h, onMounted, reactive, ref, VNodeChild} from 'vue';
 import { useRouter } from 'vue-router';
 
 
@@ -105,12 +105,12 @@ const columns = [
     {
         title: '用户状态',
         key: 'userStatus',
-        render: (val: UserInfo): string => {
+        render: (val: UserInfo): VNodeChild => {
             switch (val.userStatus) {
                 case 1:
                     return '可用'
                 case 2:
-                    return '无效'
+                    return '禁用'
                 case 3:
                     return '不活跃'
                 default:
@@ -157,10 +157,22 @@ const columns = [
                             text: false,
                             onClick: e => {
                                 e.preventDefault()
-                                e.stopPropagation()
+                                  updateUserInfo({
+                                    id: row.id,
+                                    userStatus: row.userStatus === 1 ? 2 : 1,
+                                  }).then(() => { message.success('更新成功');
+                                    getTableRows(pagination.page)
+                                  }).catch((err) => {
+                                    console.log(err)
+                                    if (err instanceof Error) {
+                                      message.error(err.message)
+                                    }
+                                  })
                             },
                         },
-                        { icon: () => h(NIcon, null, { default: () => h(AddCircleOutline) }), default: () => '禁用' }
+                        { icon: () => h(NIcon, null, { default: () => h(AddCircleOutline) }), default: () => {
+                          return row.userStatus === 1 ? '禁用':'启用'
+                          } }
                     ),
                     h(
                         NButton,

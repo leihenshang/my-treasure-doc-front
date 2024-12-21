@@ -53,10 +53,10 @@ export function createUserInfo(doc: UserInfo): Promise<TreasureResponse<UserInfo
     })
 }
 
-export function updateUserInfo(doc: UserInfo): Promise<TreasureResponse<UserInfo>> {
+export function updateUserInfo(userInfo: UserInfo): Promise<TreasureResponse<UserInfo>> {
     return new Promise<TreasureResponse<UserInfo>>((resolve, reject) => {
         myHttp.post<UserInfo>({
-            url: '/api/user-manage/update', data: doc
+            url: '/api/user-manage/update', data: userInfo
         }).then((response) => {
             if (response?.code) {
                 reject(response)
