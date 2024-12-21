@@ -14,7 +14,7 @@
                 </n-button>
             </n-form-item-gi>
             <n-form-item-gi>
-                <n-button @click.prevent="currentUserId = 0; showModal = !showModal;">
+                <n-button @click.prevent="currentUserId = ''; showModal = !showModal;">
                     <template #icon>
                         <n-icon>
                             <Bookmarks></Bookmarks>
