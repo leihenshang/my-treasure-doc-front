@@ -5,21 +5,21 @@
       {{ modalTitle }}
     </template>
     <div class="log-in-wrap">
-      <n-form :model="userInfo" ref="formRef" class="long-in-form" size="small" autocomplete="off">
+      <n-form :model="userInfo" ref="formRef" class="long-in-form" size="small">
         <n-form-item path="account" :rule="getRules('账号')" label="账号">
           <n-input v-model:value="userInfo.account" autofocus clearable placeholder="账号"
-                   ref="usernameInput" autocomplete="off"/>
+          />
         </n-form-item>
-        <n-form-item path="account" :rule="getRules('邮箱')" label="邮箱">
+        <n-form-item path="email" :rule="getRules('邮箱')" label="邮箱">
           <n-input v-model:value="userInfo.email" autofocus clearable placeholder="邮箱"
-                   ref="usernameInput" autocomplete="off"/>
+          />
         </n-form-item>
         <n-form-item path="password" :rule="getRules('密码')" label="密码">
-          <n-input v-model:value="userInfo.password" type="password" clearable placeholder="密码" autocomplete="off"/>
+          <n-input v-model:value="userInfo.password" type="password" clearable placeholder="密码"/>
         </n-form-item>
-        <n-form-item path="password" :rule="getRules('确认密码')" label="确认密码">
+        <n-form-item path="rePassword" :rule="getRules('确认密码')" label="确认密码">
           <n-input v-model:value="userInfo.rePassword" type="password" clearable placeholder="确认密码"
-                   autocomplete="off"/>
+          />
         </n-form-item>
         <n-form-item>
           <n-space>
@@ -39,16 +39,12 @@
 </template>
 
 <script lang="ts" setup>
-import {useUserInfoStore} from "@/stores/user/user_info";
 import {LoginUser} from '@/types/resource';
 import {FormInst, NInput, useMessage} from 'naive-ui';
 import {ref} from 'vue';
-import {useRouter} from 'vue-router';
 
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
-const router = useRouter()
-const storeUserInfo = useUserInfoStore()
 const userInfo = ref<LoginUser>({
   id: '',
   account: '',
@@ -56,7 +52,6 @@ const userInfo = ref<LoginUser>({
   password: '',
   verifyCode: '123456'
 });
-const usernameInput = ref<InstanceType<typeof NInput> | null>(null)
 const showModal = defineModel('showModal')
 const modalTitle = ref('新增')
 
