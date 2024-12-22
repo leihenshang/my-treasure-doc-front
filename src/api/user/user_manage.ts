@@ -1,6 +1,6 @@
 import myHttp from "@/api/treasure_axios"
-import { UserInfo } from "@/types/resource"
-import { PaginationWithSort, TreasureResponse, TreasureResponseList } from "@/types/treasure_response"
+import {UserInfo} from "@/types/resource"
+import {PaginationWithSort, TreasureResponse, TreasureResponseList} from "@/types/treasure_response"
 
 
 export function getUserInfoList(
@@ -36,13 +36,13 @@ export function getUserInfo(id: number | string = 0): Promise<TreasureResponse<U
     })
 }
 
-export function createUserInfo(doc: UserInfo): Promise<TreasureResponse<UserInfo>> {
+export function createUserInfo(userInfo: UserInfo): Promise<TreasureResponse<UserInfo>> {
     return new Promise<TreasureResponse<UserInfo>>((resolve, reject) => {
         myHttp.post<UserInfo>({
-            url: '/api/user-manage/create', data: doc
+            url: '/api/user-manage/create', data: userInfo
         }).then((response) => {
             if (response?.code) {
-                reject(response?.msg)
+                reject(response)
             }
             const resp: TreasureResponse<UserInfo> = new TreasureResponse()
             resp.data = response?.data

@@ -5,13 +5,13 @@
       {{ modalTitle }}
     </template>
     <div class="log-in-wrap">
-      <n-form :model="userInfo" ref="formRef" class="long-in-form" size="small">
+      <n-form :model="userInfo" ref="formRef" class="long-in-form" size="small" autocomplete="off">
         <n-form-item path="account" :rule="getRules('账号')" label="账号">
           <n-input v-model:value="userInfo.account" autofocus clearable placeholder="账号"
           />
         </n-form-item>
         <n-form-item path="email" :rule="getRules('邮箱')" label="邮箱">
-          <n-input v-model:value="userInfo.email" autofocus clearable placeholder="邮箱"
+          <n-input v-model:value="userInfo.email" autofocus clearable placeholder="邮箱" autocomplete="off"
           />
         </n-form-item>
         <n-form-item path="password" :rule="getRules('密码')" label="密码">
@@ -42,13 +42,14 @@
 import {LoginUser} from '@/types/resource';
 import {FormInst, NInput, useMessage} from 'naive-ui';
 import {ref} from 'vue';
+import {createUserInfo} from "@/api/user/user_manage";
 
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
 const userInfo = ref<LoginUser>({
   id: '',
   account: '',
-  email: '',
+  email: '@',
   password: '',
   verifyCode: '123456'
 });
@@ -62,6 +63,14 @@ const longIn = (e: MouseEvent) => {
     if (errors) {
       return
     }
+
+    createUserInfo(userInfo.value).then(() => {
+      message.success('成功');
+      showModal.value = !showModal.value;
+    }).catch((err) => {
+      console.log(err)
+      message.error(err.msg)
+    })
 
 
   }).catch((err: Error) => {
