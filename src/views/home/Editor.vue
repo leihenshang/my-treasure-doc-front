@@ -1,6 +1,6 @@
 <template>
     <div class="edit-box">
-        <template v-if="props.id as number > 0">
+        <template v-if="props.id">
             <div class="edit-banner">
                 <n-space>
                     <n-button default round size="tiny" @click="showHistoryModal = !showHistoryModal">
@@ -72,7 +72,7 @@
         </div>
     </div>
     <DocHistory v-model:show="showHistoryModal" v-model:doc-id="currentDoc.id"
-        v-on:refresh-doc="getSetCurrentDoc(props.id as number)">
+        v-on:refresh-doc="getSetCurrentDoc(props.id)">
     </DocHistory>
 </template>
 <script lang="ts" setup>
@@ -88,7 +88,7 @@ import { useRouter } from "vue-router";
 
 
 const props = defineProps<{
-    id: number | string,
+    id: string,
 }>()
 const currentDoc = ref<Doc>({ title: '' } as Doc)
 const message = useMessage()
@@ -138,7 +138,7 @@ function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false, isReadOnly: b
 
 // 为了保证当直接进入页面的时候不会获取到默认的缓存数据
 onMounted(async () => {
-    getSetCurrentDoc(props.id as number)
+    getSetCurrentDoc(props.id)
     eventBus.on('updateGroupName', (group: DocGroup) => {
         currentDoc.value.groupPath?.some((val) => {
             if (val.id === group.id) {
@@ -164,12 +164,12 @@ onBeforeUnmount(() => {
     eventBus.offAll('deleteDocGroup')
 })
 
-watch(() => props.id, (newId: number | string) => {
-    getSetCurrentDoc(newId as number)
+watch(() => props.id, (newId: string) => {
+    getSetCurrentDoc(newId)
 })
 
-function getSetCurrentDoc(docId: number) {
-    if (docId <= 0) {
+function getSetCurrentDoc(docId: string) {
+    if (!docId) {
         return
     }
     const msg = message.loading('获取文档...')
