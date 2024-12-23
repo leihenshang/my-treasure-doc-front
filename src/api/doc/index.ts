@@ -4,7 +4,7 @@ import { PaginationWithSort, TreasureResponse, TreasureResponseList } from "@/ty
 
 
 export function getDocList(
-    groupId: string = '',
+    groupId: string = '0',
     isTop: number = 0,
     recycleBin: boolean = false,
     keyword: string = '',

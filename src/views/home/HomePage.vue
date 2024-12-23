@@ -265,7 +265,7 @@ function genDocTitle(suffix: string = "-新") {
 
 function refreshTree() {
   treeData.value = []
-  getDocGroupTree('', true).then((response) => {
+  getDocGroupTree('0', true).then((response) => {
     (response.data as Array<DocGroup>).map((val) => {
       treeData.value.push(buildTreeItem(val))
     })
