@@ -1,6 +1,6 @@
 import myHttp from "@/api/treasure_axios";
-import { UserInfo } from "@/stores/user/types";
 import { useUserInfoStore } from '@/stores/user/user_info';
+import { UserInfo } from "@/types/resource";
 import { TreasureResponse } from "@/types/treasure_response";
 
 const userInfoStore = useUserInfoStore()

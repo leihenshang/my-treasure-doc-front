@@ -265,7 +265,7 @@ function genDocTitle(suffix: string = "-新") {
 
 function refreshTree() {
   treeData.value = []
-  getDocGroupTree(0, true).then((response) => {
+  getDocGroupTree('', true).then((response) => {
     (response.data as Array<DocGroup>).map((val) => {
       treeData.value.push(buildTreeItem(val))
     })
@@ -276,7 +276,7 @@ function refreshTree() {
 
 function refreshDocList() {
   topDocList.value = []
-  getDocList(-1, 1).then((response) => {
+  getDocList('', 1).then((response) => {
     response.list.map((val) => {
       topDocList.value.push(buildTreeItem({
         title: val.title,
@@ -291,7 +291,7 @@ function refreshDocList() {
 
 function handleLoad(node: TreeOption) {
   return new Promise<void>((resolve, reject) => {
-    getDocGroupTree(node.id as number, true).then((response) => {
+    getDocGroupTree(node.id as string, true).then((response) => {
       if (!response.data) {
         reject()
         return
