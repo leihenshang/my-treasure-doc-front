@@ -153,7 +153,7 @@ onUpdated(() => {
 function getTableRows(currentPage: number) {
     loading.value = !loading.value
     tableRows.value = []
-    getDocList(-1, -1, true, '', {
+    getDocList('0', -1, true, '', {
         page: currentPage,
         pageSize: pagination.pageSize,
         orderBy: `updatedAt_desc`,
