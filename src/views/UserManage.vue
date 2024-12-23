@@ -1,6 +1,4 @@
 <template>
-
-
   <div class="user-manage">
     <n-grid :cols="2">
       <n-form-item-gi>
@@ -14,7 +12,7 @@
         </n-button>
       </n-form-item-gi>
       <n-form-item-gi>
-        <n-button @click=" showModal = !showModal;">
+        <n-button @click=" showModal = !showModal; modalMode = 'create'">
           <template #icon>
             <n-icon>
               <Bookmarks></Bookmarks>
@@ -26,22 +24,22 @@
     </n-grid>
     <div class="table-container">
       <n-config-provider>
-        <n-data-table :columns="columns" :data="tableRows" :pagination="pagination" :bordered="false"
-                      :loading="loading" remote style="height:580px" size="small"/>
+        <n-data-table :columns="columns" :data="tableRows" :pagination="pagination" :bordered="false" :loading="loading"
+          remote style="height:580px" size="small" />
       </n-config-provider>
     </div>
   </div>
-  <CreateUser v-model:show-modal="showModal"></CreateUser>
+  <CreateUser v-model:show-modal="showModal" :mode="modalMode" :user="currentUser"></CreateUser>
 </template>
 <script setup lang="ts">
-import {getUserInfoList, updateUserInfo} from '@/api/user/user_manage';
+import { getUserInfoList, updateUserInfo } from '@/api/user/user_manage';
 import CreateUser from '@/components/user_manage/CreateUser.vue';
-import {UserInfo} from '@/types/resource';
-import {PaginationWithSort} from '@/types/treasure_response';
-import {AddCircleOutline, ArrowBackCircleSharp, Bookmarks} from '@vicons/ionicons5';
-import {NButton, NButtonGroup, NIcon, PaginationProps, useMessage} from 'naive-ui';
-import {h, onMounted, reactive, ref, VNodeChild} from 'vue';
-import {useRouter} from 'vue-router';
+import { UserInfo } from '@/types/resource';
+import { PaginationWithSort } from '@/types/treasure_response';
+import { AddCircleOutline, ArrowBackCircleSharp, Bookmarks } from '@vicons/ionicons5';
+import { NButton, NButtonGroup, NIcon, PaginationProps, useMessage } from 'naive-ui';
+import { h, onMounted, reactive, ref, VNodeChild } from 'vue';
+import { useRouter } from 'vue-router';
 
 
 const router = useRouter()
@@ -61,8 +59,9 @@ const pagination = reactive({
 } as PaginationProps)
 const loading = ref(true)
 const tableRows = ref<Array<UserInfo>>([])
-const currentUserId = ref('')
 const showModal = ref(false)
+const modalMode = ref('create')
+const currentUser = ref<UserInfo>()
 
 onMounted(() => {
   getTableRows(1)
@@ -135,65 +134,68 @@ const columns = [
     key: 'actions',
     render(row: UserInfo) {
       return h(NButtonGroup, {
-            size: "tiny",
-          },
-          () => [
-            h(
-                NButton,
-                {
-                  text: false,
-                  onClick: e => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    showModal.value = !showModal.value
+        size: "tiny",
+      },
+        () => [
+          h(
+            NButton,
+            {
+              text: false,
+              onClick: e => {
+                e.preventDefault()
+                e.stopPropagation()
+                showModal.value = !showModal.value
 
-                  },
-                },
-                {icon: () => h(NIcon, null, {default: () => h(AddCircleOutline)}), default: () => '详情'}
-            ),
-            h(
-                NButton,
-                {
-                  text: false,
-                  onClick: e => {
-                    e.preventDefault()
-                    updateUserInfo({
-                      id: row.id,
-                      userStatus: row.userStatus === 1 ? 2 : 1,
-                    }).then(() => {
-                      message.success('更新成功');
-                      getTableRows(pagination.page)
-                    }).catch((err) => {
-                      console.log(err)
+              },
+            },
+            { icon: () => h(NIcon, null, { default: () => h(AddCircleOutline) }), default: () => '详情' }
+          ),
+          h(
+            NButton,
+            {
+              text: false,
+              onClick: e => {
+                e.preventDefault()
+                updateUserInfo({
+                  account: row.account,
+                  id: row.id,
+                  userStatus: row.userStatus === 1 ? 2 : 1,
+                }).then(() => {
+                  message.success('更新成功');
+                  getTableRows(pagination.page as number)
+                }).catch((err) => {
+                  console.log(err)
 
-                      if (err.msg) {
-                        message.error(err.msg)
-                      }
-
-                      if (err instanceof Error) {
-                        message.error(err.message)
-                      }
-                    })
-                  },
-                },
-                {
-                  icon: () => h(NIcon, null, {default: () => h(AddCircleOutline)}), default: () => {
-                    return row.userStatus === 1 ? '禁用' : '启用'
+                  if (err.msg) {
+                    message.error(err.msg)
                   }
-                }
-            ),
-            h(
-                NButton,
-                {
-                  text: false,
-                  onClick: e => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                  },
-                },
-                {icon: () => h(NIcon, null, {default: () => h(AddCircleOutline)}), default: () => '重置密码'}
-            )
-          ]
+
+                  if (err instanceof Error) {
+                    message.error(err.message)
+                  }
+                })
+              },
+            },
+            {
+              icon: () => h(NIcon, null, { default: () => h(AddCircleOutline) }), default: () => {
+                return row.userStatus === 1 ? '禁用' : '启用'
+              }
+            }
+          ),
+          h(
+            NButton,
+            {
+              text: false,
+              onClick: e => {
+                e.preventDefault()
+                modalMode.value = 'resetPwd'
+                showModal.value = !showModal.value
+                currentUser.value = { ...row }
+              },
+            },
+            { icon: () => h(NIcon, null, { default: () => h(AddCircleOutline) }), default: () => '重置密码' }
+          )
+        ]
       )
     }
   }

@@ -35,7 +35,7 @@ export interface LoginUser extends BaseResource {
     account: string
     email: string
     password: string
-    rePassword: string
+    rePassword?: string
     verifyCode: string
 }
 

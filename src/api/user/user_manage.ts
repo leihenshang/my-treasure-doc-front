@@ -1,6 +1,6 @@
 import myHttp from "@/api/treasure_axios"
-import {UserInfo} from "@/types/resource"
-import {PaginationWithSort, TreasureResponse, TreasureResponseList} from "@/types/treasure_response"
+import { LoginUser, UserInfo } from "@/types/resource"
+import { PaginationWithSort, TreasureResponse, TreasureResponseList } from "@/types/treasure_response"
 
 
 export function getUserInfoList(
@@ -66,13 +66,13 @@ export function updateUserInfo(userInfo: UserInfo): Promise<TreasureResponse<Use
     })
 }
 
-export function deleteUserInfo(doc: UserInfo): Promise<TreasureResponse<UserInfo>> {
+export function resetPwd(user: LoginUser): Promise<TreasureResponse<UserInfo>> {
     return new Promise<TreasureResponse<UserInfo>>((resolve, reject) => {
         myHttp.post<UserInfo>({
-            url: '/api/user-manage/delete', data: doc
+            url: '/api/user-manage/reset-pwd', data: user
         }).then((response) => {
             if (response?.code) {
-                reject(response?.msg)
+                reject(response)
             }
             resolve(response)
         })

@@ -40,6 +40,8 @@ const storeUserInfo = useUserInfoStore()
 const userInfo = ref<LoginUser>({
   id: '',
   account: '',
+  email: '',
+  rePassword: '',
   password: '',
   verifyCode: '123456'
 });

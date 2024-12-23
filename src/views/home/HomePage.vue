@@ -58,7 +58,7 @@ import { Doc, DocGroup } from '@/types/resource';
 import { buildTreeItem } from '@/utils/common';
 import eventBus from '@/utils/event_bus';
 import { DashboardOutlined, FolderAddOutlined } from '@vicons/antd';
-import { Trash } from "@vicons/fa";
+import { Trash, User } from "@vicons/fa";
 import { Delete24Filled } from "@vicons/fluent";
 import {
   AddCircleOutline,
@@ -193,6 +193,11 @@ const horizontalMenuOptions: MenuOption[] = [
         key: 'recycle-bin',
         icon: renderIcon(Trash),
       },
+      {
+        label: '用户管理',
+        key: 'user-manage',
+        icon: renderIcon(User),
+      },
     ]
   }
 ]
@@ -240,6 +245,8 @@ function topMenuUpdate(key: string): void {
     showSearchBox.value = true
   } else if (key === 'recycle-bin') {
     showRecycleBinModal.value = true
+  } else if (key === 'user-manage') {
+    router.push({ path: '/userManage' })
   }
 }
 
