@@ -2,10 +2,11 @@
 import { getDocList } from "@/api/doc";
 import SvgIcon from '@/components/public/SvgIcon.vue';
 import { Doc, DocGroup } from "@/types/resource";
+import { RowData, TableColumns } from "naive-ui/es/data-table/src/interface";
 import { computed, onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-const groupList = ref<DocGroup[]>([{ title: '全部', id: 0, groupType: "" }]);
+const groupList = ref<DocGroup[]>([{ title: '全部', id: '', groupType: "" }]);
 
 
 onMounted(() => {
@@ -14,7 +15,7 @@ onMounted(() => {
     })
 })
 
-const columns = ref<any>([
+const columns = ref<TableColumns>([
     {
         title: 'ID',
         key: 'id',
@@ -49,24 +50,24 @@ const pagination = reactive({
     page: 1,
     pageCount: 1,
     pageSize: 10,
-    prefix({ itemCount }: { itemCount: any }) {
+    prefix({ itemCount }: { itemCount: unknown }) {
         return `Total is ${itemCount}.`
     }
 })
 const searchData = ref<search>({});
-const selectedCollectionId = ref(0);
+const selectedCollectionId = ref('');
 
 //获取右侧表格的标题
 const selectedGroupName = computed(() => {
     return groupList.value.filter((item) => item.id === selectedCollectionId.value)[0]?.title;
 });
 
-function rowKey(rowData: any) {
+function rowKey(rowData: RowData) {
     return rowData?.id
 }
 
 
-function handlePageChange(currentPage: any) {
+function handlePageChange() {
     if (!loading.value) {
         loading.value = true
         getDocList()
@@ -74,7 +75,7 @@ function handlePageChange(currentPage: any) {
 }
 
 
-function rowProps(row: any) {
+function rowProps(row: RowData) {
     return {
         style: 'cursor: pointer;',
         onClick: () => {

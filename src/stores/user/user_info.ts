@@ -1,5 +1,5 @@
+import { UserInfo } from '@/types/resource'
 import { defineStore } from 'pinia'
-import { UserInfo } from '@/stores/user/types'
 
 interface StoreUserInfo {
     userInfo: UserInfo
@@ -8,7 +8,7 @@ interface StoreUserInfo {
 export const useUserInfoStore = defineStore('userinfo', {
     state: (): StoreUserInfo => {
         return {
-            userInfo: { id: 0, account: "" }
+            userInfo: { id: '', account: "" }
         }
     },
     actions: {

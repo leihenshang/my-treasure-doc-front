@@ -1,5 +1,5 @@
-import { UserInfo } from '@/stores/user/types';
 import { useUserInfoStore } from "@/stores/user/user_info";
+import { UserInfo } from '@/types/resource';
 import { createRouter, createWebHashHistory } from 'vue-router';
 
 const router = createRouter({
@@ -9,6 +9,9 @@ const router = createRouter({
     { path: '/LogIn', name: 'LogIn', component: () => import('./views/LogIn.vue') },
     {
       path: '/Dashboard', name: 'Dashboard', component: () => import('./views/Dashboard.vue'),
+    },
+    {
+      path: '/UserManage', name: 'UserManage', component: () => import('./views/UserManage.vue'),
     },
     {
       path: '/HomePage', name: 'HomePage', component: () => import('./views/home/HomePage.vue'),
@@ -27,14 +30,14 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   let isAuthenticated: boolean = false
   const storeUserinfo = useUserInfoStore()
-  if (storeUserinfo.userId > 0) {
+  if (storeUserinfo.userId) {
     isAuthenticated = true
   } else {
     const localUserInfo: string | null = localStorage.getItem('userInfo')
     if (localUserInfo) {
       try {
         const userInfo: UserInfo = JSON.parse(localUserInfo)
-        if (userInfo && userInfo.id > 0) {
+        if (userInfo && userInfo.id) {
           storeUserinfo.updateUserInfo(userInfo)
           isAuthenticated = true
         }

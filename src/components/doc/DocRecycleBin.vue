@@ -66,7 +66,8 @@ const storeGlobal = useGlobalStore()
 
 
 interface rowData {
-    id: number,
+    id: string,
+    title: string,
     createdAt: string,
 }
 
@@ -127,7 +128,7 @@ const columns = [
 
 
 function handleOkBtn() {
-    if (!currentDoc.value || currentDoc.value.id <= 0) {
+    if (!currentDoc.value || !currentDoc.value.id) {
         return
     }
 
@@ -152,7 +153,7 @@ onUpdated(() => {
 function getTableRows(currentPage: number) {
     loading.value = !loading.value
     tableRows.value = []
-    getDocList(-1, -1, true, '', {
+    getDocList('0', -1, true, '', {
         page: currentPage,
         pageSize: pagination.pageSize,
         orderBy: `updatedAt_desc`,
@@ -166,7 +167,7 @@ function getTableRows(currentPage: number) {
                 id: val.id,
                 title: val.title,
                 createdAt: val.createdAt as string,
-            } as rowData)
+            })
         })
         loading.value = false
     }).catch(err => {

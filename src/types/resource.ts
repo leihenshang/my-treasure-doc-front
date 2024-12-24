@@ -1,5 +1,5 @@
 export interface BaseResource {
-    id: number,
+    id: string,
     createdAt?: string,
     updatedAt?: string,
     deletedAt?: string,
@@ -9,7 +9,7 @@ export interface Doc extends BaseResource {
     title: string,
     content: string,
     version?: number,
-    groupId?: number,
+    groupId?: string,
     isTop?: number,
     isPin?: number,
     isRecover?: boolean,
@@ -26,14 +26,16 @@ export interface DocHistory extends BaseResource {
 export interface DocGroup extends BaseResource {
     title: string,
     groupType: string,
-    pid?: number,
+    pid?: string,
     children?: Array<DocGroup>,
     isLeaf?: boolean,
 }
 
 export interface LoginUser extends BaseResource {
     account: string
+    email: string
     password: string
+    rePassword?: string
     verifyCode: string
 }
 
@@ -41,9 +43,22 @@ export interface Note extends BaseResource {
     title: string,
     content: string,
     noteType: string,
-    docId: number,
+    docId: string,
     isTop?: number,
     priority?: 0,
     color?: string,
     icon?: string
+}
+
+export interface UserInfo extends BaseResource {
+    nickname?: string,
+    account: string,
+    email?: string,
+    password?: string,
+    userType?: number,
+    userStatus?: number,
+    mobile?: string,
+    avatar?: string,
+    bio?: string,
+    token?: string,
 }

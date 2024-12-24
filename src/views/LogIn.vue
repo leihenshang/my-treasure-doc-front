@@ -27,9 +27,8 @@
 
 <script lang="ts" setup>
 import { logIn } from '@/api/user';
-import { UserInfo } from '@/stores/user/types';
 import { useUserInfoStore } from "@/stores/user/user_info";
-import { LoginUser } from "@/types/resource";
+import { LoginUser, UserInfo } from '@/types/resource';
 import { FormInst, lightTheme, NInput, useMessage } from 'naive-ui';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -39,8 +38,10 @@ const formRef = ref<FormInst | null>(null)
 const router = useRouter()
 const storeUserInfo = useUserInfoStore()
 const userInfo = ref<LoginUser>({
-  id: 0,
+  id: '',
   account: '',
+  email: '',
+  rePassword: '',
   password: '',
   verifyCode: '123456'
 });
@@ -104,7 +105,7 @@ const getRules = (name: string) => {
     background-color: #FFFFFF;
 
     >.my-icon {
-      font-size:30vh;
+      font-size: 30vh;
     }
   }
 

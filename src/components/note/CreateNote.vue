@@ -48,29 +48,29 @@ import { useMessage } from 'naive-ui';
 import { computed, ref, watchEffect } from 'vue';
 
 const props = defineProps<{
-    id: number,
+    id: string,
 }>()
 const emit = defineEmits<{
     (e: 'refreshList'): void
 }>()
 const initNote: Note = {
-    id: 0,
+    id: '',
     noteType: 'note',
     title: '',
     content: '',
     isTop: 0,
     priority: 0,
-    docId: 0
+    docId: ''
 }
 const showModal = defineModel('showModal')
 const formRef = ref<FormInst | null>(null)
 const message = useMessage()
 const size = ref<'small' | 'medium' | 'large'>('medium')
 const formValue = ref<Note>({ ...initNote } as Note)
-const modalTitle = computed(() => props.id > 0 ? '编辑' : '新增')
+const modalTitle = computed(() => props.id ? '编辑' : '新增')
 
 watchEffect(() => {
-    if (props.id > 0) {
+    if (props.id) {
         getNote(props.id).then((resp) => {
             const respNote = resp.data as Note
             formValue.value.noteType = respNote.noteType
@@ -113,7 +113,7 @@ function handleOkBtn(e: MouseEvent) {
         () => {
             const note = { ...formValue.value }
             note.isTop = note.isTop ? 1 : 0;
-            if (formValue.value.id > 0) {
+            if (formValue.value.id) {
                 updateNote(note as Note).then(() => {
                     showModal.value = !showModal.value
                     message.success('更新成功')
