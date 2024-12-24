@@ -3,7 +3,7 @@
     <n-layout has-sider class="menu-layout">
       <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="0" :width="'280px'"
         show-trigger="bar" :native-scrollbar="false">
-        <div style="text-align:center;">
+        <div class="title-header-wrapper" style="text-align:center;">
           <n-button icon-placement="right" text size="large" @click="router.push('/Dashboard')">
             <template #icon>
               <n-icon>
@@ -12,7 +12,8 @@
             </template>
             treasure-doc
           </n-button>
-          <n-button text size="medium" round @click="globalStore.themeSwitch()">{{
+          <n-button class="theme-button" :class="{'HoverThemeButton':isHoverThemeButton}" text size="medium" round @click="globalStore.themeSwitch()"
+                    @mouseover="hoverThemeButton" @mouseleave="mouseleaveThemeButton">{{
             globalStore.theme === 'light' ? '☀️'
               : '🌙'
           }}
@@ -96,6 +97,7 @@ const selectedKeys = ref<Array<string>>([])
 const showRecycleBinModal = ref(false)
 const hoverMenuId = ref()
 let handleMouseOverFn: ReturnType<typeof setTimeout>
+const isHoverThemeButton = ref(false)
 
 
 onMounted(() => {
@@ -116,6 +118,14 @@ onBeforeUnmount(() => {
   eventBus.offAll('updateTopDoc')
   eventBus.offAll('updateDocTitle')
 })
+
+//切换主题的位置
+const hoverThemeButton = ()=>{
+  isHoverThemeButton.value = true
+}
+const mouseleaveThemeButton = ()=>{
+  isHoverThemeButton.value = false
+}
 
 const override: TreeOverrideNodeClickBehavior = ({ option }) => {
   if (option.groupType === 'group') {
@@ -502,6 +512,27 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: string, title
 
 .homePage-wrapper {
   height: 100%;
+  .title-header-wrapper{
+    position: relative;
+    .theme-button{
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 1px solid rgb(224, 224, 230);
+      padding: 4px 8px 3px;
+      //border-radius: 12px;
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+      transition: all linear 0.2s;
+      &:hover{
+        //border-color: #36ad6a;
+      }
+      &.HoverThemeButton{
+        right: 0;
+      }
+    }
+  }
 
   .tree-wrapper {
     ::v-deep(.n-tree-node-content) {
