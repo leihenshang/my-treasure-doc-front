@@ -53,7 +53,7 @@ import {useGlobalStore} from '@/stores/global';
 import {Doc, DocGroup} from '@/types/resource';
 import {buildTreeItem} from '@/utils/common';
 import eventBus from '@/utils/event_bus';
-import {DashboardOutlined, FolderAddOutlined} from '@vicons/antd';
+import {FolderAddOutlined} from '@vicons/antd';
 import {Delete24Filled} from "@vicons/fluent";
 import {ToolObj} from "@/home-page/nav-type";
 import {
@@ -63,7 +63,6 @@ import {
   Pencil as Pen,
   MoonSharp,
   SunnySharp,
-  PeopleCircleSharp
 } from '@vicons/ionicons5';
 import type {TreeOverrideNodeClickBehavior} from 'naive-ui';
 import {NButton, NButtonGroup, NDropdown, NIcon, NLayout, NTree, TreeOption, useMessage} from 'naive-ui';
