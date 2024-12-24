@@ -3,20 +3,12 @@
     <n-layout has-sider class="menu-layout">
       <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="0" :width="'280px'"
                       show-trigger="bar" :native-scrollbar="false">
-        <div class="title-header-wrapper" style="text-align:center;">
-          <n-button icon-placement="right" text size="large" @click="router.push('/Dashboard')">
-            <template #icon>
-              <n-icon>
-                <DashboardOutlined/>
-              </n-icon>
-            </template>
-            treasure-doc
-          </n-button>
+        <div class="title-header-wrapper" style="text-align:center;height: 40px">
+          <h3 style="line-height: 40px"> treasure-doc</h3>
           <n-button class="theme-button" :class="{'HoverThemeButton':isHoverThemeButton}" text size="medium" round
                     @click="globalStore.themeSwitch()"
                     @mouseover="hoverThemeButton" @mouseleave="mouseleaveThemeButton">
             <n-icon v-if="globalStore.theme === 'light'" size="14" color="#F1DD38">
-
               <MoonSharp/>
             </n-icon>
             <n-icon v-else size="14" color="#FFB200">
@@ -70,7 +62,8 @@ import {
   MenuOutline,
   Pencil as Pen,
   MoonSharp,
-  SunnySharp
+  SunnySharp,
+  PeopleCircleSharp
 } from '@vicons/ionicons5';
 import type {TreeOverrideNodeClickBehavior} from 'naive-ui';
 import {NButton, NButtonGroup, NDropdown, NIcon, NLayout, NTree, TreeOption, useMessage} from 'naive-ui';
@@ -161,8 +154,30 @@ const toolList: ToolObj[] = [
   {type: 'icon', iconOrTextName: 'PencilOutline', props: 'addNote'},
   {
     type: 'icon', iconOrTextName: 'EllipsisHorizontalCircleOutline', props: 'more',
-    HandleSelectList: [{label: '退出登录', iconName: 'ArrowBackCircleOutline', props: 'logOut'},
-      {label: '回收站', iconName: 'Delete16Regular', props: 'recycleBin', iconType: 'fluent'}]
+    HandleSelectList: [{
+      label: '退出登录',
+      iconName: 'ArrowBackCircleOutline',
+      props: 'logOut'
+    },
+      {
+        label: '回收站',
+        iconName: 'Delete16Regular',
+        props: 'recycleBin',
+        iconType: 'fluent'
+      },
+      {
+        label: '用户管理',
+        iconName: 'PeopleCircleSharp',
+        props: 'userManage',
+        iconType: 'ionicons'
+      },
+      {
+        label: '仪表盘',
+        iconName: 'Board24Filled',
+        props: 'dashboard',
+        iconType: 'fluent'
+      },
+    ]
   },
 ]
 
@@ -209,8 +224,10 @@ function topMenuUpdate(key: string): void {
     showSearchBox.value = true
   } else if (key === 'recycleBin') {
     showRecycleBinModal.value = true
-  } else if (key === 'user-manage') {
-    router.push({path: '/userManage'})
+  } else if (key === 'userManage') {
+    router.push({path: '/UserManage'})
+  } else if (key === 'dashboard') {
+    router.push({path: '/DashBoard'})
   }
 }
 
