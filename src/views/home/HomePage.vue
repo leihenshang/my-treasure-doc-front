@@ -521,7 +521,7 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: string, title
 
     .theme-button {
       position: absolute;
-      right: -12px;
+      right: -2px;
       top: 50%;
       transform: translateY(-50%);
       border: 1px solid rgb(224, 224, 230);
