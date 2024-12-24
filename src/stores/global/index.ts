@@ -1,5 +1,5 @@
-import { darkTheme, lightTheme } from 'naive-ui'
-import { defineStore } from 'pinia'
+import {darkTheme, lightTheme} from 'naive-ui'
+import {defineStore} from 'pinia'
 
 interface GlobalStore {
     theme: string
@@ -13,7 +13,11 @@ export const useGlobalStore = defineStore('global', {
     },
     actions: {
         themeSwitch() {
-            this.theme === 'light' ? this.theme = 'dark' : this.theme = 'light'
+            if (this.theme === 'light') {
+                this.theme = 'dark'
+            } else {
+                this.theme = 'light'
+            }
             localStorage.setItem('globalState.theme', this.theme)
         }
     },

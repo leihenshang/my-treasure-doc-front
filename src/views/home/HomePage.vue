@@ -14,15 +14,17 @@
           </n-button>
           <n-button class="theme-button" :class="{'HoverThemeButton':isHoverThemeButton}" text size="medium" round
                     @click="globalStore.themeSwitch()"
-                    @mouseover="hoverThemeButton" @mouseleave="mouseleaveThemeButton">{{
-              globalStore.theme === 'light' ? '☀️'
-                  : '🌙'
-            }}
+                    @mouseover="hoverThemeButton" @mouseleave="mouseleaveThemeButton">
+            <n-icon v-if="globalStore.theme === 'light'" size="14" color="#F1DD38">
+
+              <MoonSharp/>
+            </n-icon>
+            <n-icon v-else size="14" color="#FFB200">
+              <SunnySharp/>
+            </n-icon>
           </n-button>
         </div>
         <HeaderToolList :tool-list="toolList" @handleClickTool="topMenuUpdate"></HeaderToolList>
-        <n-menu mode="horizontal" :options="[]" @update:value="topMenuUpdate" :icon-size="18"
-                ref="topMenuRef"/>
         <n-collapse :default-expanded-names="['1', '2']" style="padding: 0 10px 0 0;">
           <n-collapse-item title="置顶文档" name="1">
             <n-tree block-line :data="topDocList" :node-props="nodeProps" :render-switcher-icon="renderSwitcherIcon"
@@ -32,7 +34,7 @@
             <n-tree class="tree-wrapper" :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
                     :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" @mouseover.stop=""
                     :override-default-node-click-behavior="override" :default-expanded-keys="expandedKeys"
-                    :selected-keys="selectedKeys"/>
+                    :selected-keys="selectedKeys" block-line/>
           </n-collapse-item>
         </n-collapse>
       </n-layout-sider>
@@ -67,25 +69,19 @@ import {
   ChevronForward,
   MenuOutline,
   Pencil as Pen,
+  MoonSharp,
+  SunnySharp
 } from '@vicons/ionicons5';
 import type {TreeOverrideNodeClickBehavior} from 'naive-ui';
-import {
-  NButton, NButtonGroup,
-  NDropdown,
-  NIcon,
-  NLayout,
-  NMenu,
-  NTree,
-  TreeOption, useMessage
-} from 'naive-ui';
+import {NButton, NButtonGroup, NDropdown, NIcon, NLayout, NTree, TreeOption, useMessage} from 'naive-ui';
 import {h, onBeforeUnmount, onMounted, ref} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import HeaderToolList from "@/components/home_page/nav/HeaderToolList.vue";
+import SearchBox from "@/components/home_page/SearchBox.vue";
 
 const globalStore = useGlobalStore()
 const router = useRouter();
 const route = useRoute()
-const topMenuRef = ref(null)
 const message = useMessage()
 const treeData = ref<Array<TreeOption>>([])
 const topDocList = ref<Array<TreeOption>>([])
@@ -220,7 +216,7 @@ function topMenuUpdate(key: string): void {
 
 function genDocTitle(suffix: string = "-新") {
   const today = new Date()
-  let todayTitleStr = "".concat(
+  return "".concat(
       today.getFullYear().toString(),
       (today.getMonth() + 1).toString().padStart(2, '0'),
       today.getDate().toString().padStart(2, '0'),
@@ -228,7 +224,6 @@ function genDocTitle(suffix: string = "-新") {
       today.getHours().toString().padStart(2, '0'),
       today.getMinutes().toString().padStart(2, '0'),
       today.getSeconds().toString().padStart(2, '0')) + suffix
-  return todayTitleStr
 }
 
 function refreshTree() {
@@ -521,7 +516,7 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: string, title
 
     .theme-button {
       position: absolute;
-      right: -2px;
+      right: -5px;
       top: 50%;
       transform: translateY(-50%);
       border: 1px solid rgb(224, 224, 230);
@@ -529,6 +524,7 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: string, title
       //border-radius: 12px;
       border-top-left-radius: 12px;
       border-bottom-left-radius: 12px;
+      border-right: none;
       transition: all linear 0.2s;
 
       &:hover {
@@ -542,10 +538,6 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: string, title
   }
 
   .tree-wrapper {
-    ::v-deep(.n-tree-node-content) {
-      width: calc(100% - 72px);
-    }
-
     ::v-deep(.n-tree-node-content__text) {
       overflow: hidden;
       white-space: nowrap;
