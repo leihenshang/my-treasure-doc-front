@@ -18,7 +18,7 @@
             }}
           </n-button>
         </div>
-        <HeaderToolList></HeaderToolList>
+        <HeaderToolList :tool-list="toolList" @handleClickTool="topMenuUpdate"></HeaderToolList>
         <n-menu mode="horizontal" :options="horizontalMenuOptions" @update:value="topMenuUpdate" :icon-size="18"
                 ref="topMenuRef"/>
         <n-collapse :default-expanded-names="['1', '2']" style="padding: 0 10px 0 0;">
@@ -28,7 +28,7 @@
           </n-collapse-item>
           <n-collapse-item title="我的文档" name="2">
             <n-tree class="tree-wrapper" :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
-                    :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" @mouseover="xxx"
+                    :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon"
                     :override-default-node-click-behavior="override" :default-expanded-keys="expandedKeys"
                     :selected-keys="selectedKeys"/>
           </n-collapse-item>
@@ -58,20 +58,16 @@ import {Doc, DocGroup} from '@/types/resource';
 import {buildTreeItem} from '@/utils/common';
 import eventBus from '@/utils/event_bus';
 import {DashboardOutlined, FolderAddOutlined} from '@vicons/antd';
-import {Trash} from "@vicons/fa";
 import {Delete24Filled} from "@vicons/fluent";
+import {ToolObj} from "@/home-page/nav-type";
 import {
   AddCircleOutline,
-  ArrowForwardCircleSharp,
   ChevronForward,
-  EllipsisHorizontalCircleOutline as EllipsisHorizontalCircle,
   MenuOutline,
   Pencil as Pen,
-  SearchSharp as Search
 } from '@vicons/ionicons5';
 import type {TreeOverrideNodeClickBehavior} from 'naive-ui';
 import {
-  MenuOption,
   NButton, NButtonGroup,
   NDropdown,
   NIcon,
@@ -80,7 +76,7 @@ import {
   NTree,
   TreeOption, useMessage
 } from 'naive-ui';
-import {Component, h, onBeforeUnmount, onMounted, ref} from 'vue';
+import {h, onBeforeUnmount, onMounted, ref} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import HeaderToolList from "@/components/home_page/nav/HeaderToolList.vue";
 
@@ -151,55 +147,19 @@ const changeModal = (type: string, group?: DocGroup) => {
   groupHandleType.value = type
   updateGroup.value = {...group as DocGroup}
 };
-
-
-function renderIcon(icon: Component) {
-  return () => h(NIcon, null, {default: () => h(icon)})
-}
-
-const horizontalMenuOptions: MenuOption[] = [
-  // {
-  //   label: '',
-  //   key: 'top-menu-message',
-  //   icon: renderIcon(MailOpen)
-  // },
+const toolList: ToolObj[] = [
+  {type: 'icon', iconOrTextName: 'Search', props: 'search'},
+  {type: 'icon', iconOrTextName: 'FolderOutline', props: 'addFolder'},
+  {type: 'icon', iconOrTextName: 'PencilOutline', props: 'addNote'},
   {
-    label: '',
-    key: 'top-menu-search',
-    icon: renderIcon(Search),
+    type: 'icon', iconOrTextName: 'EllipsisHorizontalCircleOutline', props: 'more',
+    HandleSelectList: [{label: '退出登录', iconName: 'ArrowBackCircleOutline', props: 'logOut'},
+      {label: '回收站', iconName: 'Delete16Regular', props: 'recycleBin',iconType:'fluent'}]
   },
-  {
-    label: '',
-    key: 'top-menu-folder',
-    icon: renderIcon(FolderAddOutlined),
-  },
-  {
-    label: '',
-    key: 'top-menu-write',
-    icon: renderIcon(Pen),
-  },
-  {
-    label: '',
-    key: 'top-menu-my-center',
-    icon: renderIcon(EllipsisHorizontalCircle),
-    children: [
-      {
-        label: '退出登录',
-        key: 'login-out',
-        icon: renderIcon(ArrowForwardCircleSharp),
-      },
-      {
-        label: '回收站',
-        key: 'recycle-bin',
-        icon: renderIcon(Trash),
-      },
-    ]
-  }
 ]
-
 function topMenuUpdate(key: string): void {
   const title = genDocTitle()
-  if (key === 'top-menu-write') {
+  if (key === 'addNote') {
     createDoc({
       id: 0,
       content: `# ${title}`,
@@ -218,7 +178,7 @@ function topMenuUpdate(key: string): void {
     }).catch(err => {
       message.error(err)
     })
-  } else if (key === 'login-out') {
+  } else if (key === 'logOut') {
     logOut().then(() => {
       router.push("/LogIn")
     }).catch((err) => {
@@ -228,7 +188,7 @@ function topMenuUpdate(key: string): void {
         console.log(err)
       }
     })
-  } else if (key === 'top-menu-folder') {
+  } else if (key === 'addFolder') {
     changeModal('create', {
       id: 0,
       title: "",
@@ -236,9 +196,9 @@ function topMenuUpdate(key: string): void {
       isLeaf: true,
       pid: 0
     })
-  } else if (key === 'top-menu-search') {
+  } else if (key === 'search') {
     showSearchBox.value = true
-  } else if (key === 'recycle-bin') {
+  } else if (key === 'recycleBin') {
     showRecycleBinModal.value = true
   }
 }

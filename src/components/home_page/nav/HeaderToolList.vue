@@ -1,59 +1,81 @@
 <template>
   <div class="header-tool-list-wrapper">
     <div class="tools-wrapper" v-for="tool in toolList" :key="tool.props">
-      <n-icon v-if="tool.type==='icon'" :component="ionicons[tool.iconOrTextName]" size="18" :depth="1" />
-      <span v-else>{{tool.iconOrTextName}}</span>
+      <n-popover style="padding: 0">
+        <template #trigger>
+          <div @click="handleClickTool(tool)">
+            <n-icon v-if="tool.type==='icon'" :component="ionicons[tool.iconOrTextName]" size="18" :depth="1"/>
+            <span v-else>{{ tool.iconOrTextName }}</span>
+          </div>
+        </template>
+        <ul class="select-list-wrapper">
+          <li v-for="item in tool.HandleSelectList" :key="item.props" class="select-list"  @click="handleClickTool(item)">
+            <n-icon :component="item.iconType==='fluent'?fluent[item.iconName]:ionicons[item.iconName]" size="18" :depth="1"/>
+            <span>{{ item.label }}</span>
+          </li>
+        </ul>
+      </n-popover>
     </div>
   </div>
 </template>
 
 
 <script setup lang="ts">
-import {ref} from "vue";
 import * as ionicons from '@vicons/ionicons5'
+import * as fluent from '@vicons/fluent'
+import type {ToolObj} from "@/home-page/nav-type";
 
-type HandleSelectObj = {
-  label:string,
-  props:string,
+defineProps({
+  toolList: {type:Array as ()=>ToolObj[]}
+})
+
+const emit = defineEmits(['handleClickTool',])
+const handleClickTool = (tool:ToolObj)=>{
+  if (tool.HandleSelectList?.length) return
+  emit('handleClickTool',tool.props)
 }
-type ToolObj = {
-  type: 'text' | 'icon',
-  iconOrTextName:string,
-  props:string,
-  HandleSelectList?:HandleSelectObj[]
-}
-const defaultList:ToolObj[] = [
-    {type:'icon',iconOrTextName:'Search',props:'search'},
-    {type:'icon',iconOrTextName:'FolderOutline',props:'addDirectory'},
-    {type:'icon',iconOrTextName:'PencilOutline',props:'addNote'},
-    {type:'icon',iconOrTextName:'EllipsisHorizontalCircleOutline',props:'more'},
-    {type:'icon',iconOrTextName:'SunnyOutline',props:'theme'},
-]
-
-
-const toolList = ref<ToolObj[]>(defaultList)
 </script>
 
 
 <style scoped lang="scss">
-.header-tool-list-wrapper{
+.header-tool-list-wrapper {
   display: flex;
   align-items: center;
   padding: 0 4px;
   //border-bottom: 1px solid rgb(239, 239, 245);
   //margin-bottom: 10px;
-  > .tools-wrapper{
+  > .tools-wrapper {
     padding: 10px 4px;
-    width: 20%;
+    width: 25%;
     text-align: center;
     align-items: center;
     display: flex;
     justify-content: center;
-    &:hover{
+
+    &:hover {
       cursor: pointer;
     }
-    >.n-icon:hover{
+
+    .n-icon:hover {
       color: #36ad6a;
+    }
+
+  }
+}
+.select-list-wrapper {
+  padding: 4px;
+  > .select-list {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    cursor: pointer;
+    &:hover {
+      background: #f3f3f5;
+    }
+
+    span {
+      white-space: nowrap;
+      margin-left: 16px;
     }
   }
 }
