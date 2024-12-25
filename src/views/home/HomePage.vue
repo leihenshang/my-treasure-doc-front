@@ -19,7 +19,7 @@
         <n-collapse :default-expanded-names="['1', '2']" style="padding: 0 10px 0 0;">
           <n-collapse-item title="置顶文档" name="1">
             <n-tree v-show="topDocList.length > 0" block-line :data="topDocList" :node-props="nodeProps"
-              :render-switcher-icon="renderSwitcherIcon" :selectable="false" no />
+              :render-switcher-icon="renderSwitcherIcon" :selectable="false" />
           </n-collapse-item>
           <n-collapse-item title="我的文档" name="2">
             <n-tree class="tree-wrapper" :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
