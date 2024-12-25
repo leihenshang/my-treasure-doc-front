@@ -21,7 +21,7 @@ export function getGroupList(pagination: PaginationWithSort = new PaginationWith
     })
 }
 
-export function getDocGroupTree(pid: string = '0', withDoc: boolean = false): Promise<TreasureResponse<DocGroup>> {
+export function getDocGroupTree(pid: string = 'root', withDoc: boolean = false): Promise<TreasureResponse<DocGroup>> {
     return new Promise<TreasureResponse<DocGroup>>((resolve, reject) => {
         myHttp.get<TreasureResponse<DocGroup>>({
             url: '/api/doc-group/tree', params: {
