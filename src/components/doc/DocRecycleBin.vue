@@ -1,6 +1,6 @@
 <template>
   <n-modal v-model:show="show as boolean" preset="dialog" title="Dialog" :show-icon="false" class="modal-dialog"
-           :mask-closable=false style="min-width: 1200px;">
+    :mask-closable=false style="min-width: 1200px;">
     <template #header>
       回收站
     </template>
@@ -9,8 +9,8 @@
         <template #1>
           <div class="table-container" style="margin: 0 10px">
             <n-config-provider>
-              <n-data-table :columns="columns" :data="tableRows" :pagination="pagination"
-                            :bordered="false" :loading="loading" remote style="height:580px" size="small"/>
+              <n-data-table :columns="columns" :data="tableRows" :pagination="pagination" :bordered="false"
+                :loading="loading" remote style="height:580px" size="small" />
             </n-config-provider>
           </div>
 
@@ -27,16 +27,16 @@
   </n-modal>
 </template>
 <script lang="ts" setup>
-import {getDoc, getDocList, updateDoc} from '@/api/doc';
-import {darkTheme, lightTheme} from '@/constants';
-import {useGlobalStore} from "@/stores/global";
-import {vditorCustomerTheme} from '@/types/editor';
-import {Doc} from '@/types/resource';
-import {PaginationWithSort} from '@/types/treasure_response';
-import {NButton, PaginationProps, useMessage} from 'naive-ui';
+import { getDoc, getDocList, updateDoc } from '@/api/doc';
+import { darkTheme, lightTheme } from '@/constants';
+import { useGlobalStore } from "@/stores/global";
+import { vditorCustomerTheme } from '@/types/editor';
+import { Doc } from '@/types/resource';
+import { PaginationWithSort } from '@/types/treasure_response';
+import { NButton, PaginationProps, useMessage } from 'naive-ui';
 import Vditor from 'vditor';
 import "vditor/dist/index.css";
-import {h, onUpdated, reactive, ref, useTemplateRef} from 'vue';
+import { h, onUpdated, reactive, ref, useTemplateRef } from 'vue';
 
 const emit = defineEmits<{
   (e: 'refreshDoc'): void
@@ -89,35 +89,35 @@ const columns = [
     render(row: rowData) {
 
       return h(
-          NButton,
-          {
-            strong: true,
-            tertiary: true,
-            size: 'small',
-            onClick: () => {
-              if (storeGlobal.theme === 'light') {
-                vditorTheme.value = {...lightTheme}
-              } else {
-                vditorTheme.value = {...darkTheme}
-              }
-              const msgLoading = message.loading('加载...')
-              getDoc(row.id).then(resp => {
-                currentDoc.value = resp.data as Doc
-                Vditor.preview(vditorContainerRef.value as HTMLDivElement, currentDoc.value.content, {
-                  mode: vditorTheme.value?.editorTheme as string === "dark" ? "dark" : "light",
-                  hljs: {
-                    style: vditorTheme.value?.codeTheme
-                  },
-                  theme: {current: vditorTheme.value?.previewTheme as string},
-                })
-                msgLoading.destroy()
-              }).catch(err => {
-                console.log(err)
-                message.error(`${err}`)
-              })
+        NButton,
+        {
+          strong: true,
+          tertiary: true,
+          size: 'small',
+          onClick: () => {
+            if (storeGlobal.theme === 'light') {
+              vditorTheme.value = { ...lightTheme }
+            } else {
+              vditorTheme.value = { ...darkTheme }
             }
-          },
-          {default: () => '查看'}
+            const msgLoading = message.loading('加载...')
+            getDoc(row.id).then(resp => {
+              currentDoc.value = resp.data as Doc
+              Vditor.preview(vditorContainerRef.value as HTMLDivElement, currentDoc.value.content, {
+                mode: vditorTheme.value?.editorTheme as string === "dark" ? "dark" : "light",
+                hljs: {
+                  style: vditorTheme.value?.codeTheme
+                },
+                theme: { current: vditorTheme.value?.previewTheme as string },
+              })
+              msgLoading.destroy()
+            }).catch(err => {
+              console.log(err)
+              message.error(`${err}`)
+            })
+          }
+        },
+        { default: () => '查看' }
       )
     }
   }
@@ -152,7 +152,7 @@ onUpdated(() => {
 function getTableRows(currentPage: number) {
   loading.value = !loading.value
   tableRows.value = []
-  getDocList('0', -1, true, '', {
+  getDocList('root', -1, true, '', {
     page: currentPage,
     pageSize: pagination.pageSize,
     orderBy: `updatedAt_desc`,
