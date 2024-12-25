@@ -3,6 +3,9 @@
  */
 export const SUCCESS_CODE = 200
 
+
+export const ROOT_GROUP = 'root'
+
 /**
  * 请求contentType
  */

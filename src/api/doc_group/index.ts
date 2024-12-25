@@ -1,4 +1,5 @@
 import myHttp from "@/api/treasure_axios"
+import { ROOT_GROUP } from "@/constants"
 import { DocGroup } from "@/types/resource"
 import { PaginationWithSort, TreasureResponse, TreasureResponseList } from "@/types/treasure_response"
 
@@ -60,6 +61,9 @@ export async function deleteGroup(groupObj: DocGroup) {
 
 export async function createGroup(groupObj: DocGroup) {
     return new Promise<TreasureResponse<DocGroup>>((resolve, reject) => {
+        if (!groupObj.pid) {
+            groupObj.pid = ROOT_GROUP
+        }
         myHttp.post<DocGroup>({
             url: '/api/doc-group/create', data: groupObj
         }).then((response) => {
