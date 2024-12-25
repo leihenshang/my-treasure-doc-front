@@ -69,6 +69,7 @@ import { h, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import HeaderToolList from "@/components/home_page/nav/HeaderToolList.vue";
 import SearchBox from "@/components/home_page/SearchBox.vue";
+import { ROOT_GROUP } from "@/constants";
 
 const globalStore = useGlobalStore()
 const router = useRouter();
@@ -185,7 +186,8 @@ function topMenuUpdate(key: string): void {
     createDoc({
       id: '',
       content: `# ${title}`,
-      title: title
+      title: title,
+      groupId: ROOT_GROUP
     } as Doc).then(res => {
       const doc = res.getData()
       router.push({ path: `/Editor/${doc.id}` })
