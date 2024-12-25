@@ -49,8 +49,8 @@ const updateModalPid = ref('')
 const options = ref([
     {
         label: '顶层',
-        key: 0,
-        id: 0,
+        key: 'root',
+        id: 'root',
         depth: 1,
         isLeaf: false
     }
@@ -158,7 +158,7 @@ function clearModal() {
 function loadTree(node: TreeOption) {
     console.log(node)
     return new Promise<void>((resolve) => {
-        getDocGroupTree(node.id as number, false).then((response) => {
+        getDocGroupTree(node.id as string, false).then((response) => {
             if (!response.data) {
                 node.children = []
                 resolve()
