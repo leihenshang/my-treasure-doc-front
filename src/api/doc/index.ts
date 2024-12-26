@@ -4,7 +4,7 @@ import { PaginationWithSort, TreasureResponse, TreasureResponseList } from "@/ty
 
 
 export function getDocList(
-    groupId: string = 'root',
+    groupId: string,
     isTop: number = 0,
     recycleBin: boolean = false,
     keyword: string = '',
@@ -79,6 +79,19 @@ export function deleteDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
         myHttp.post<Doc>({
             url: '/api/doc/delete', data: doc
+        }).then((response) => {
+            if (response?.code) {
+                reject(response?.msg)
+            }
+            resolve(response)
+        })
+    })
+}
+
+export function recoverDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
+    return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
+        myHttp.post<Doc>({
+            url: '/api/doc/recover', data: doc
         }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)

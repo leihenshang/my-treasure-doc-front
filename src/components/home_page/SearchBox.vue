@@ -35,7 +35,7 @@ function updateValue(value: string | null) {
     return
   }
 
-  getDocList('root', -1, false, value).then((resp) => {
+  getDocList('', -1, false, value).then((resp) => {
     autoCompleteOptions.value = []
     resp.list.map((val) => {
       autoCompleteOptions.value.push({

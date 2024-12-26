@@ -27,7 +27,7 @@
   </n-modal>
 </template>
 <script lang="ts" setup>
-import { getDoc, getDocList, updateDoc } from '@/api/doc';
+import { getDoc, getDocList, recoverDoc } from '@/api/doc';
 import { darkTheme, lightTheme } from '@/constants';
 import { useGlobalStore } from "@/stores/global";
 import { vditorCustomerTheme } from '@/types/editor';
@@ -129,16 +129,12 @@ function handleOkBtn() {
     return
   }
 
-  updateDoc({
-    id: currentDoc.value.id,
-    isRecover: true,
-    version: currentDoc.value.version
-  } as Doc).then(() => {
+  recoverDoc({ id: currentDoc.value.id } as Doc).then(() => {
     show.value = false
     emit('refreshDoc')
     message.info('更新成功');
   }).catch((err) => {
-    message.error(`${err}`)
+    message.error(`${err.msg}`)
   })
 }
 
