@@ -246,11 +246,15 @@ function genDocTitle(suffix: string = "-新") {
 function refreshTree() {
   treeData.value = []
   getDocGroupTree('root', true).then((response) => {
+    if (!response.data) {
+      return
+    }
     (response.data as Array<DocGroup>).map((val) => {
       treeData.value.push(buildTreeItem(val))
     })
   }).catch((err) => {
-    message.error(err)
+    console.log(err)
+    message.error(err.msg)
   })
 }
 
