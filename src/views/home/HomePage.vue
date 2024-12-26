@@ -15,7 +15,7 @@
             </n-icon>
           </n-button>
         </div>
-        <HeaderToolList :tool-list="toolList" @handleClickTool="topMenuUpdate"></HeaderToolList>
+        <HeaderToolList :tool-list="toolList" @handleClickTool="topMenuAction"></HeaderToolList>
         <n-collapse :default-expanded-names="['1', '2']" style="padding: 0 10px 0 0;">
           <n-collapse-item title="置顶文档" name="1">
             <n-tree v-show="topDocList.length > 0" block-line :data="topDocList" :node-props="nodeProps"
@@ -180,7 +180,7 @@ const toolList: ToolObj[] = [
   },
 ]
 
-function topMenuUpdate(key: string): void {
+function topMenuAction(key: string): void {
   const title = genDocTitle()
   if (key === 'addNote') {
     createDoc({
