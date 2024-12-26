@@ -38,7 +38,7 @@
     @add-tree-item="addTreeItem" @recursion-reload="id => recursionReloadTreeNode(treeData, id)">
   </CreateGroup>
   <SearchBox v-model:show="showSearchBox"></SearchBox>
-  <DocRecycleBin v-model:show="showRecycleBinModal" v-on:refresh-doc=" refreshDocList(); refreshTree();">
+  <DocRecycleBin v-model:show="showRecycleBinModal" v-on:refresh-doc=" refreshTopDocList(); refreshTree();">
   </DocRecycleBin>
 </template>
 
@@ -91,7 +91,7 @@ const isHoverThemeButton = ref(false)
 
 onMounted(() => {
   refreshTree();
-  refreshDocList();
+  refreshTopDocList();
 })
 
 eventBus.on('updateDocTitle', (data: Doc) => {
@@ -99,7 +99,7 @@ eventBus.on('updateDocTitle', (data: Doc) => {
 })
 
 eventBus.on('updateTopDoc', () => {
-  refreshDocList()
+  refreshTopDocList()
 })
 
 
@@ -258,7 +258,7 @@ function refreshTree() {
   })
 }
 
-function refreshDocList() {
+function refreshTopDocList() {
   topDocList.value = []
   getDocList('', 1).then((response) => {
     response.list.map((val) => {
@@ -458,7 +458,7 @@ function deleteTreeNode(id: string, type: string) {
   if (type === 'doc') {
     deleteDoc({ id } as Doc).then(() => {
       message.success('删除成功');
-      refreshDocList();
+      refreshTopDocList();
       if (route.params.id === id) {
         router.push({ path: `/Editor` })
       }
