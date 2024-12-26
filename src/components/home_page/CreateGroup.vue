@@ -3,21 +3,21 @@
         class="modal-dialog" :mask-closable=false
         style="position: fixed; left: 50%;transform: translateX(-50%);top: 100px">
         <template #header>
-            <div>{{ getModalTileByType(handleType as string) }}</div>
+            <div>{{ getModalTileByType(actionName as string) }}</div>
         </template>
         <div class="dialog-container">
-            <div class="dialog-content" v-if="handleType != 'updateDoc'">
+            <div class="dialog-content" v-if="actionName != 'updateDoc'">
                 <label>名称</label>
                 <n-input v-model:value="updateModalName" type="text" placeholder="分组名称"></n-input>
             </div>
             <div class="dialog-content">
                 <label>层级</label>
                 <n-tree-select v-model:value="updateModalPid" clearable :options="options" key-field="id"
-                    :cascade="true" :show-path="true" :allow-checking-not-loaded="true" :on-load="loadTree" />
+                    :cascade="true" :show-path="true" :allow-checking-not-loaded="true" :on-load="loadGroupTree" />
             </div>
         </div>
         <template #action>
-            <n-button type="primary" @click="updateModal(handleType as string)">确定</n-button>
+            <n-button type="primary" @click="updateModal(actionName as string)">确定</n-button>
             <n-button @click="showModalModel = false">取消</n-button>
         </template>
     </n-modal>
@@ -43,7 +43,7 @@ const emit = defineEmits<{
 
 const showModalModel = defineModel('show')
 const updateGroup = defineModel('updateGroup')
-const handleType = defineModel('handleType', { type: String, required: true })
+const actionName = defineModel('actionName', { type: String, required: true })
 const updateModalName = ref('')
 const updateModalPid = ref('')
 const options = ref([
@@ -60,12 +60,12 @@ const options = ref([
 const newGroup = reactive<DocGroup>({ title: '', groupType: '', id: '', pid: '' });
 const message = useMessage()
 
-function getModalTileByType(handleType: string): string {
-    if (handleType === 'create') {
+function getModalTileByType(action: string): string {
+    if (action === 'create') {
         return `新增分组`
-    } else if (handleType === 'update') {
+    } else if (action === 'update') {
         return `编辑分组`
-    } else if (handleType === 'updateDoc') {
+    } else if (action === 'updateDoc') {
         return `编辑文档`
     }
     return ''
@@ -155,28 +155,25 @@ function clearModal() {
 }
 
 
-function loadTree(node: TreeOption) {
-    console.log(node)
-    return new Promise<void>((resolve) => {
+async function loadGroupTree(node: TreeOption) {
+    return await new Promise<void>((resolve) => {
         getDocGroupTree(node.id as string, false).then((response) => {
             if (!response.data) {
-                node.children = []
-                resolve()
-                return
+                node.children = [];
+                resolve();
+                return;
             }
 
-            let arr = new Array<TreeOption>((response.data as Array<DocGroup>).length)
+            let arr = new Array<TreeOption>((response.data as Array<DocGroup>).length);
             for (const e of response.data as Array<DocGroup>) {
-                arr.push(buildTreeItem(e))
+                arr.push(buildTreeItem(e));
             }
-            node.children = arr
-            resolve()
+            node.children = arr;
+            resolve();
         }).catch((err) => {
-            console.log(err)
-        })
-    }).catch(err => {
-        console.log(err)
-    })
+            console.log(err);
+        });
+    });
 }
 
 

@@ -34,7 +34,7 @@
       </n-layout-content>
     </n-layout>
   </div>
-  <CreateGroup v-model:show="showModal" v-model:update-group="updateGroup" v-model:handle-type="groupHandleType"
+  <CreateGroup v-model:show="showModal" v-model:update-group="updateGroup" v-model:action-name="modalActionName"
     @add-tree-item="addTreeItem" @recursion-reload="id => recursionReloadTreeNode(treeData, id)">
   </CreateGroup>
   <SearchBox v-model:show="showSearchBox"></SearchBox>
@@ -79,7 +79,7 @@ const treeData = ref<Array<TreeOption>>([])
 const topDocList = ref<Array<TreeOption>>([])
 const showModal = ref(false);
 const showSearchBox = ref(false);
-const groupHandleType = ref('');
+const modalActionName = ref('');
 const updateGroup = ref<DocGroup>();
 const expandedKeys = ref<Array<string>>([])
 const selectedKeys = ref<Array<string>>([])
@@ -144,7 +144,7 @@ function renderSwitcherIcon() {
 
 const changeModal = (type: string, group?: DocGroup) => {
   showModal.value = true;
-  groupHandleType.value = type
+  modalActionName.value = type
   updateGroup.value = { ...group as DocGroup }
 };
 const toolList: ToolObj[] = [
