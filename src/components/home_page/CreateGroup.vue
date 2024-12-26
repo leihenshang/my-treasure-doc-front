@@ -8,11 +8,11 @@
         <div class="dialog-container">
             <div class="dialog-content" v-if="actionName != 'updateDoc'">
                 <label>名称</label>
-                <n-input v-model:value="updateModalName" type="text" placeholder="分组名称"></n-input>
+                <n-input v-model:value="(updateGroup as DocGroup).title" type="text" placeholder="分组名称"></n-input>
             </div>
             <div class="dialog-content">
                 <label>层级</label>
-                <n-tree-select v-model:value="updateModalPid" clearable :options="options" key-field="id"
+                <n-tree-select v-model:value="(updateGroup as DocGroup).pid" clearable :options="options" key-field="id"
                     :cascade="true" :show-path="true" :allow-checking-not-loaded="true" :on-load="loadGroupTree" />
             </div>
         </div>
@@ -33,19 +33,16 @@ import {
     TreeOption,
     useMessage
 } from 'naive-ui';
-import { reactive, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 
 const emit = defineEmits<{
-    (e: 'addTreeItem', value: TreeOption): void
-    (e: 'recursionReload', value: string): void
+    (e: 'updated', value: string | TreeOption): void
 
 }>()
 
 const showModalModel = defineModel('show')
 const updateGroup = defineModel('updateGroup')
 const actionName = defineModel('actionName', { type: String, required: true })
-const updateModalName = ref('')
-const updateModalPid = ref('')
 const options = ref([
     {
         label: '顶层',
@@ -55,9 +52,7 @@ const options = ref([
         isLeaf: false
     }
 ])
-
-
-const newGroup = reactive<DocGroup>({ title: '', groupType: '', id: '', pid: '' });
+const updateData = computed((): DocGroup => { return updateGroup.value as unknown as DocGroup })
 const message = useMessage()
 
 function getModalTileByType(action: string): string {
@@ -71,31 +66,24 @@ function getModalTileByType(action: string): string {
     return ''
 }
 
-watch(updateGroup, (newGroup) => {
-    const group = newGroup as DocGroup
-    updateModalName.value = group.title
-    updateModalPid.value = group.pid || ''
-})
 
 function updateModal(type: string) {
-    const updateGroupCopy = updateGroup.value as unknown as DocGroup
     if (type === 'updateDoc') {
-        if (!updateModalPid.value) {
+        if (!updateData.value.pid) {
             showModalModel.value = false
-            clearModal()
             return
         }
 
-        getDoc(updateGroupCopy.id).then((resp) => {
+        getDoc(updateData.value.id).then((resp) => {
             const docDetail = resp.data as Doc
             updateDoc({
                 id: docDetail.id,
-                groupId: updateModalPid.value,
-                version: docDetail.version
+                groupId: updateData.value.pid,
+                version: docDetail.version,
+                title: updateData.value.title
             } as Doc).then(() => {
                 showModalModel.value = false
-                clearModal()
-                emit('recursionReload', updateGroupCopy.pid || '')
+                emit('updated', updateData.value.pid || '')
             }).catch(err => {
                 message.error(`${err.msg}`)
                 console.log(err)
@@ -111,37 +99,23 @@ function updateModal(type: string) {
     }
 
     if (type == 'update') {
-        updateGroupCopy.title = updateModalName.value
-        if (updateModalPid.value) {
-            updateGroupCopy.pid = updateModalPid.value
-        }
-        updateGroupData(updateGroupCopy).then(() => {
-            clearModal()
-            eventBus.emit('updateGroupName', updateGroupCopy)
-            emit('recursionReload', updateGroupCopy.pid || '')
+        updateGroupData(updateData.value).then(() => {
+            eventBus.emit('updateGroupName', updateData.value)
+            emit('updated', updateData.value.pid || '')
         }).catch(err => {
             message.error(err)
         })
     }
 
     if (type == 'create') {
-        newGroup.title = updateModalName.value
-        if (updateModalPid.value) {
-            newGroup.pid = updateModalPid.value
-        }
+        const newGroup = { title: updateData.value.title, groupType: '', id: '', pid: updateData.value.pid, isLeaf: false } as DocGroup
         createGroup(newGroup).then((resp) => {
-            clearModal()
-            if (newGroup.pid) {
-                const newItem = Object.assign({}, newGroup)
-                newItem.id = resp?.getData()?.id
-                newItem.isLeaf = true
-                emit('addTreeItem', buildTreeItem(newItem))
-            } else {
-                emit('recursionReload', newGroup.pid || '')
-            }
+            newGroup.id = resp?.getData()?.id
+            newGroup.isLeaf = true
+            emit('updated', buildTreeItem(newGroup))
         }).catch(err => {
             console.log(err)
-            message.error(`${err}`)
+            message.error(`${err.msg}`)
         })
     }
 
@@ -149,10 +123,6 @@ function updateModal(type: string) {
 }
 
 
-function clearModal() {
-    updateModalName.value = ''
-    updateModalPid.value = ''
-}
 
 
 async function loadGroupTree(node: TreeOption) {

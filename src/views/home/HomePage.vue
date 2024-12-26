@@ -15,7 +15,7 @@
             </n-icon>
           </n-button>
         </div>
-        <HeaderToolList :tool-list="toolList" @handleClickTool="topMenuAction"></HeaderToolList>
+        <HeaderToolList :tool-list="toolMenuList" @handleClickTool="topMenuAction"></HeaderToolList>
         <n-collapse :default-expanded-names="['1', '2']" style="padding: 0 10px 0 0;">
           <n-collapse-item title="置顶文档" name="1">
             <n-tree v-show="topDocList.length > 0" block-line :data="topDocList" :node-props="nodeProps"
@@ -35,7 +35,7 @@
     </n-layout>
   </div>
   <CreateGroup v-model:show="showModal" v-model:update-group="updateGroup" v-model:action-name="modalActionName"
-    @add-tree-item="addTreeItem" @recursion-reload="id => recursionReloadTreeNode(treeData, id)">
+    @updated="id => recursionReloadTreeNode(treeData, id)">
   </CreateGroup>
   <SearchBox v-model:show="showSearchBox"></SearchBox>
   <DocRecycleBin v-model:show="showRecycleBinModal" v-on:refresh-doc=" refreshTopDocList(); refreshTree();">
@@ -87,6 +87,40 @@ const showRecycleBinModal = ref(false)
 const hoverMenuId = ref()
 let handleMouseOverFn: ReturnType<typeof setTimeout>
 const isHoverThemeButton = ref(false)
+
+const toolMenuList: ToolObj[] = [
+  { type: 'icon', iconOrTextName: 'Search', props: 'search' },
+  { type: 'icon', iconOrTextName: 'FolderOutline', props: 'addFolder' },
+  { type: 'icon', iconOrTextName: 'PencilOutline', props: 'addNote' },
+  {
+    type: 'icon', iconOrTextName: 'EllipsisHorizontalCircleOutline', props: 'more',
+    HandleSelectList: [{
+      label: '退出登录',
+      iconName: 'ArrowBackCircleOutline',
+      props: 'logOut'
+    },
+    {
+      label: '回收站',
+      iconName: 'Delete16Regular',
+      props: 'recycleBin',
+      iconType: 'fluent'
+    },
+    {
+      label: '系统管理',
+      iconName: 'PeopleCircleSharp',
+      props: 'userManage',
+      iconType: 'ionicons'
+    },
+    {
+      label: '仪表盘',
+      iconName: 'Board24Filled',
+      props: 'dashboard',
+      iconType: 'fluent'
+    },
+    ]
+  },
+]
+
 
 
 onMounted(() => {
@@ -142,43 +176,11 @@ function renderSwitcherIcon() {
   return h(NIcon, null, { default: () => h(ChevronForward) })
 }
 
-const changeModal = (type: string, group?: DocGroup) => {
+const changeModal = (action: string, group?: DocGroup) => {
   showModal.value = true;
-  modalActionName.value = type
+  modalActionName.value = action
   updateGroup.value = { ...group as DocGroup }
 };
-const toolList: ToolObj[] = [
-  { type: 'icon', iconOrTextName: 'Search', props: 'search' },
-  { type: 'icon', iconOrTextName: 'FolderOutline', props: 'addFolder' },
-  { type: 'icon', iconOrTextName: 'PencilOutline', props: 'addNote' },
-  {
-    type: 'icon', iconOrTextName: 'EllipsisHorizontalCircleOutline', props: 'more',
-    HandleSelectList: [{
-      label: '退出登录',
-      iconName: 'ArrowBackCircleOutline',
-      props: 'logOut'
-    },
-    {
-      label: '回收站',
-      iconName: 'Delete16Regular',
-      props: 'recycleBin',
-      iconType: 'fluent'
-    },
-    {
-      label: '系统管理',
-      iconName: 'PeopleCircleSharp',
-      props: 'userManage',
-      iconType: 'ionicons'
-    },
-    {
-      label: '仪表盘',
-      iconName: 'Board24Filled',
-      props: 'dashboard',
-      iconType: 'fluent'
-    },
-    ]
-  },
-]
 
 function topMenuAction(key: string): void {
   const title = genDocTitle()
@@ -491,11 +493,17 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
   }
 }
 
-function recursionReloadTreeNode(arr: Array<TreeOption>, key: string) {
-  if (key) {
+function recursionReloadTreeNode(arr: Array<TreeOption>, key: string | TreeOption) {
+  if (!key) {
     refreshTree()
     return
   }
+
+  if (typeof key !== 'string') {
+    addTreeItem(key as TreeOption)
+    return
+  }
+
 
   for (let i = 0; i < arr.length; i++) {
     if (arr[i]?.id && arr[i].id == key) {
