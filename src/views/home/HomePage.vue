@@ -132,6 +132,10 @@ eventBus.on('updateDocTitle', (data: Doc) => {
   recursionUpdateTreeNodeTitle(treeData.value, data.id, data.title)
 })
 
+eventBus.on('updateGroupName', (data: TreeOption) => {
+  recursionUpdateTreeNodeTitle(treeData.value, data.id as string, data.title as string)
+})
+
 eventBus.on('updateTopDoc', () => {
   refreshTopDocList()
 })
@@ -140,6 +144,7 @@ eventBus.on('updateTopDoc', () => {
 onBeforeUnmount(() => {
   eventBus.offAll('updateTopDoc')
   eventBus.offAll('updateDocTitle')
+  eventBus.offAll('updateDocGroupName')
 })
 
 //切换主题的位置
