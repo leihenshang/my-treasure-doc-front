@@ -36,7 +36,8 @@ export function buildTreeItem(d: DocGroup): TreeOption {
         })(),
         groupType: d.groupType,
         prefix: () => getPrefixIcon(d.groupType),
-        pid: d.pid
+        pid: d.pid,
+        children: []
     }
 }
 

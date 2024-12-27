@@ -162,19 +162,7 @@ const override: TreeOverrideNodeClickBehavior = ({ option }) => {
   return 'default'
 }
 
-function addTreeItem(op: TreeOption) {
-  let foundDoc = false
-  for (let i = 0; i < treeData.value.length; i++) {
-    if (treeData.value[i].groupType == 'doc') {
-      foundDoc = true
-      treeData.value.splice(i, 0, op)
-      break;
-    }
-  }
-  if (!foundDoc) {
-    treeData.value.push(op)
-  }
-}
+
 
 
 function renderSwitcherIcon() {
@@ -435,15 +423,18 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
           expandedKeys.value?.push(info.option.key as string)
           createDoc(newDoc).then(res => {
             const doc = res.getData()
-            if (doc.groupId === '') {
-              treeData.value.push(buildTreeItem({
-                id: doc.id,
-                title: doc.title,
-                groupType: "doc",
-              } as DocGroup))
-            } else {
-              recursionReloadTreeNode(treeData.value, doc.groupId || '')
-            }
+            const op = buildTreeItem({
+              id: doc.id,
+              title: doc.title,
+              groupType: "doc",
+            } as DocGroup)
+            recursionReloadTreeNodeV1(treeData.value, 'createDoc', op)
+
+            // if (doc.groupId === '') {
+            //   treeData.value.push(op)
+            // } else {
+            //   recursionReloadTreeNode(treeData.value, doc.groupId || '')
+            // }
             if (doc.id) {
               selectedKeys.value = []
               selectedKeys.value.push(`doc-${doc.id}`)
@@ -461,37 +452,48 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
 }
 
 
-function deleteTreeNode(id: string, type: string) {
-  if (type === 'doc') {
-    deleteDoc({ id } as Doc).then(() => {
-      message.success('删除成功');
-      refreshTopDocList();
-      if (route.params.id === id) {
-        router.push({ path: `/Editor` })
-      }
-    }).catch(err => {
-      console.log(err)
-    })
-  } else {
-    deleteGroup({ id } as DocGroup).then(() => {
-      message.success('删除成功')
-    }).catch(err => {
-      console.log(err)
-    })
-  }
-}
+// function recursionAddTreeNode(op: TreeOption) {
+//   let foundDoc = false
+//   for (let i = 0; i < treeData.value.length; i++) {
+//     if (treeData.value[i].groupType == 'doc') {
+//       foundDoc = true
+//       treeData.value.splice(i, 0, op)
+//       break;
+//     }
+//   }
+//   if (!foundDoc) {
+//     treeData.value.push(op)
+//   }
+// }
 
 function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
-  if (arr.length <= 0 || key <= 0) {
+  if (!arr || arr.length <= 0 || !key) {
     return
   }
 
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i]?.id && arr[i].id == key) {
-      deleteTreeNode(arr[i].id as string, arr[i].groupType as string)
-      arr.splice(i, 1)
-      // router.push({ path: `/Editor` })
-      eventBus.emit('deleteDocGroup', key)
+    if (arr[i]?.id == key) {
+      const id = arr[i]?.id
+      if ((arr[i].groupType as string) === 'doc') {
+        deleteDoc({ id } as Doc).then(() => {
+          message.success('删除成功');
+          refreshTopDocList();
+          arr.splice(i, 1)
+          if (route.params.id === id) {
+            router.push({ path: `/Editor` })
+          }
+        }).catch(err => {
+          console.log(err)
+        })
+      } else {
+        deleteGroup({ id } as DocGroup).then(() => {
+          message.success('删除成功')
+          arr.splice(i, 1)
+          eventBus.emit('deleteDocGroup', key)
+        }).catch(err => {
+          console.log(err)
+        })
+      }
       break
     }
     recursionDeleteTreeNode(arr[i]?.children || [], key)
@@ -499,28 +501,107 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
 }
 
 function handleCreateGroup(updateData: TreeOption): void {
-  if (createGroupAction.value == 'update') {
-    recursionReloadTreeNode(treeData.value, updateData.pid as string)
-  } else if (createGroupAction.value == 'create') {
-    addTreeItem(updateData)
-  } else if (createGroupAction.value == 'updateDoc') {
-    recursionReloadTreeNode(treeData.value, updateData.pid as string)
-  }
+  console.log(createGroupAction.value, updateData)
+  recursionReloadTreeNodeV1(treeData.value, createGroupAction.value, updateData)
+  // if (createGroupAction.value == 'update') {
+  //   recursionReloadTreeNode(treeData.value, updateData.pid as string)
+  // } else if (createGroupAction.value == 'create') {
+  //   recursionAddTreeNode(updateData)
+  // } else if (createGroupAction.value == 'updateDoc') {
+  //   recursionReloadTreeNode(treeData.value, updateData.pid as string)
+  // }
 }
 
-function recursionReloadTreeNode(arr: Array<TreeOption>, key: string) {
-  if (!arr || arr.length <= 0 || !key) {
+function recursionReloadTreeNodeV1(arr: Array<TreeOption>, action: string, updateData: TreeOption): void {
+  console.log(arguments)
+  if (arr.length <= 0 || !updateData) {
+    return
+  }
+
+  if (updateData.pid as string === 'root') {
+    if (action == 'update') {
+      console.log('update')
+    } else if (action == 'updateDoc') {
+      console.log('updateDoc')
+    } else if (action == 'createDoc' || action == 'create') {
+      let foundDoc = false
+      for (let i = 0; i < arr.length; i++) {
+        if (treeData.value[i].groupType == 'doc') {
+          foundDoc = true
+          arr.splice(i, 0, updateData)
+          break;
+        }
+      }
+      if (!foundDoc) {
+        arr.push(updateData)
+      }
+    }
     return
   }
 
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i]?.id == key) {
-      handleLoad(arr[i])
+    if (arr[i]?.id === (updateData.pid as string)) {
+      if (action === 'update') {
+        for (let j = 0; j < arr[i].children!.length; j++) {
+          if (arr[i].children![j].id === (updateData.id as string)) {
+            arr[i].children!.splice(j, 1)
+            console.log(arr[i])
+            // recursionReloadTreeNodeV1(treeData.value, 'create', updateData)
+            break
+          }
+        }
+      } else if (action === 'create') {
+        console.log('create', arr[i])
+        if (!arr[i] || arr[i].children!.length <= 0) {
+          arr[i].children?.push(updateData)
+        } else {
+          let foundDoc = false
+          for (let j = 0; j < arr[i].children!.length; j++) {
+            if (arr[i].children![j].groupType === 'doc') {
+              foundDoc = true
+              arr[i].children!.splice(j, 0, updateData)
+              break;
+            }
+          }
+          if (!foundDoc) {
+            arr[i].children!.push(updateData)
+          }
+        }
+      } else if (action == 'updateDoc') {
+        for (let j = 0; j < arr[i].children!.length; j++) {
+          if (arr[i].children![j].id === (updateData.id as string)) {
+            arr[i].children!.splice(j, 1)
+            console.log(arr[i])
+            // recursionReloadTreeNodeV1(treeData.value, 'createDoc', updateData)
+            break
+          }
+        }
+      } else if (action == 'createDoc') {
+        console.log(action)
+        arr[i].children!.push(updateData)
+      }
+
+      console.log(action)
       break
     }
-    recursionReloadTreeNode(arr[i]?.children || [], key)
+    recursionReloadTreeNodeV1(arr[i]?.children || [], action, updateData)
   }
 }
+
+
+// function recursionReloadTreeNode(arr: Array<TreeOption>, pId: string) {
+//   if (!arr || arr.length <= 0 || !pId) {
+//     return
+//   }
+
+//   for (let i = 0; i < arr.length; i++) {
+//     if (arr[i]?.id == pId) {
+//       handleLoad(arr[i])
+//       break
+//     }
+//     recursionReloadTreeNode(arr[i]?.children || [], pId)
+//   }
+// }
 
 function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: string, title: string) {
   if (!arr || arr.length <= 0 || !key) {
