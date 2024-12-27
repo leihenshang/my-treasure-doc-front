@@ -508,14 +508,13 @@ function handleCreateGroup(updateData: TreeOption): void {
   }
 }
 
-function recursionReloadTreeNode(arr: Array<TreeOption>, key: string | TreeOption) {
-  if (!key) {
-    refreshTree()
+function recursionReloadTreeNode(arr: Array<TreeOption>, key: string) {
+  if (!arr || arr.length <= 0 || !key) {
     return
   }
 
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i]?.id && arr[i].id == key) {
+    if (arr[i]?.id == key) {
       handleLoad(arr[i])
       break
     }
@@ -524,9 +523,10 @@ function recursionReloadTreeNode(arr: Array<TreeOption>, key: string | TreeOptio
 }
 
 function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: string, title: string) {
-  if (arr.length <= 0 || !key) {
+  if (!arr || arr.length <= 0 || !key) {
     return
   }
+
 
   for (let i = 0; i < arr.length; i++) {
     if (arr[i]?.id == key) {
