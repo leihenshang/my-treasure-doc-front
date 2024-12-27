@@ -1,7 +1,7 @@
 <template>
   <div class="header-tool-list-wrapper">
     <div class="tools-wrapper" v-for="tool in toolList" :key="tool.props">
-      <n-popover style="padding: 0">
+      <n-popover style="padding: 0" trigger="click">
         <template #trigger>
           <div @click="handleClickTool(tool)">
             <n-icon v-if="tool.type==='icon'" :component="ionicons[tool.iconOrTextName]" size="18" :depth="1"/>
@@ -62,13 +62,20 @@ const handleClickTool = (tool:ToolObj)=>{
 
   }
 }
+.n-popover-shared{
+  .select-list-wrapper>.select-list:hover{
+    background: rgba(255,255,255,0.09);
+  }
+}
 .select-list-wrapper {
   padding: 4px;
   > .select-list {
     display: flex;
     align-items: center;
-    padding: 8px;
+    padding: 6px 8px;
     cursor: pointer;
+    border-radius: 3px;
+    transition: background-color .3s;
     &:hover {
       background: #f3f3f5;
     }
