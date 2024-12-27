@@ -36,7 +36,7 @@ import {
 import { computed, ref } from 'vue';
 
 const emit = defineEmits<{
-    (e: 'updated', value: string | TreeOption): void
+    (e: 'updated', value: TreeOption): void
 
 }>()
 
@@ -67,8 +67,13 @@ function getModalTileByType(action: string): string {
 }
 
 
-function updateModal(type: string) {
-    if (type === 'updateDoc') {
+function updateModal(action: string) {
+    if (!updateData.value) {
+        return
+    }
+
+    const newGroup = { title: updateData.value.title, groupType: '', id: updateData.value.id, pid: updateData.value.pid, isLeaf: false } as DocGroup
+    if (action === 'updateDoc') {
         if (!updateData.value.pid) {
             showModalModel.value = false
             return
@@ -82,44 +87,41 @@ function updateModal(type: string) {
                 version: docDetail.version,
                 title: updateData.value.title
             } as Doc).then(() => {
+                emit('updated', buildTreeItem(newGroup))
                 showModalModel.value = false
-                emit('updated', updateData.value.pid || '')
             }).catch(err => {
-                message.error(`${err.msg}`)
                 console.log(err)
+                message.error(`${err.msg}`)
             })
 
-        }).catch(err => {
-            message.error(`${err}`)
-            console.log(err)
-        })
-
-
-
-    }
-
-    if (type == 'update') {
-        updateGroupData(updateData.value).then(() => {
-            eventBus.emit('updateGroupName', updateData.value)
-            emit('updated', updateData.value.pid || '')
-        }).catch(err => {
-            message.error(err)
-        })
-    }
-
-    if (type == 'create') {
-        const newGroup = { title: updateData.value.title, groupType: '', id: '', pid: updateData.value.pid, isLeaf: false } as DocGroup
-        createGroup(newGroup).then((resp) => {
-            newGroup.id = resp?.getData()?.id
-            newGroup.isLeaf = true
-            emit('updated', buildTreeItem(newGroup))
         }).catch(err => {
             console.log(err)
             message.error(`${err.msg}`)
         })
     }
 
-    showModalModel.value = false;
+    if (action == 'update') {
+        updateGroupData(updateData.value).then(() => {
+            eventBus.emit('updateGroupName', updateData.value)
+            emit('updated', buildTreeItem(newGroup))
+            showModalModel.value = false;
+        }).catch(err => {
+            console.log(err)
+            message.error(`${err.msg}`)
+        })
+    }
+
+    if (action == 'create') {
+        createGroup(newGroup).then((resp) => {
+            newGroup.id = resp?.getData()?.id
+            newGroup.isLeaf = true
+            emit('updated', buildTreeItem(newGroup))
+            showModalModel.value = false;
+        }).catch(err => {
+            console.log(err)
+            message.error(`${err.msg}`)
+        })
+    }
 }
 
 

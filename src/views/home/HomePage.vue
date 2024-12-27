@@ -34,8 +34,8 @@
       </n-layout-content>
     </n-layout>
   </div>
-  <CreateGroup v-model:show="showModal" v-model:update-group="updateGroup" v-model:action-name="modalActionName"
-    @updated="id => recursionReloadTreeNode(treeData, id)">
+  <CreateGroup v-model:show="showModal" v-model:update-group="updateGroup" v-model:action-name="createGroupAction"
+    @updated="updateData => handleCreateGroup(updateData)">
   </CreateGroup>
   <SearchBox v-model:show="showSearchBox"></SearchBox>
   <DocRecycleBin v-model:show="showRecycleBinModal" v-on:refresh-doc=" refreshTopDocList(); refreshTree();">
@@ -79,7 +79,7 @@ const treeData = ref<Array<TreeOption>>([])
 const topDocList = ref<Array<TreeOption>>([])
 const showModal = ref(false);
 const showSearchBox = ref(false);
-const modalActionName = ref('');
+const createGroupAction = ref('');
 const updateGroup = ref<DocGroup>();
 const expandedKeys = ref<Array<string>>([])
 const selectedKeys = ref<Array<string>>([])
@@ -178,7 +178,7 @@ function renderSwitcherIcon() {
 
 const changeModal = (action: string, group?: DocGroup) => {
   showModal.value = true;
-  modalActionName.value = action
+  createGroupAction.value = action
   updateGroup.value = { ...group as DocGroup }
 };
 
@@ -493,17 +493,21 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
   }
 }
 
+function handleCreateGroup(updateData: TreeOption): void {
+  if (createGroupAction.value == 'update') {
+    recursionReloadTreeNode(treeData.value, updateData.pid as string)
+  } else if (createGroupAction.value == 'create') {
+    addTreeItem(updateData)
+  } else if (createGroupAction.value == 'updateDoc') {
+    recursionReloadTreeNode(treeData.value, updateData.pid as string)
+  }
+}
+
 function recursionReloadTreeNode(arr: Array<TreeOption>, key: string | TreeOption) {
   if (!key) {
     refreshTree()
     return
   }
-
-  if (typeof key !== 'string') {
-    addTreeItem(key as TreeOption)
-    return
-  }
-
 
   for (let i = 0; i < arr.length; i++) {
     if (arr[i]?.id && arr[i].id == key) {
