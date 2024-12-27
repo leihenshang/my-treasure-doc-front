@@ -314,7 +314,11 @@ function nodeProps({ option }: { option: TreeOption }) {
         router.push({ path: `/Editor/${option.id}` })
       }
     },
-    onMouseover() {
+    onMouseover(e) {
+      if (e.target.className==='n-tree-node-content__text'){
+        const {clientWidth,scrollWidth,innerHTML} = e.target
+        if (clientWidth < scrollWidth) e.target.title = innerHTML
+      }
       clearTimeout(handleMouseOverFn)
       hoverMenuId.value = option.id
     },
