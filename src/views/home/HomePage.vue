@@ -276,7 +276,7 @@ function handleLoad(node: TreeOption) {
         return
       }
       const docGroupList = response.data as Array<DocGroup>
-      const arr = new Array<TreeOption>(docGroupList.length)
+      const arr = new Array<TreeOption>()
       docGroupList.map((val) => {
         arr.push(buildTreeItem(val))
       })
@@ -532,6 +532,7 @@ const findParentByParentId = (arr:Array<TreeOption>,parentId:string): TreeOption
   return parentArr.filter(item=>!!item)[0]
 }
 const xxx = (arr: Array<TreeOption>, parentId:string, updateData: TreeOption)=>{
+  console.log(arr);
   const parent = findParentByParentId(arr,parentId)
   if (!parent) {return}
   const children = parent.children || []
