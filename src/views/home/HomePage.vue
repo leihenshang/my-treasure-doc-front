@@ -424,21 +424,16 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
             title: title,
             groupId: info.option.id as unknown as string
           }
-          expandedKeys.value?.push(info.option.key as string)
           createDoc(newDoc).then(res => {
             const doc = res.getData()
             const op = buildTreeItem({
               id: doc.id,
               title: doc.title,
               groupType: "doc",
+              pid: info.option.id,
             } as DocGroup)
-            recursionReloadTreeNodeV1(treeData.value, 'createDoc', op)
-
-            // if (doc.groupId === '') {
-            //   treeData.value.push(op)
-            // } else {
-            //   recursionReloadTreeNode(treeData.value, doc.groupId || '')
-            // }
+            createOtherFolderOrNote(treeData.value,op)
+            expandedKeys.value?.push(info.option.key as string)
             if (doc.id) {
               selectedKeys.value = []
               selectedKeys.value.push(`doc-${doc.id}`)
@@ -454,21 +449,6 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
     ),
   ])
 }
-
-
-// function recursionAddTreeNode(op: TreeOption) {
-//   let foundDoc = false
-//   for (let i = 0; i < treeData.value.length; i++) {
-//     if (treeData.value[i].groupType == 'doc') {
-//       foundDoc = true
-//       treeData.value.splice(i, 0, op)
-//       break;
-//     }
-//   }
-//   if (!foundDoc) {
-//     treeData.value.push(op)
-//   }
-// }
 
 function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
   if (!arr || arr.length <= 0 || !key) {
@@ -557,8 +537,8 @@ const createRootFolder = (arr:Array<TreeOption>,updateData:TreeOption)=>{
     arr?.push(updateData)
   }
 }
-//创建非根目录文件夹
-const createOtherFolder = (arr: Array<TreeOption>, updateData: TreeOption)=>{
+//创建非根目录文件夹/笔记
+const createOtherFolderOrNote = (arr: Array<TreeOption>, updateData: TreeOption)=>{
   const parentId = updateData.pid
   const parent = findParentByParentId(arr,parentId as string)
   if (!parent) {return}
@@ -582,99 +562,8 @@ const createNewFolder = (arr: Array<TreeOption>, updateData: TreeOption)=>{
     createRootFolder(arr,updateData)
     return;
   }
-  createOtherFolder(arr,updateData)
+  createOtherFolderOrNote(arr,updateData)
 }
-
-function recursionReloadTreeNodeV1(arr: Array<TreeOption>, action: string, updateData: TreeOption): void {
-  if (arr.length <= 0 || !updateData) {
-    return
-  }
-
-  if (updateData.pid as string === 'root') {
-    if (action == 'update') {
-      console.log('update')
-    } else if (action == 'updateDoc') {
-      console.log('updateDoc')
-    } else if (action == 'createDoc' || action == 'create') {
-      let foundDoc = false
-      for (let i = 0; i < arr.length; i++) {
-        if (treeData.value[i].groupType == 'doc') {
-          foundDoc = true
-          arr.splice(i, 0, updateData)
-          break;
-        }
-      }
-      if (!foundDoc) {
-        arr.push(updateData)
-      }
-    }
-    return
-  }
-  for (let i = 0; i < arr.length; i++) {
-    const children = arr[i].children || []
-    const childLength = children?.length || 0
-
-
-    if (arr[i]?.id === (updateData.pid as string)) {
-      if (action === 'update') {
-        // for (let j = 0; j < childLength; j++) {
-        //   if (children[j]?.id === (updateData.id as string)) {
-        //     children?.splice(j, 1)
-        //     // recursionReloadTreeNodeV1(treeData.value, 'create', updateData)
-        //     break
-        //   }
-        // }
-      } else if (action === 'create') {
-        // if (!arr[i] || !childLength) {
-        //   children.push(updateData)
-        // } else {
-        //   let foundDoc = false
-        //   for (let j = 0; j < childLength; j++) {
-        //     if (children[j]?.groupType === 'doc') {
-        //       foundDoc = true
-        //       children?.splice(j, 0, updateData)
-        //       break;
-        //     }
-        //   }
-        //   if (!foundDoc) {
-        //     children?.push(updateData)
-        //   }
-        // }
-      } else if (action == 'updateDoc') {
-        for (let j = 0; j < childLength; j++) {
-          if (children[j].id === (updateData.id as string)) {
-            children?.splice(j, 1)
-            console.log(arr[i])
-            // recursionReloadTreeNodeV1(treeData.value, 'createDoc', updateData)
-            break
-          }
-        }
-      } else if (action == 'createDoc') {
-        console.log(action)
-        children?.push(updateData)
-      }
-
-      console.log(action)
-      break
-    }
-    // recursionReloadTreeNodeV1(children || [], action, updateData)
-  }
-}
-
-
-// function recursionReloadTreeNode(arr: Array<TreeOption>, pId: string) {
-//   if (!arr || arr.length <= 0 || !pId) {
-//     return
-//   }
-
-//   for (let i = 0; i < arr.length; i++) {
-//     if (arr[i]?.id == pId) {
-//       handleLoad(arr[i])
-//       break
-//     }
-//     recursionReloadTreeNode(arr[i]?.children || [], pId)
-//   }
-// }
 
 function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: string, title: string) {
   if (!arr || arr.length <= 0 || !key) {
