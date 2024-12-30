@@ -509,7 +509,7 @@ function handleCreateGroup(updateData: TreeOption|DocGroup): void {
   if (createGroupAction.value == 'update') {
     recursionUpdateTreeNodeTitle(treeData.value, updateData.id as string, updateData.title as string)
   }else if (createGroupAction.value == 'create') {
-    xxx(treeData.value,updateData as TreeOption)
+    createNewFolder(treeData.value,updateData as TreeOption)
   }
   // recursionReloadTreeNodeV1(treeData.value, createGroupAction.value, updateData)
 
@@ -522,7 +522,7 @@ function handleCreateGroup(updateData: TreeOption|DocGroup): void {
   // }
 }
 
-
+//获取父级对象
 const findParentByParentId = (arr:Array<TreeOption>,parentId:string): TreeOption|undefined =>{
   if (arr.length<=0) return
   // console.log(arr,parentId);
@@ -537,8 +537,28 @@ const findParentByParentId = (arr:Array<TreeOption>,parentId:string): TreeOption
   })
   return parentArr.filter(item=>!!item)[0]
 }
-const xxx = (arr: Array<TreeOption>, updateData: TreeOption)=>{
-  console.log(arr);
+//获取新文件夹的index
+const findLastFolderIndex = (children:TreeOption[],childLength:number)=>{
+  let index = -1
+  for (let j = 0; j < childLength; j++) {
+    if (children[j]?.groupType === 'doc') {
+      index = j
+      break;
+    }
+  }
+  return index
+}
+//创建根目录的文件夹
+const createRootFolder = (arr:Array<TreeOption>,updateData:TreeOption)=>{
+  const lastFolderIndex = findLastFolderIndex(arr, arr.length )
+  if (lastFolderIndex>=0){
+    arr?.splice(lastFolderIndex, 0, updateData)
+  }else {
+    arr?.push(updateData)
+  }
+}
+//创建非根目录文件夹
+const createOtherFolder = (arr: Array<TreeOption>, updateData: TreeOption)=>{
   const parentId = updateData.pid
   const parent = findParentByParentId(arr,parentId as string)
   if (!parent) {return}
@@ -548,18 +568,21 @@ const xxx = (arr: Array<TreeOption>, updateData: TreeOption)=>{
     parent.isLeaf = false
     parent.children = [updateData]
   } else {
-    let foundDoc = false
-    for (let j = 0; j < childLength; j++) {
-      if (children[j]?.groupType === 'doc') {
-        foundDoc = true
-        children?.splice(j, 0, updateData)
-        break;
-      }
-    }
-    if (!foundDoc) {
+    const lastFolderIndex = findLastFolderIndex(children, childLength)
+    if (lastFolderIndex>=0){
+      children?.splice(lastFolderIndex, 0, updateData)
+    }else {
       children?.push(updateData)
     }
   }
+}
+//创建文件夹
+const createNewFolder = (arr: Array<TreeOption>, updateData: TreeOption)=>{
+  if (updateData.pid==='root'){
+    createRootFolder(arr,updateData)
+    return;
+  }
+  createOtherFolder(arr,updateData)
 }
 
 function recursionReloadTreeNodeV1(arr: Array<TreeOption>, action: string, updateData: TreeOption): void {
