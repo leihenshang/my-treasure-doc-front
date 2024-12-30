@@ -1,7 +1,7 @@
 <template>
   <div class="header-tool-list-wrapper">
     <div class="tools-wrapper" v-for="tool in toolList" :key="tool.props">
-      <n-popover style="padding: 0" trigger="click">
+      <n-popover style="padding: 0">
         <template #trigger>
           <div @click="handleClickTool(tool)">
             <n-icon v-if="tool.type==='icon'" :component="ionicons[tool.iconOrTextName]" size="18" :depth="1"/>
