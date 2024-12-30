@@ -516,6 +516,44 @@ function handleCreateGroup(updateData: TreeOption): void {
   // }
 }
 
+
+const findParentByParentId = (arr:Array<TreeOption>,parentId:string): TreeOption|undefined =>{
+  if (arr.length<=0) return
+  // console.log(arr,parentId);
+  const parentArr = arr.map(item=> {
+    if (item.id === parentId) {
+      // console.log('执行了id');
+      return item
+    }else if (item.children){
+      // console.log('执行了children');
+      return findParentByParentId(item.children,parentId)
+    }
+  })
+  return parentArr.filter(item=>!!item)[0]
+}
+const xxx = (arr: Array<TreeOption>, parentId:string, updateData: TreeOption)=>{
+  const parent = findParentByParentId(arr,parentId)
+  if (!parent) {return}
+  const children = parent.children || []
+  const childLength = children?.length || 0
+  if (!childLength) {
+    parent.isLeaf = false
+    parent.children = [updateData]
+  } else {
+    let foundDoc = false
+    for (let j = 0; j < childLength; j++) {
+      if (children[j]?.groupType === 'doc') {
+        foundDoc = true
+        children?.splice(j, 0, updateData)
+        break;
+      }
+    }
+    if (!foundDoc) {
+      children?.push(updateData)
+    }
+  }
+}
+
 function recursionReloadTreeNodeV1(arr: Array<TreeOption>, action: string, updateData: TreeOption): void {
   if (arr.length <= 0 || !updateData) {
     return
@@ -541,34 +579,39 @@ function recursionReloadTreeNodeV1(arr: Array<TreeOption>, action: string, updat
     }
     return
   }
+  if (action === 'create'){
+    xxx(arr,updateData.pid as string,updateData)
+  }
   for (let i = 0; i < arr.length; i++) {
     const children = arr[i].children || []
     const childLength = children?.length || 0
+
+
     if (arr[i]?.id === (updateData.pid as string)) {
       if (action === 'update') {
-        for (let j = 0; j < childLength; j++) {
-          if (children[j]?.id === (updateData.id as string)) {
-            children?.splice(j, 1)
-            // recursionReloadTreeNodeV1(treeData.value, 'create', updateData)
-            break
-          }
-        }
+        // for (let j = 0; j < childLength; j++) {
+        //   if (children[j]?.id === (updateData.id as string)) {
+        //     children?.splice(j, 1)
+        //     // recursionReloadTreeNodeV1(treeData.value, 'create', updateData)
+        //     break
+        //   }
+        // }
       } else if (action === 'create') {
-        if (!arr[i] || !childLength) {
-          children.push(updateData)
-        } else {
-          let foundDoc = false
-          for (let j = 0; j < childLength; j++) {
-            if (children[j]?.groupType === 'doc') {
-              foundDoc = true
-              children?.splice(j, 0, updateData)
-              break;
-            }
-          }
-          if (!foundDoc) {
-            children?.push(updateData)
-          }
-        }
+        // if (!arr[i] || !childLength) {
+        //   children.push(updateData)
+        // } else {
+        //   let foundDoc = false
+        //   for (let j = 0; j < childLength; j++) {
+        //     if (children[j]?.groupType === 'doc') {
+        //       foundDoc = true
+        //       children?.splice(j, 0, updateData)
+        //       break;
+        //     }
+        //   }
+        //   if (!foundDoc) {
+        //     children?.push(updateData)
+        //   }
+        // }
       } else if (action == 'updateDoc') {
         for (let j = 0; j < childLength; j++) {
           if (children[j].id === (updateData.id as string)) {
@@ -586,7 +629,7 @@ function recursionReloadTreeNodeV1(arr: Array<TreeOption>, action: string, updat
       console.log(action)
       break
     }
-    recursionReloadTreeNodeV1(children || [], action, updateData)
+    // recursionReloadTreeNodeV1(children || [], action, updateData)
   }
 }
 

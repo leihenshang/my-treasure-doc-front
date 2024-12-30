@@ -110,7 +110,6 @@ function updateModal(action: string) {
             message.error(`${err.msg}`)
         })
     }
-
     if (action == 'create') {
         createGroup(newGroup).then((resp) => {
             newGroup.id = resp?.getData()?.id
@@ -118,7 +117,6 @@ function updateModal(action: string) {
             emit('updated', buildTreeItem(newGroup))
             showModalModel.value = false;
         }).catch(err => {
-            console.log(err)
             message.error(`${err.msg}`)
         })
     }
