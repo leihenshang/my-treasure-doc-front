@@ -35,7 +35,7 @@
     </n-layout>
   </div>
   <CreateGroup v-model:show="showModal" v-model:update-group="updateGroup" v-model:action-name="createGroupAction"
-    @updated="(updateData:TreeOption) => handleCreateGroup(updateData)">
+    @updated="(updateData:TreeOption|DocGroup) => handleCreateGroup(updateData)">
   </CreateGroup>
   <SearchBox v-model:show="showSearchBox"></SearchBox>
   <DocRecycleBin v-model:show="showRecycleBinModal" v-on:refresh-doc=" refreshTopDocList(); refreshTree();">
@@ -132,9 +132,9 @@ eventBus.on('updateDocTitle', (data: Doc) => {
   recursionUpdateTreeNodeTitle(treeData.value, data.id, data.title)
 })
 
-eventBus.on('updateGroupName', (data: TreeOption) => {
-  recursionUpdateTreeNodeTitle(treeData.value, data.id as string, data.title as string)
-})
+// eventBus.on('updateGroupName', (data: TreeOption) => {
+//   recursionUpdateTreeNodeTitle(treeData.value, data.id as string, data.title as string)
+// })
 
 eventBus.on('updateTopDoc', () => {
   refreshTopDocList()
@@ -504,9 +504,15 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
   }
 }
 
-function handleCreateGroup(updateData: TreeOption): void {
+function handleCreateGroup(updateData: TreeOption|DocGroup): void {
   console.log(createGroupAction.value, updateData)
-  recursionReloadTreeNodeV1(treeData.value, createGroupAction.value, updateData)
+  if (createGroupAction.value == 'update') {
+    recursionUpdateTreeNodeTitle(treeData.value, updateData.id as string, updateData.title as string)
+  }else if (createGroupAction.value == 'create') {
+    xxx(treeData.value,updateData as TreeOption)
+  }
+  // recursionReloadTreeNodeV1(treeData.value, createGroupAction.value, updateData)
+
   // if (createGroupAction.value == 'update') {
   //   recursionReloadTreeNode(treeData.value, updateData.pid as string)
   // } else if (createGroupAction.value == 'create') {
@@ -531,9 +537,10 @@ const findParentByParentId = (arr:Array<TreeOption>,parentId:string): TreeOption
   })
   return parentArr.filter(item=>!!item)[0]
 }
-const xxx = (arr: Array<TreeOption>, parentId:string, updateData: TreeOption)=>{
+const xxx = (arr: Array<TreeOption>, updateData: TreeOption)=>{
   console.log(arr);
-  const parent = findParentByParentId(arr,parentId)
+  const parentId = updateData.pid
+  const parent = findParentByParentId(arr,parentId as string)
   if (!parent) {return}
   const children = parent.children || []
   const childLength = children?.length || 0
@@ -579,9 +586,6 @@ function recursionReloadTreeNodeV1(arr: Array<TreeOption>, action: string, updat
       }
     }
     return
-  }
-  if (action === 'create'){
-    xxx(arr,updateData.pid as string,updateData)
   }
   for (let i = 0; i < arr.length; i++) {
     const children = arr[i].children || []

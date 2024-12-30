@@ -103,7 +103,7 @@ function updateModal(action: string) {
     if (action == 'update') {
         updateGroupData(updateData.value).then(() => {
             eventBus.emit('updateGroupName', updateData.value)
-            emit('updated', buildTreeItem(newGroup))
+            emit('updated',updateData.value)
             showModalModel.value = false;
         }).catch(err => {
             console.log(err)
