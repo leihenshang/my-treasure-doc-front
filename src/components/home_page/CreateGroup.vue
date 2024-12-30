@@ -80,7 +80,7 @@ function updateModal(action: string) {
         }
 
         getDoc(updateData.value.id).then((resp) => {
-            const docDetail = resp.data as Doc
+          const docDetail = resp.data as Doc
             updateDoc({
                 id: docDetail.id,
                 groupId: updateData.value.pid,

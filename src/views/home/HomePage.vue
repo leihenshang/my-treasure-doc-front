@@ -35,7 +35,7 @@
     </n-layout>
   </div>
   <CreateGroup v-model:show="showModal" v-model:update-group="updateGroup" v-model:action-name="createGroupAction"
-    @updated="updateData => handleCreateGroup(updateData)">
+    @updated="(updateData:TreeOption) => handleCreateGroup(updateData)">
   </CreateGroup>
   <SearchBox v-model:show="showSearchBox"></SearchBox>
   <DocRecycleBin v-model:show="showRecycleBinModal" v-on:refresh-doc=" refreshTopDocList(); refreshTree();">
@@ -517,7 +517,6 @@ function handleCreateGroup(updateData: TreeOption): void {
 }
 
 function recursionReloadTreeNodeV1(arr: Array<TreeOption>, action: string, updateData: TreeOption): void {
-  console.log(arguments)
   if (arr.length <= 0 || !updateData) {
     return
   }
@@ -542,39 +541,38 @@ function recursionReloadTreeNodeV1(arr: Array<TreeOption>, action: string, updat
     }
     return
   }
-
   for (let i = 0; i < arr.length; i++) {
+    const children = arr[i].children || []
+    const childLength = children?.length || 0
     if (arr[i]?.id === (updateData.pid as string)) {
       if (action === 'update') {
-        for (let j = 0; j < arr[i].children!.length; j++) {
-          if (arr[i].children![j].id === (updateData.id as string)) {
-            arr[i].children!.splice(j, 1)
-            console.log(arr[i])
+        for (let j = 0; j < childLength; j++) {
+          if (children[j]?.id === (updateData.id as string)) {
+            children?.splice(j, 1)
             // recursionReloadTreeNodeV1(treeData.value, 'create', updateData)
             break
           }
         }
       } else if (action === 'create') {
-        console.log('create', arr[i])
-        if (!arr[i] || arr[i].children!.length <= 0) {
-          arr[i].children?.push(updateData)
+        if (!arr[i] || !childLength) {
+          children.push(updateData)
         } else {
           let foundDoc = false
-          for (let j = 0; j < arr[i].children!.length; j++) {
-            if (arr[i].children![j].groupType === 'doc') {
+          for (let j = 0; j < childLength; j++) {
+            if (children[j]?.groupType === 'doc') {
               foundDoc = true
-              arr[i].children!.splice(j, 0, updateData)
+              children?.splice(j, 0, updateData)
               break;
             }
           }
           if (!foundDoc) {
-            arr[i].children!.push(updateData)
+            children?.push(updateData)
           }
         }
       } else if (action == 'updateDoc') {
-        for (let j = 0; j < arr[i].children!.length; j++) {
-          if (arr[i].children![j].id === (updateData.id as string)) {
-            arr[i].children!.splice(j, 1)
+        for (let j = 0; j < childLength; j++) {
+          if (children[j].id === (updateData.id as string)) {
+            children?.splice(j, 1)
             console.log(arr[i])
             // recursionReloadTreeNodeV1(treeData.value, 'createDoc', updateData)
             break
@@ -582,13 +580,13 @@ function recursionReloadTreeNodeV1(arr: Array<TreeOption>, action: string, updat
         }
       } else if (action == 'createDoc') {
         console.log(action)
-        arr[i].children!.push(updateData)
+        children?.push(updateData)
       }
 
       console.log(action)
       break
     }
-    recursionReloadTreeNodeV1(arr[i]?.children || [], action, updateData)
+    recursionReloadTreeNodeV1(children || [], action, updateData)
   }
 }
 
