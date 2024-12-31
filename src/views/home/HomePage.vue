@@ -24,9 +24,9 @@
           </n-collapse-item>
           <n-collapse-item title="我的文档" name="2">
             <n-tree class="tree-wrapper" :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
-                    :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" @mouseover.stop=""
-                    :override-default-node-click-behavior="override" :default-expanded-keys="expandedKeys"
-                    :selected-keys="selectedKeys" block-line/>
+                    :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon"
+                    :default-expanded-keys="expandedKeys"
+                    :selected-keys="selectedKeys" block-line selectable/>
           </n-collapse-item>
         </n-collapse>
       </n-layout-sider>
@@ -64,7 +64,6 @@ import {
   MoonSharp,
   SunnySharp,
 } from '@vicons/ionicons5';
-import type {TreeOverrideNodeClickBehavior} from 'naive-ui';
 import {NButton, NButtonGroup, NDropdown, NIcon, NLayout, NTree, TreeOption, useMessage} from 'naive-ui';
 import {h, onBeforeUnmount, onMounted, ref} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
@@ -85,8 +84,8 @@ const updateGroup = ref<DocGroup>();
 const expandedKeys = ref<Array<string>>([])
 const selectedKeys = ref<Array<string>>([])
 const showRecycleBinModal = ref(false)
-const hoverMenuId = ref()
-let handleMouseOverFn: ReturnType<typeof setTimeout>
+const selectedMenuId = ref()
+// let handleMouseOverFn: ReturnType<typeof setTimeout>
 const isHoverThemeButton = ref(false)
 
 const toolMenuList: ToolObj[] = [
@@ -155,12 +154,12 @@ const mouseleaveThemeButton = () => {
   isHoverThemeButton.value = false
 }
 
-const override: TreeOverrideNodeClickBehavior = ({option}) => {
-  if (option.groupType === 'group') {
-    return 'toggleExpand'
-  }
-  return 'default'
-}
+// const override: TreeOverrideNodeClickBehavior = ({option}) => {
+//   if (option.groupType === 'group') {
+//     return 'toggleExpand'
+//   }
+//   return 'default'
+// }
 
 
 function renderSwitcherIcon() {
@@ -294,9 +293,10 @@ function handleLoad(node: TreeOption) {
 function nodeProps({option}: { option: TreeOption }) {
   return {
     onClick() {
+      selectedMenuId.value = option.id
+      selectedKeys.value = []
+      selectedKeys.value.push(option.key as string)
       if (option.groupType == "doc") {
-        selectedKeys.value = []
-        selectedKeys.value.push(option.key as string)
         router.push({path: `/Editor/${option.id}`})
       }
     },
@@ -305,19 +305,12 @@ function nodeProps({option}: { option: TreeOption }) {
         const {clientWidth, scrollWidth, innerHTML} = e.target
         if (clientWidth < scrollWidth) e.target.title = innerHTML
       }
-      clearTimeout(handleMouseOverFn)
-      hoverMenuId.value = option.id
     },
-    onMouseleave() {
-      handleMouseOverFn = setTimeout(() => {
-        hoverMenuId.value = 0
-      }, 250)
-    }
   }
 }
 
 const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: boolean }) => {
-  if (hoverMenuId.value !== info.option.id) return
+  if (selectedMenuId.value !== info.option.id) return
   return h(NButtonGroup, {
     size: "tiny",
   }, () => [
@@ -357,13 +350,6 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
               show: (info.option.groupType === "doc")
             },
           ],
-          onMouseover: () => {
-            clearTimeout(handleMouseOverFn)
-            hoverMenuId.value = info.option.id
-          },
-          onMouseleave() {
-            hoverMenuId.value = 0
-          },
           onSelect: (key: string) => {
             if (key === 'delete') {
               recursionDeleteTreeNode(treeData.value, info.option.id as number)
