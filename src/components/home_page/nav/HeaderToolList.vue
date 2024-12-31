@@ -9,7 +9,8 @@
           </div>
         </template>
         <ul class="select-list-wrapper">
-          <li v-for="item in tool.HandleSelectList" :key="item.props" class="select-list"  @click="handleClickTool(item)">
+          <li v-for="item in tool.HandleSelectList" :key="item.props" class="select-list" :class="{'dark-theme-select-list':globalStore.theme === 'dark'}"
+              @click="handleClickTool(item)">
             <n-icon :component="item.iconType==='fluent'?fluent[item.iconName]:ionicons[item.iconName]" size="18" :depth="1"/>
             <span>{{ item.label }}</span>
           </li>
@@ -24,11 +25,12 @@
 import * as ionicons from '@vicons/ionicons5'
 import * as fluent from '@vicons/fluent'
 import type {ToolObj} from "@/home-page/nav-type";
+import {useGlobalStore} from "@/stores/global";
 
 defineProps({
   toolList: {type:Array as ()=>ToolObj[]}
 })
-
+const globalStore = useGlobalStore()
 const emit = defineEmits(['handleClickTool',])
 const handleClickTool = (tool:ToolObj)=>{
   if (tool.HandleSelectList?.length) return
@@ -62,11 +64,7 @@ const handleClickTool = (tool:ToolObj)=>{
 
   }
 }
-.n-popover-shared{
-  .select-list-wrapper>.select-list:hover{
-    background: rgba(255,255,255,0.09);
-  }
-}
+
 .select-list-wrapper {
   padding: 4px;
   > .select-list {
@@ -83,6 +81,11 @@ const handleClickTool = (tool:ToolObj)=>{
     span {
       white-space: nowrap;
       margin-left: 16px;
+    }
+    &.dark-theme-select-list{
+      &:hover {
+        background: rgba(255,255,255,0.09);
+      }
     }
   }
 }
