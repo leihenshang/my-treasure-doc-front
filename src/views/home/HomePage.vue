@@ -2,16 +2,17 @@
   <div class="homePage-wrapper">
     <n-layout has-sider class="menu-layout">
       <n-layout-sider class="menu-sider" bordered collapse-mode="width" :collapsed-width="0" :width="'280px'"
-        show-trigger="bar" :native-scrollbar="false">
+                      show-trigger="bar" :native-scrollbar="false">
         <div class="title-header-wrapper" style="text-align:center;height: 40px">
           <h3 style="line-height: 40px"> treasure-doc</h3>
           <n-button class="theme-button" :class="{ 'HoverThemeButton': isHoverThemeButton }" text size="medium" round
-            @click="globalStore.themeSwitch()" @mouseover="hoverThemeButton" @mouseleave="mouseleaveThemeButton">
+                    @click="globalStore.themeSwitch()" @mouseover="hoverThemeButton"
+                    @mouseleave="mouseleaveThemeButton">
             <n-icon v-if="globalStore.theme === 'light'" size="14" color="#F1DD38">
-              <MoonSharp />
+              <MoonSharp/>
             </n-icon>
             <n-icon v-else size="14" color="#FFB200">
-              <SunnySharp />
+              <SunnySharp/>
             </n-icon>
           </n-button>
         </div>
@@ -19,13 +20,13 @@
         <n-collapse :default-expanded-names="['1', '2']" style="padding: 0 10px 0 0;">
           <n-collapse-item title="置顶文档" name="1">
             <n-tree v-show="topDocList.length > 0" block-line :data="topDocList" :node-props="nodeProps"
-              :render-switcher-icon="renderSwitcherIcon" :selectable="false" />
+                    :render-switcher-icon="renderSwitcherIcon" :selectable="false"/>
           </n-collapse-item>
           <n-collapse-item title="我的文档" name="2">
             <n-tree class="tree-wrapper" :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
-              :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" @mouseover.stop=""
-              :override-default-node-click-behavior="override" :default-expanded-keys="expandedKeys"
-              :selected-keys="selectedKeys" block-line />
+                    :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon" @mouseover.stop=""
+                    :override-default-node-click-behavior="override" :default-expanded-keys="expandedKeys"
+                    :selected-keys="selectedKeys" block-line/>
           </n-collapse-item>
         </n-collapse>
       </n-layout-sider>
@@ -35,7 +36,7 @@
     </n-layout>
   </div>
   <CreateGroup v-model:show="showModal" v-model:update-group="updateGroup" v-model:action-name="createGroupAction"
-    @updated="(updateData:TreeOption|DocGroup) => handleCreateGroup(updateData)">
+               @updated="(updateData:TreeOption|DocGroup,prePid:string) => handleCreateGroup(updateData,prePid)">
   </CreateGroup>
   <SearchBox v-model:show="showSearchBox"></SearchBox>
   <DocRecycleBin v-model:show="showRecycleBinModal" v-on:refresh-doc=" refreshTopDocList(); refreshTree();">
@@ -43,18 +44,18 @@
 </template>
 
 <script lang="ts" setup>
-import { createDoc, deleteDoc, getDocList } from "@/api/doc";
-import { deleteGroup, getDocGroupTree } from "@/api/doc_group";
-import { logOut } from '@/api/user';
+import {createDoc, deleteDoc, getDocList} from "@/api/doc";
+import {deleteGroup, getDocGroupTree} from "@/api/doc_group";
+import {logOut} from '@/api/user';
 import DocRecycleBin from '@/components/doc/DocRecycleBin.vue';
 import CreateGroup from "@/components/home_page/CreateGroup.vue";
-import { useGlobalStore } from '@/stores/global';
-import { Doc, DocGroup } from '@/types/resource';
-import { buildTreeItem } from '@/utils/common';
+import {useGlobalStore} from '@/stores/global';
+import {Doc, DocGroup} from '@/types/resource';
+import {buildTreeItem} from '@/utils/common';
 import eventBus from '@/utils/event_bus';
-import { FolderAddOutlined } from '@vicons/antd';
-import { Delete24Filled } from "@vicons/fluent";
-import { ToolObj } from "@/home-page/nav-type";
+import {FolderAddOutlined} from '@vicons/antd';
+import {Delete24Filled} from "@vicons/fluent";
+import {ToolObj} from "@/home-page/nav-type";
 import {
   AddCircleOutline,
   ChevronForward,
@@ -63,13 +64,13 @@ import {
   MoonSharp,
   SunnySharp,
 } from '@vicons/ionicons5';
-import type { TreeOverrideNodeClickBehavior } from 'naive-ui';
-import { NButton, NButtonGroup, NDropdown, NIcon, NLayout, NTree, TreeOption, useMessage } from 'naive-ui';
-import { h, onBeforeUnmount, onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import type {TreeOverrideNodeClickBehavior} from 'naive-ui';
+import {NButton, NButtonGroup, NDropdown, NIcon, NLayout, NTree, TreeOption, useMessage} from 'naive-ui';
+import {h, onBeforeUnmount, onMounted, ref} from 'vue';
+import {useRoute, useRouter} from 'vue-router';
 import HeaderToolList from "@/components/home_page/nav/HeaderToolList.vue";
 import SearchBox from "@/components/home_page/SearchBox.vue";
-import { ROOT_GROUP } from "@/constants";
+import {ROOT_GROUP} from "@/constants";
 
 const globalStore = useGlobalStore()
 const router = useRouter();
@@ -89,9 +90,9 @@ let handleMouseOverFn: ReturnType<typeof setTimeout>
 const isHoverThemeButton = ref(false)
 
 const toolMenuList: ToolObj[] = [
-  { type: 'icon', iconOrTextName: 'Search', props: 'search' },
-  { type: 'icon', iconOrTextName: 'FolderOutline', props: 'addFolder' },
-  { type: 'icon', iconOrTextName: 'PencilOutline', props: 'addNote' },
+  {type: 'icon', iconOrTextName: 'Search', props: 'search'},
+  {type: 'icon', iconOrTextName: 'FolderOutline', props: 'addFolder'},
+  {type: 'icon', iconOrTextName: 'PencilOutline', props: 'addNote'},
   {
     type: 'icon', iconOrTextName: 'EllipsisHorizontalCircleOutline', props: 'more',
     HandleSelectList: [{
@@ -99,28 +100,27 @@ const toolMenuList: ToolObj[] = [
       iconName: 'ArrowBackCircleOutline',
       props: 'logOut'
     },
-    {
-      label: '回收站',
-      iconName: 'Delete16Regular',
-      props: 'recycleBin',
-      iconType: 'fluent'
-    },
-    {
-      label: '系统管理',
-      iconName: 'PeopleCircleSharp',
-      props: 'userManage',
-      iconType: 'ionicons'
-    },
-    {
-      label: '仪表盘',
-      iconName: 'Board24Filled',
-      props: 'dashboard',
-      iconType: 'fluent'
-    },
+      {
+        label: '回收站',
+        iconName: 'Delete16Regular',
+        props: 'recycleBin',
+        iconType: 'fluent'
+      },
+      {
+        label: '系统管理',
+        iconName: 'PeopleCircleSharp',
+        props: 'userManage',
+        iconType: 'ionicons'
+      },
+      {
+        label: '仪表盘',
+        iconName: 'Board24Filled',
+        props: 'dashboard',
+        iconType: 'fluent'
+      },
     ]
   },
 ]
-
 
 
 onMounted(() => {
@@ -155,7 +155,7 @@ const mouseleaveThemeButton = () => {
   isHoverThemeButton.value = false
 }
 
-const override: TreeOverrideNodeClickBehavior = ({ option }) => {
+const override: TreeOverrideNodeClickBehavior = ({option}) => {
   if (option.groupType === 'group') {
     return 'toggleExpand'
   }
@@ -163,16 +163,14 @@ const override: TreeOverrideNodeClickBehavior = ({ option }) => {
 }
 
 
-
-
 function renderSwitcherIcon() {
-  return h(NIcon, null, { default: () => h(ChevronForward) })
+  return h(NIcon, null, {default: () => h(ChevronForward)})
 }
 
 const changeModal = (action: string, group?: DocGroup) => {
   showModal.value = true;
   createGroupAction.value = action
-  updateGroup.value = { ...group as DocGroup }
+  updateGroup.value = {...group as DocGroup}
 };
 
 function topMenuAction(key: string): void {
@@ -185,7 +183,7 @@ function topMenuAction(key: string): void {
       groupId: ROOT_GROUP
     } as Doc).then(res => {
       const doc = res.getData()
-      router.push({ path: `/Editor/${doc.id}` })
+      router.push({path: `/Editor/${doc.id}`})
       const option = buildTreeItem({
         id: doc.id,
         title: doc.title,
@@ -220,22 +218,22 @@ function topMenuAction(key: string): void {
   } else if (key === 'recycleBin') {
     showRecycleBinModal.value = true
   } else if (key === 'userManage') {
-    router.push({ path: '/UserManage' })
+    router.push({path: '/UserManage'})
   } else if (key === 'dashboard') {
-    router.push({ path: '/DashBoard' })
+    router.push({path: '/DashBoard'})
   }
 }
 
 function genDocTitle(suffix: string = "-新") {
   const today = new Date()
   return "".concat(
-    today.getFullYear().toString(),
-    (today.getMonth() + 1).toString().padStart(2, '0'),
-    today.getDate().toString().padStart(2, '0'),
-    '.',
-    today.getHours().toString().padStart(2, '0'),
-    today.getMinutes().toString().padStart(2, '0'),
-    today.getSeconds().toString().padStart(2, '0')) + suffix
+      today.getFullYear().toString(),
+      (today.getMonth() + 1).toString().padStart(2, '0'),
+      today.getDate().toString().padStart(2, '0'),
+      '.',
+      today.getHours().toString().padStart(2, '0'),
+      today.getMinutes().toString().padStart(2, '0'),
+      today.getSeconds().toString().padStart(2, '0')) + suffix
 }
 
 function refreshTree() {
@@ -293,18 +291,18 @@ function handleLoad(node: TreeOption) {
   })
 }
 
-function nodeProps({ option }: { option: TreeOption }) {
+function nodeProps({option}: { option: TreeOption }) {
   return {
     onClick() {
       if (option.groupType == "doc") {
         selectedKeys.value = []
         selectedKeys.value.push(option.key as string)
-        router.push({ path: `/Editor/${option.id}` })
+        router.push({path: `/Editor/${option.id}`})
       }
     },
     onMouseover(e) {
-      if (e.target.className==='n-tree-node-content__text'){
-        const {clientWidth,scrollWidth,innerHTML} = e.target
+      if (e.target.className === 'n-tree-node-content__text') {
+        const {clientWidth, scrollWidth, innerHTML} = e.target
         if (clientWidth < scrollWidth) e.target.title = innerHTML
       }
       clearTimeout(handleMouseOverFn)
@@ -324,128 +322,129 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
     size: "tiny",
   }, () => [
     h(
-      NDropdown,
-      {
-        options: [
-          {
-            icon: () => {
-              return h(NIcon, null, { default: () => h(Delete24Filled) })
-            },
-            label: '删除',
-            key: 'delete',
-          },
-          {
-            icon: () => {
-              return h(NIcon, null, { default: () => h(FolderAddOutlined) })
-            },
-            label: '创建目录',
-            key: 'createFolder',
-            show: (info.option.groupType != "doc")
-          },
-          {
-            icon: () => {
-              return h(NIcon, null, { default: () => h(FolderAddOutlined) })
-            },
-            label: '编辑目录',
-            key: 'updateGroup',
-            show: (info.option.groupType != "doc")
-          },
-          {
-            icon: () => {
-              return h(NIcon, null, { default: () => h(Pen) })
-            },
-            label: '编辑',
-            key: 'updateDoc',
-            show: (info.option.groupType === "doc")
-          },
-        ],
-        onMouseover: () => {
-          clearTimeout(handleMouseOverFn)
-          hoverMenuId.value = info.option.id
-        },
-        onMouseleave() {
-          hoverMenuId.value = 0
-        },
-        onSelect: (key: string) => {
-          if (key === 'delete') {
-            recursionDeleteTreeNode(treeData.value, info.option.id as number)
-          }
-          if (key === 'createFolder') {
-            changeModal('create', {
-              pid: info.option.id
-            } as DocGroup)
-          }
-
-          if (key === 'updateGroup') {
-            changeModal('update', {
-              id: info.option.id,
-              title: info.option.label,
-              pid: info.option.pid
-            } as DocGroup)
-          }
-
-          if (key === 'updateDoc') {
-            changeModal('updateDoc', {
-              id: info.option.id,
-              title: info.option.label,
-              pid: info.option.pid,
-            } as DocGroup)
-          }
-        }
-
-      },
-      () => h(
-        NButton,
+        NDropdown,
         {
-          text: true,
-          size: 'small',
-          onClick: e => {
-            e.preventDefault()
-            e.stopPropagation()
+          options: [
+            {
+              icon: () => {
+                return h(NIcon, null, {default: () => h(Delete24Filled)})
+              },
+              label: '删除',
+              key: 'delete',
+            },
+            {
+              icon: () => {
+                return h(NIcon, null, {default: () => h(FolderAddOutlined)})
+              },
+              label: '创建目录',
+              key: 'createFolder',
+              show: (info.option.groupType != "doc")
+            },
+            {
+              icon: () => {
+                return h(NIcon, null, {default: () => h(FolderAddOutlined)})
+              },
+              label: '编辑目录',
+              key: 'updateGroup',
+              show: (info.option.groupType != "doc")
+            },
+            {
+              icon: () => {
+                return h(NIcon, null, {default: () => h(Pen)})
+              },
+              label: '编辑',
+              key: 'updateDoc',
+              show: (info.option.groupType === "doc")
+            },
+          ],
+          onMouseover: () => {
+            clearTimeout(handleMouseOverFn)
+            hoverMenuId.value = info.option.id
+          },
+          onMouseleave() {
+            hoverMenuId.value = 0
+          },
+          onSelect: (key: string) => {
+            if (key === 'delete') {
+              recursionDeleteTreeNode(treeData.value, info.option.id as number)
+            }
+            if (key === 'createFolder') {
+              changeModal('create', {
+                pid: info.option.id
+              } as DocGroup)
+            }
+
+            if (key === 'updateGroup') {
+              changeModal('update', {
+                id: info.option.id,
+                title: info.option.label,
+                pid: info.option.pid
+              } as DocGroup)
+            }
+
+            if (key === 'updateDoc') {
+              console.log('option', info.option);
+              changeModal('updateDoc', {
+                id: info.option.id,
+                title: info.option.label,
+                pid: info.option.pid,
+              } as DocGroup)
+            }
           }
+
         },
-        { icon: () => h(NIcon, null, { default: () => h(MenuOutline) }) }
-      )
+        () => h(
+            NButton,
+            {
+              text: true,
+              size: 'small',
+              onClick: e => {
+                e.preventDefault()
+                e.stopPropagation()
+              }
+            },
+            {icon: () => h(NIcon, null, {default: () => h(MenuOutline)})}
+        )
     ),
     // the add document button on the tree
     info.option.groupType != "doc" && h(
-      NButton,
-      {
-        text: true,
-        size: 'tiny',
-        type: "default",
-        onClick: e => {
-          e.stopPropagation()
-          e.preventDefault()
-          const title = genDocTitle()
-          const newDoc: Doc = {
-            id: '',
-            content: `# ${title}`,
-            title: title,
-            groupId: info.option.id as unknown as string
-          }
-          createDoc(newDoc).then(res => {
-            const doc = res.getData()
-            const op = buildTreeItem({
-              id: doc.id,
-              title: doc.title,
-              groupType: "doc",
-              pid: info.option.id,
-            } as DocGroup)
-            createOtherFolderOrNote(treeData.value,op)
-            expandedKeys.value?.push(info.option.key as string)
-            if (doc.id) {
-              selectedKeys.value = []
-              selectedKeys.value.push(`doc-${doc.id}`)
-              router.push({ path: `/Editor/${doc.id}` })
+        NButton,
+        {
+          text: true,
+          size: 'tiny',
+          type: "default",
+          onClick: e => {
+            e.stopPropagation()
+            e.preventDefault()
+            const title = genDocTitle()
+            const newDoc: Doc = {
+              id: '',
+              content: `# ${title}`,
+              title: title,
+              groupId: info.option.id as unknown as string
             }
-          }).catch(err => {
-            console.log(err)
-            message.error(err)
-          })
-        }
-      },
-      { icon: () => h(NIcon, null, { default: () => h(AddCircleOutline) }) }
+            createDoc(newDoc).then(res => {
+              const doc = res.getData()
+              const op = buildTreeItem({
+                id: doc.id,
+                title: doc.title,
+                groupType: "doc",
+                pid: info.option.id,
+              } as DocGroup)
+              createOtherFolderOrNote(treeData.value, op)
+              expandedKeys.value?.push(info.option.key as string)
+              if (doc.id) {
+                selectedKeys.value = []
+                selectedKeys.value.push(`doc-${doc.id}`)
+                router.push({path: `/Editor/${doc.id}`})
+              }
+            }).catch(err => {
+              console.log(err)
+              message.error(err)
+            })
+          }
+        },
+        {icon: () => h(NIcon, null, {default: () => h(AddCircleOutline)})}
     ),
   ])
 }
@@ -459,18 +458,18 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
     if (arr[i]?.id == key) {
       const id = arr[i]?.id
       if ((arr[i].groupType as string) === 'doc') {
-        deleteDoc({ id } as Doc).then(() => {
+        deleteDoc({id} as Doc).then(() => {
           message.success('删除成功');
           refreshTopDocList();
           arr.splice(i, 1)
           if (route.params.id === id) {
-            router.push({ path: `/Editor` })
+            router.push({path: `/Editor`})
           }
         }).catch(err => {
           console.log(err)
         })
       } else {
-        deleteGroup({ id } as DocGroup).then(() => {
+        deleteGroup({id} as DocGroup).then(() => {
           message.success('删除成功')
           arr.splice(i, 1)
           eventBus.emit('deleteDocGroup', key)
@@ -484,12 +483,15 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
   }
 }
 
-function handleCreateGroup(updateData: TreeOption|DocGroup): void {
+function handleCreateGroup(updateData: TreeOption | DocGroup, prePid: string): void {
   console.log(createGroupAction.value, updateData)
   if (createGroupAction.value == 'update') {
     recursionUpdateTreeNodeTitle(treeData.value, updateData.id as string, updateData.title as string)
-  }else if (createGroupAction.value == 'create') {
-    createNewFolder(treeData.value,updateData as TreeOption)
+  } else if (createGroupAction.value == 'create') {
+    createNewFolder(treeData.value, updateData as TreeOption)
+  } else if (createGroupAction.value == 'updateDoc') {
+    updateDoc(treeData.value, updateData as TreeOption, prePid)
+    // recursionReloadTreeNode(treeData.value, updateData.pid as string)
   }
   // recursionReloadTreeNodeV1(treeData.value, createGroupAction.value, updateData)
 
@@ -502,23 +504,46 @@ function handleCreateGroup(updateData: TreeOption|DocGroup): void {
   // }
 }
 
-//获取父级对象
-const findParentByParentId = (arr:Array<TreeOption>,parentId:string): TreeOption|undefined =>{
-  if (arr.length<=0) return
-  // console.log(arr,parentId);
-  const parentArr = arr.map(item=> {
-    if (item.id === parentId) {
+//更新笔记位置
+const updateDoc = (arr: Array<TreeOption>, updateData: TreeOption, prePid: string) => {
+  //删除原本位置上的数据
+  const preParent = findTreeItemById(arr, prePid)
+  if (preParent) {
+    const preChildren = preParent.children
+    if (!preChildren) return
+    preChildren.forEach((item, index) => {
+      if (item.id === updateData.id as string) preChildren?.splice(index, 1)
+    })
+  } else {
+    arr.forEach((item, index) => {
+      if (item.id === updateData.id as string) arr?.splice(index, 1)
+    })
+  }
+  //移动到新的位置
+  if (updateData.pid === 'root') {
+    treeData.value.push(updateData)
+  } else {
+    createOtherFolderOrNote(arr, updateData)
+  }
+}
+
+//根据id查找是节点数据
+const findTreeItemById = (arr: Array<TreeOption>, id: string): TreeOption | undefined => {
+  if (arr.length <= 0) return
+  // console.log(arr,id);
+  const parentArr = arr.map(item => {
+    if (item.id === id) {
       // console.log('执行了id');
       return item
-    }else if (item.children){
+    } else if (item.children) {
       // console.log('执行了children');
-      return findParentByParentId(item.children,parentId)
+      return findTreeItemById(item.children, id)
     }
   })
-  return parentArr.filter(item=>!!item)[0]
+  return parentArr.filter(item => !!item)[0]
 }
 //获取新文件夹的index
-const findLastFolderIndex = (children:TreeOption[],childLength:number)=>{
+const findLastFolderIndex = (children: TreeOption[], childLength: number) => {
   let index = -1
   for (let j = 0; j < childLength; j++) {
     if (children[j]?.groupType === 'doc') {
@@ -529,19 +554,21 @@ const findLastFolderIndex = (children:TreeOption[],childLength:number)=>{
   return index
 }
 //创建根目录的文件夹
-const createRootFolder = (arr:Array<TreeOption>,updateData:TreeOption)=>{
-  const lastFolderIndex = findLastFolderIndex(arr, arr.length )
-  if (lastFolderIndex>=0){
+const createRootFolder = (arr: Array<TreeOption>, updateData: TreeOption) => {
+  const lastFolderIndex = findLastFolderIndex(arr, arr.length)
+  if (lastFolderIndex >= 0) {
     arr?.splice(lastFolderIndex, 0, updateData)
-  }else {
+  } else {
     arr?.push(updateData)
   }
 }
 //创建非根目录文件夹/笔记
-const createOtherFolderOrNote = (arr: Array<TreeOption>, updateData: TreeOption)=>{
+const createOtherFolderOrNote = (arr: Array<TreeOption>, updateData: TreeOption) => {
   const parentId = updateData.pid
-  const parent = findParentByParentId(arr,parentId as string)
-  if (!parent) {return}
+  const parent = findTreeItemById(arr, parentId as string)
+  if (!parent) {
+    return
+  }
   const children = parent.children || []
   const childLength = children?.length || 0
   if (!childLength) {
@@ -549,20 +576,20 @@ const createOtherFolderOrNote = (arr: Array<TreeOption>, updateData: TreeOption)
     parent.children = [updateData]
   } else {
     const lastFolderIndex = findLastFolderIndex(children, childLength)
-    if (lastFolderIndex>=0){
+    if (lastFolderIndex >= 0 && updateData.groupType!=='doc') {
       children?.splice(lastFolderIndex, 0, updateData)
-    }else {
+    } else {
       children?.push(updateData)
     }
   }
 }
 //创建文件夹
-const createNewFolder = (arr: Array<TreeOption>, updateData: TreeOption)=>{
-  if (updateData.pid==='root'){
-    createRootFolder(arr,updateData)
+const createNewFolder = (arr: Array<TreeOption>, updateData: TreeOption) => {
+  if (updateData.pid === 'root') {
+    createRootFolder(arr, updateData)
     return;
   }
-  createOtherFolderOrNote(arr,updateData)
+  createOtherFolderOrNote(arr, updateData)
 }
 
 function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: string, title: string) {

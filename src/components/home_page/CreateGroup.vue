@@ -33,10 +33,10 @@ import {
     TreeOption,
     useMessage
 } from 'naive-ui';
-import { computed, ref } from 'vue';
+import {computed, ref, watch} from 'vue';
 
 const emit = defineEmits<{
-    (e: 'updated', value: TreeOption): void
+    (e: 'updated', value: TreeOption|DocGroup,prePid?:string): void
 
 }>()
 
@@ -53,6 +53,13 @@ const options = ref([
     }
 ])
 const updateData = computed((): DocGroup => { return updateGroup.value as unknown as DocGroup })
+const prePid = ref('')
+watch(showModalModel,value => {
+  if (value && updateGroup.value) {
+    prePid.value = (updateGroup.value as DocGroup).pid as string
+  }
+  console.log(prePid.value);
+})
 const message = useMessage()
 
 function getModalTileByType(action: string): string {
@@ -87,7 +94,7 @@ function updateModal(action: string) {
                 version: docDetail.version,
                 title: updateData.value.title
             } as Doc).then(() => {
-                emit('updated', buildTreeItem(newGroup))
+                emit('updated', buildTreeItem({...newGroup,groupType: 'doc'}),prePid.value)
                 showModalModel.value = false
             }).catch(err => {
                 console.log(err)
