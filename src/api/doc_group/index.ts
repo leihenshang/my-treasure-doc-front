@@ -40,6 +40,25 @@ export function getDocGroupTree(pid: string = 'root', withDoc: boolean = false):
 
     })
 }
+//根据文件夹名称获取路径
+export const getGroupRoad = (id:string)=>{
+    return new Promise<TreasureResponse<DocGroup>>((resolve, reject) => {
+        myHttp.get<TreasureResponse<DocGroup>>({
+            url: '/api/doc-group/detail', params: {
+                id,
+            }
+        }).then((response) => {
+            if (response?.code) {
+                reject(response?.msg)
+            }
+
+            const resp: TreasureResponse<DocGroup> = new TreasureResponse()
+            resp.data = response?.data
+            resolve(resp)
+        })
+
+    })
+}
 
 
 export async function deleteGroup(groupObj: DocGroup) {

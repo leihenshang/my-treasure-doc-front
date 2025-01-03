@@ -12,8 +12,11 @@
             </div>
             <div class="dialog-content">
                 <label>层级</label>
-                <n-tree-select v-model:value="(updateGroup as DocGroup).pid" clearable :options="options" key-field="id"
-                    :cascade="true" :show-path="true" :allow-checking-not-loaded="true" :on-load="loadGroupTree" />
+              <n-input :value="selectedTreepath.join('/')" type="text" placeholder="分组名称"></n-input>
+<!--                <n-tree-select v-model:value="(updateGroup as DocGroup).pid" clearable :options="options" key-field="id"-->
+<!--                    :cascade="true" :show-path="true" :allow-checking-not-loaded="true" :on-load="loadGroupTree" />-->
+              <n-tree class="tree-wrapper" :data="treeData" :on-load="handleLoad" :on-update:selected-keys="selectedNodeChange"
+                       block-line selectable/>
             </div>
         </div>
         <template #action>
@@ -23,15 +26,15 @@
     </n-modal>
 </template>
 <script setup lang="ts">
-import { getDoc, updateDoc } from "@/api/doc";
-import { createGroup, getDocGroupTree, updateGroup as updateGroupData } from "@/api/doc_group";
+import { getDoc, updateDoc,getGroupRoad } from "@/api/doc";
+import { createGroup,getDocGroupTree, updateGroup as updateGroupData } from "@/api/doc_group";
 import { Doc, DocGroup } from '@/types/resource';
 import { buildTreeItem } from '@/utils/common';
 import eventBus from "@/utils/event_bus";
 import {
-    NButton,
-    TreeOption,
-    useMessage
+  NButton, NTree,
+  TreeOption,
+  useMessage
 } from 'naive-ui';
 import {computed, ref, watch} from 'vue';
 
@@ -39,28 +42,72 @@ const emit = defineEmits<{
     (e: 'updated', value: TreeOption|DocGroup,prePid?:string): void
 
 }>()
-
+const treeData = ref<Array<TreeOption>>([])
+const selectedTreepath = ref<Array<string>>([])
 const showModalModel = defineModel('show')
 const updateGroup = defineModel('updateGroup')
 const actionName = defineModel('actionName', { type: String, required: true })
-const options = ref([
-    {
-        label: '顶层',
-        key: 'root',
-        id: 'root',
-        depth: 1,
-        isLeaf: false
-    }
-])
 const updateData = computed((): DocGroup => { return updateGroup.value as unknown as DocGroup })
 const prePid = ref('')
 watch(showModalModel,value => {
   if (value && updateGroup.value) {
+    initTreeData()
     prePid.value = (updateGroup.value as DocGroup).pid as string
   }
   console.log(prePid.value);
 })
 const message = useMessage()
+//初始化树节点数据
+const initTreeData = ()=>{
+  treeData.value = []
+  treeData.value.push(buildTreeItem({
+    id:'root',
+    title: '顶层',
+    isLeaf: false,
+  } as DocGroup))
+}
+//获取树节点数据
+const handleLoad = (node: TreeOption)=> {
+  return new Promise<void>((resolve, reject) => {
+    getDocGroupTree(node.id as string, false).then((response) => {
+      if (!response.data) {
+        reject()
+        return
+      }
+      const docGroupList = response.data as Array<DocGroup>
+      const arr = new Array<TreeOption>()
+      docGroupList.map((val) => {
+        arr.push(buildTreeItem(val))
+      })
+      if (arr.length > 0) {
+        node.isLeaf = false
+      }
+      node.children = arr
+      resolve()
+    }).catch((err) => {
+      console.log(err)
+    })
+  }).catch(err => {
+    console.log(err)
+  })
+}
+//选中树节点变化
+const selectedNodeChange = (keys: Array<string | number>, option: Array<TreeOption | null>)=>{
+  console.log(keys);
+  console.log(option);
+  getSelectedNodeRoad(option[0]?.id as string)
+}
+//获取选中节点的路径
+const getSelectedNodeRoad = (docId:string)=>{
+  getGroupRoad(docId).then(resp => {
+    const doc = resp.data as Doc
+    if (doc) {
+      selectedTreepath.value = doc.groupPath?.map(item => item.title) || []
+    }
+  }).catch(err => {
+    message.error(err)
+  })
+}
 
 function getModalTileByType(action: string): string {
     if (action === 'create') {
@@ -132,26 +179,26 @@ function updateModal(action: string) {
 
 
 
-async function loadGroupTree(node: TreeOption) {
-    return await new Promise<void>((resolve) => {
-        getDocGroupTree(node.id as string, false).then((response) => {
-            if (!response.data) {
-                node.children = [];
-                resolve();
-                return;
-            }
-
-            let arr = new Array<TreeOption>((response.data as Array<DocGroup>).length);
-            for (const e of response.data as Array<DocGroup>) {
-                arr.push(buildTreeItem(e));
-            }
-            node.children = arr;
-            resolve();
-        }).catch((err) => {
-            console.log(err);
-        });
-    });
-}
+// async function loadGroupTree(node: TreeOption) {
+//     return await new Promise<void>((resolve) => {
+//         getDocGroupTree(node.id as string, false).then((response) => {
+//             if (!response.data) {
+//                 node.children = [];
+//                 resolve();
+//                 return;
+//             }
+//
+//             let arr = new Array<TreeOption>((response.data as Array<DocGroup>).length);
+//             for (const e of response.data as Array<DocGroup>) {
+//                 arr.push(buildTreeItem(e));
+//             }
+//             node.children = arr;
+//             resolve();
+//         }).catch((err) => {
+//             console.log(err);
+//         });
+//     });
+// }
 
 
 </script>
