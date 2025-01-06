@@ -43,6 +43,7 @@ const emit = defineEmits<{
 
 }>()
 const treeData = ref<Array<TreeOption>>([])
+const selectedPId = ref<number | string>('')
 const selectedTreepath = ref<Array<string>>([])
 const showModalModel = defineModel('show')
 const updateGroup = defineModel('updateGroup')
@@ -93,16 +94,15 @@ const handleLoad = (node: TreeOption)=> {
 }
 //选中树节点变化
 const selectedNodeChange = (keys: Array<string | number>, option: Array<TreeOption | null>)=>{
-  console.log(keys);
-  console.log(option);
-  getSelectedNodeRoad(option[0]?.id as string)
+  selectedPId.value = option[0]?.id as string
+  getSelectedNodeRoad()
 }
 //获取选中节点的路径
-const getSelectedNodeRoad = (docId:string)=>{
-  getGroupRoad(docId).then(resp => {
+const getSelectedNodeRoad = ()=>{
+  getGroupRoad(selectedPId.value).then(resp => {
     const doc = resp.data as Doc
     if (doc) {
-      selectedTreepath.value = doc.groupPath?.map(item => item.title) || []
+      selectedTreepath.value = doc.groupPathList?.map(item => item.title) || []
     }
   }).catch(err => {
     message.error(err)
@@ -126,9 +126,9 @@ function updateModal(action: string) {
         return
     }
 
-    const newGroup = { title: updateData.value.title, groupType: '', id: updateData.value.id, pid: updateData.value.pid, isLeaf: false } as DocGroup
+    const newGroup = { title: updateData.value.title, groupType: '', id: updateData.value.id, pid:selectedPId.value, isLeaf: false } as DocGroup
     if (action === 'updateDoc') {
-        if (!updateData.value.pid) {
+        if (!selectedPId.value) {
             showModalModel.value = false
             return
         }
@@ -137,7 +137,7 @@ function updateModal(action: string) {
           const docDetail = resp.data as Doc
             updateDoc({
                 id: docDetail.id,
-                groupId: updateData.value.pid,
+                groupId: selectedPId.value,
                 version: docDetail.version,
                 title: updateData.value.title
             } as Doc).then(() => {

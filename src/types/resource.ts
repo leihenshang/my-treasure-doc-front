@@ -14,6 +14,7 @@ export interface Doc extends BaseResource {
     isPin?: number,
     isRecover?: boolean,
     groupPath?: Array<DocGroup>
+    groupPathList?: Array<DocGroup>
     readOnly?: number,
 }
 

@@ -44,7 +44,7 @@ export function getDoc(id: number | string = 0): Promise<TreasureResponse<Doc>> 
         })
     })
 }
-export const getGroupRoad:(id:string)=>Promise<TreasureResponse<Doc>> = (id:string) => {
+export const getGroupRoad:(id:string | number)=>Promise<TreasureResponse<Doc>> = (id) => {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
         myHttp.get<TreasureResponse<Doc>>({
             url: '/api/doc-group/detail', params: {
