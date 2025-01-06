@@ -25,7 +25,7 @@
           <n-collapse-item title="我的文档" name="2">
             <n-tree class="tree-wrapper" :data="treeData" :on-load="handleLoad" :node-props="nodeProps"
                     :render-suffix="treeNodeSuffix" :render-switcher-icon="renderSwitcherIcon"
-                    :default-expanded-keys="expandedKeys"
+                    :default-expanded-keys="expandedKeys" draggable @drop="handleDrop"
                     :selected-keys="selectedKeys" block-line selectable/>
           </n-collapse-item>
         </n-collapse>
@@ -64,7 +64,7 @@ import {
   MoonSharp,
   SunnySharp,
 } from '@vicons/ionicons5';
-import {NButton, NButtonGroup, NDropdown, NIcon, NLayout, NTree, TreeOption, useMessage} from 'naive-ui';
+import {NButton, NButtonGroup, NDropdown, NIcon, NLayout, NTree, TreeOption, useMessage, TreeDropInfo} from 'naive-ui';
 import {h, onBeforeUnmount, onMounted, ref} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import HeaderToolList from "@/components/home_page/nav/HeaderToolList.vue";
@@ -145,6 +145,45 @@ onBeforeUnmount(() => {
   eventBus.offAll('updateDocTitle')
   eventBus.offAll('updateDocGroupName')
 })
+
+//获取节点的兄妹节点及节点本身的index
+const findSiblingsAndIndex: (node: TreeOption, nodes?: TreeOption[]) => [TreeOption[], number] | [null, null] =
+    (node, nodes) => {
+      if (!nodes)
+        return [null, null]
+      for (let i = 0; i < nodes.length; ++i) {
+        const siblingNode = nodes[i]
+        if (siblingNode.key === node.key) {
+          return [nodes, i]
+        }
+        const [siblings, index] = findSiblingsAndIndex(node, siblingNode.children)
+        if (siblings && index !== null)
+          return [siblings, index]
+      }
+      return [null, null]
+    }
+//保存拖动后的位置
+
+
+//拖动后的事件
+function handleDrop({node, dragNode, dropPosition}: TreeDropInfo) {
+  const [dragNodeSiblings, dragNodeIndex] = findSiblingsAndIndex(dragNode, treeData.value)
+  if (dragNodeSiblings === null || dragNodeIndex === null) return
+  dragNodeSiblings.splice(dragNodeIndex, 1)
+  if (dropPosition === 'inside') {
+    if (node.children) {
+      node.children.unshift(dragNode)
+    } else {
+      node.children = [dragNode]
+    }
+  } else {
+    const [nodeSiblings, nodeIndex] = findSiblingsAndIndex(node, treeData.value)
+    if (nodeSiblings === null || nodeIndex === null) return
+    const spliceIndex = dropPosition === 'before' ? nodeIndex : nodeIndex + 1
+    nodeSiblings.splice(spliceIndex, 0, dragNode)
+  }
+  treeData.value = Array.from(treeData.value)
+}
 
 //切换主题的位置
 const hoverThemeButton = () => {
@@ -470,7 +509,6 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
 }
 
 function handleCreateGroup(updateData: TreeOption | DocGroup, prePid: string): void {
-  console.log(createGroupAction.value, updateData)
   if (createGroupAction.value == 'update') {
     recursionUpdateTreeNodeTitle(treeData.value, updateData.id as string, updateData.title as string)
   } else if (createGroupAction.value == 'create') {
@@ -562,7 +600,7 @@ const createOtherFolderOrNote = (arr: Array<TreeOption>, updateData: TreeOption)
     parent.children = [updateData]
   } else {
     const lastFolderIndex = findLastFolderIndex(children, childLength)
-    if (lastFolderIndex >= 0 && updateData.groupType!=='doc') {
+    if (lastFolderIndex >= 0 && updateData.groupType !== 'doc') {
       children?.splice(lastFolderIndex, 0, updateData)
     } else {
       children?.push(updateData)
