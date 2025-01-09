@@ -258,7 +258,7 @@ function topMenuAction(key: string): void {
   } else if (key === 'userManage') {
     router.push({path: '/UserManage'})
   } else if (key === 'dashboard') {
-    router.push({path: '/DashBoard'})
+    router.push({path: '/Dashboard'})
   }
 }
 
