@@ -40,15 +40,18 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "/src/assets/style/common.scss";
 .dashboard-card-wrapper{
   padding: 30px 10px 10px;
   border: 1px solid #e7e9e8;;
-  border-radius: 5px;
+  border-radius: 8px;
   width: 260px;
   height: 120px;
   position: relative;
   display: flex;
   flex-direction: column;
+  background: #ffffff;
+  box-shadow: $n-box-shadow;
 
   >.top-icon{
     position: absolute;
@@ -61,12 +64,12 @@ export default {
     flex-grow: 1;
   }
   >footer{
-    border: 1px solid #e7e9e8;
     display: flex;
     align-items: center;
     justify-content: space-between;
     > .footer-icons{
       margin-left: auto;
+      cursor: pointer;
     }
   }
 }
