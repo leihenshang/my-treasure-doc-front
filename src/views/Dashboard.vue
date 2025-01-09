@@ -101,7 +101,7 @@
 import { deleteNote, getNoteList } from '@/api/note';
 import DocNote from '@/components/doc/DocNote.vue';
 import CreateNote from '@/components/note/CreateNote.vue';
-import { router } from '@/router';
+import { router } from '@/router/router';
 import { Note } from '@/types/resource';
 import { ExternalLinkSquareAlt, StickyNote } from '@vicons/fa';
 import { ArrowBackCircleSharp, Bookmarks, MenuSharp } from '@vicons/ionicons5';

@@ -1,5 +1,5 @@
 import { REQUEST_TIMEOUT, TRANSFORM_REQUEST_DATA } from '@/constants'
-import { router } from '@/router'
+import { router } from '@/router/router'
 import { useUserInfoStore } from '@/stores/user/user_info'
 import { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig, RequestConfig } from '@/types/treasure_request'
 import axios, { AxiosError } from 'axios'
