@@ -11,7 +11,7 @@
       </p>
     </header>
     <div class="dashboard-card-list-wrapper">
-      <DashBoardCard v-for="item in dashboardContent.content" :key="item.id"></DashBoardCard>
+      <DashBoardCard v-for="item in dashboardContent.content" :key="item.id" :dashboard-note="item"></DashBoardCard>
     </div>
   </div>
 </div>
@@ -41,9 +41,9 @@ export default {
       getDashboardList()
     })
     //获取仪表盘列表
-    const getDashboardList = ()=>{
+    const getDashboardList = async()=>{
       for (let i=0;i<dashTypeBoardList.length;i++){
-        $_getDashboardList({page:1,pageSize:1000,orderBy:'createdAt_desc,id_asc',noteTypes:dashTypeBoardList[i].type})
+       await $_getDashboardList({page:1,pageSize:1000,orderBy:'createdAt_desc,id_asc',noteTypes:dashTypeBoardList[i].type})
             .then((data)=>{
               const dashboardListItem = {title:dashTypeBoardList[i].name,type:dashTypeBoardList[i].type,content:data.list}
               dashboardList.value.push(dashboardListItem)
@@ -72,6 +72,11 @@ export default {
     >p{
       margin-left: 8px;
     }
+  }
+  >.dashboard-card-list-wrapper{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 }
 }
