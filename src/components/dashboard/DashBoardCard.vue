@@ -8,7 +8,7 @@
     </div>
     <div class="content-wrapper">
       <h4 v-if="dashboardNote.noteType === 'doc'">{{dashboardNote.title}}</h4>
-      <h4 v-else-if="dashboardNote.noteType === 'bookmark'">{{dashboardNote.title}}</h4>
+      <a v-else-if="dashboardNote.noteType === 'bookmark'" :href="dashboardNote.content">{{dashboardNote.content}}</a>
       <p v-else-if="dashboardNote.noteType==='note'">{{dashboardNote.content}}</p>
     </div>
     <footer>

@@ -23,3 +23,18 @@ export const $_getDashboardList:(params:GetDashboardListParams)=>Promise<Treasur
         }
     })
 }
+
+export const $_createNote:(params:Note)=>Promise<Note> = (params)=>{
+    return new Promise<Note>((resolve,reject)=>{
+        {
+            myHttp.post<Note>({
+                url: '/api/note/create', data: params
+            }).then(res => {
+                if (res?.code) {
+                    reject(res?.msg)
+                }
+                resolve(res?.data as Note)
+            })
+        }
+    })
+}

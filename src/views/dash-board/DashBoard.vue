@@ -7,7 +7,7 @@
           <li :class="{'selectedClassify':selectedClassify==='byType'}" @click="toggleClassify('byType')">分组</li>
           <li :class="{'selectedClassify':selectedClassify==='byFree'}" @click="toggleClassify('byFree')">自由</li>
         </ul>
-        <n-button type="info" secondary>
+        <n-button type="info" secondary @click="addDashboardCard">
           <template #icon>
             <n-icon :component="ionicons.Add"></n-icon>
           </template>
@@ -29,6 +29,7 @@
         </div>
       </div>
     </div>
+    <DashboardCardDialog ref="DashboardCardDialogRef" @updateDashboard="updateDashboard"></DashboardCardDialog>
   </div>
 </template>
 
@@ -39,6 +40,7 @@ import * as ionicons from "@vicons/ionicons5";
 import {$_getDashboardList} from "@/api/dashboard";
 import DashBoardCard from "@/components/dashboard/DashBoardCard.vue";
 import type {Note} from "@/resource";
+import DashboardCardDialog from "@/components/dashboard/DashboardCardDialog.vue";
 
 type DashboardListItem = {
   title:string,
@@ -48,11 +50,13 @@ type DashboardListItem = {
 const dashTypeBoardList = [{name:'链接',type:'bookmark'},{name:'笔记',type:'note'},{name:'文档',type:'doc'}]
 export default {
   name: "DashBoard",
-  components:{DashBoardCard},
+  components:{DashBoardCard,DashboardCardDialog},
 
   setup(){
     const dashboardList = ref<DashboardListItem[]>([])
     const selectedClassify = ref('byType')
+    const DashboardCardDialogRef = ref()
+
     onMounted(()=>{
       getDashboardList()
     })
@@ -63,6 +67,32 @@ export default {
     //点击卡片右下角的更多操作
     const handleClickTool = ({handleType='',noteType=''})=>{
       console.log(handleType,noteType);
+      if (handleType === 'edit'){
+        DashboardCardDialogRef.value.showDialog()
+      }
+    }
+    //新增一个仪表盘
+    const addDashboardCard = ()=>{
+      DashboardCardDialogRef.value.showDialog()
+    }
+    //更新也表盘数据
+    const updateDashboard = async ({noteType='',noteTypeName=''})=>{
+      await $_getDashboardList({page:1,pageSize:1000,orderBy:'createdAt_desc,id_asc',noteTypes:noteType})
+          .then((data)=>{
+            let updateIndex = -1
+            dashTypeBoardList.map((item ,index)=>{
+              if (item.type===noteType){
+                updateIndex = index
+                const dashboardListItem = {title:dashTypeBoardList[index].name,type:dashTypeBoardList[index].type,content:data.list}
+                dashboardList.value.splice(index,1,dashboardListItem)
+              }
+            })
+            if (updateIndex<0){
+              dashTypeBoardList.push({name:noteTypeName,type:noteType})
+              const dashboardListItem = {title:noteTypeName,type:noteType,content:data.list}
+              dashboardList.value.push(dashboardListItem)
+            }
+          })
     }
     //获取仪表盘列表
     const getDashboardList = async()=>{
@@ -74,7 +104,8 @@ export default {
             })
       }
     }
-    return{fluent, ionicons,dashboardList,selectedClassify,toggleClassify,handleClickTool}
+    return{fluent, ionicons,dashboardList,selectedClassify,toggleClassify
+      ,handleClickTool,addDashboardCard,DashboardCardDialogRef,updateDashboard}
   }
 }
 
