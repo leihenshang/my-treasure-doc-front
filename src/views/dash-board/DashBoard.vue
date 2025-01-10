@@ -29,7 +29,8 @@
         </div>
       </div>
     </div>
-    <DashboardCardDialog ref="DashboardCardDialogRef" @updateDashboard="updateDashboard"></DashboardCardDialog>
+    <DashboardCardDialog ref="DashboardCardDialogRef" :id="selectedDashboardId"
+                         @updateDashboard="updateDashboard"></DashboardCardDialog>
   </div>
 </template>
 
@@ -56,6 +57,7 @@ export default {
     const dashboardList = ref<DashboardListItem[]>([])
     const selectedClassify = ref('byType')
     const DashboardCardDialogRef = ref()
+    const selectedDashboardId = ref('')
 
     onMounted(()=>{
       getDashboardList()
@@ -65,9 +67,10 @@ export default {
       selectedClassify.value=type
     }
     //点击卡片右下角的更多操作
-    const handleClickTool = ({handleType='',noteType=''})=>{
+    const handleClickTool = ({handleType='',noteType='',id=''})=>{
       console.log(handleType,noteType);
       if (handleType === 'edit'){
+        selectedDashboardId.value = id
         DashboardCardDialogRef.value.showDialog()
       }
     }
@@ -105,7 +108,7 @@ export default {
       }
     }
     return{fluent, ionicons,dashboardList,selectedClassify,toggleClassify
-      ,handleClickTool,addDashboardCard,DashboardCardDialogRef,updateDashboard}
+      ,handleClickTool,addDashboardCard,DashboardCardDialogRef,updateDashboard,selectedDashboardId}
   }
 }
 

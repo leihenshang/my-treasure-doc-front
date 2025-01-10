@@ -30,14 +30,17 @@
 </template>
 
 <script lang="ts">
-import {ref} from "vue";
+import {ref,nextTick} from "vue";
 import type {FormInst} from 'naive-ui'
 import type {Note} from "@/resource";
-import {$_createNote} from "@/api/dashboard";
+import {$_createNote,$_getDashboardDetails} from "@/api/dashboard";
 import customFormRules from "@/utils/form/form-rules"
 
 export default {
   name: "DashboardCardDialog",
+  props:{
+    id: {type:String,required:true,default:""},
+  },
   setup(props,context) {
     const showModal = ref(false)
     const formRef = ref<FormInst | null>(null)
@@ -46,6 +49,9 @@ export default {
 
     const showDialog = () => {
       showModal.value = true
+      nextTick(() => {
+        getFormValue()
+      })
     }
     //点击确认按钮
     const handleConfirm = () => {
@@ -60,6 +66,12 @@ export default {
         })
         context.emit('updateDashboard', {noteType,noteTypeName})
         showModal.value = false
+      })
+    }
+    //获取详情
+    const getFormValue = ()=>{
+      $_getDashboardDetails({id:props.id}).then(data => {
+        formValue.value = data
       })
     }
     return {showModal, showDialog, formRef, noteTypes, formValue, handleConfirm,customFormRules}

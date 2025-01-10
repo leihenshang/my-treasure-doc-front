@@ -38,3 +38,17 @@ export const $_createNote:(params:Note)=>Promise<Note> = (params)=>{
         }
     })
 }
+export const $_getDashboardDetails:(params: { id:string })=>Promise<Note> = (params)=>{
+    return new Promise<Note>((resolve,reject)=>{
+        {
+            myHttp.get<TreasureResponse<Note>>({
+                url:'/api/note/detail',params:params
+            }).then(res=>{
+                if (res?.code) {
+                    reject(res?.msg)
+                }
+                resolve(res?.data as Note)
+            })
+        }
+    })
+}

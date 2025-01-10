@@ -14,7 +14,6 @@
     <footer>
       <div class="footer-icons">
         <HeaderToolList :tool-list="toolMenuList"  @handleClickTool="handleClickMoreIcon"></HeaderToolList>
-<!--        <n-icon :component="ionicons.MenuSharp" size="18" :depth="1"/>-->
       </div>
     </footer>
   </div>
@@ -44,18 +43,18 @@ export default {
           label: '编辑',
           iconName: 'DocumentEdit24Regular',
           iconType: 'fluent',
-          props: 'logOut'
+          props: 'edit'
         },
           {
             label: '删除',
             iconName: 'Delete16Regular',
-            props: 'recycleBin',
+            props: 'delete',
             iconType: 'fluent'
           },
           {
             label: '置顶',
             iconName: 'PanelTopContract20Regular',
-            props: 'userManage',
+            props: 'top',
             iconType: 'fluent'
           },
         ]
@@ -63,7 +62,7 @@ export default {
     ]
     //点击卡片右下角的更多操作
    const handleClickMoreIcon = (handleType:string)=>{
-     context.emit("handleClickTool", {handleType,noteType:props.dashboardNote.noteType})
+     context.emit("handleClickTool", {handleType,noteType:props.dashboardNote.noteType,id:props.dashboardNote.id})
    }
     return{antd,fluent,ionicons,toolMenuList,handleClickMoreIcon}
   }
