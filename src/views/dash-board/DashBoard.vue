@@ -24,7 +24,8 @@
           </p>
         </header>
         <div class="dashboard-card-list-wrapper">
-          <DashBoardCard v-for="item in dashboardContent.content" :key="item.id" :dashboard-note="item"></DashBoardCard>
+          <DashBoardCard v-for="item in dashboardContent.content" :key="item.id" :dashboard-note="item"
+          @handleClickTool="handleClickTool"></DashBoardCard>
         </div>
       </div>
     </div>
@@ -44,7 +45,7 @@ type DashboardListItem = {
   type:string,
   content:Note[]
 }
-const dashTypeBoardList = [{name:'链接',type:'bookmap'},{name:'笔记',type:'note'},{name:'文档',type:'doc'}]
+const dashTypeBoardList = [{name:'链接',type:'bookmark'},{name:'笔记',type:'note'},{name:'文档',type:'doc'}]
 export default {
   name: "DashBoard",
   components:{DashBoardCard},
@@ -59,6 +60,10 @@ export default {
     const toggleClassify = (type:string)=>{
       selectedClassify.value=type
     }
+    //点击卡片右下角的更多操作
+    const handleClickTool = ({handleType='',noteType=''})=>{
+      console.log(handleType,noteType);
+    }
     //获取仪表盘列表
     const getDashboardList = async()=>{
       for (let i=0;i<dashTypeBoardList.length;i++){
@@ -69,7 +74,7 @@ export default {
             })
       }
     }
-    return{fluent, ionicons,dashboardList,selectedClassify,toggleClassify}
+    return{fluent, ionicons,dashboardList,selectedClassify,toggleClassify,handleClickTool}
   }
 }
 

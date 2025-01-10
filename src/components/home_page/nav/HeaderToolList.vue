@@ -1,7 +1,7 @@
 <template>
   <div class="header-tool-list-wrapper">
     <div class="tools-wrapper" v-for="tool in toolList" :key="tool.props">
-      <n-popover style="padding: 0">
+      <n-popover  placement="bottom" style="padding: 0">
         <template #trigger>
           <div @click="handleClickTool(tool)">
             <n-icon v-if="tool.type==='icon'" :component="ionicons[tool.iconOrTextName]" size="18" :depth="1"/>
@@ -11,7 +11,7 @@
         <ul class="select-list-wrapper">
           <li v-for="item in tool.HandleSelectList" :key="item.props" class="select-list" :class="{'dark-theme-select-list':globalStore.theme === 'dark'}"
               @click="handleClickTool(item)">
-            <n-icon :component="item.iconType==='fluent'?fluent[item.iconName]:ionicons[item.iconName]" size="18" :depth="1"/>
+            <n-icon v-if="item.iconName" :component="item.iconType==='fluent'?fluent[item.iconName]:ionicons[item.iconName]" size="18" :depth="1"/>
             <span>{{ item.label }}</span>
           </li>
         </ul>
@@ -47,7 +47,7 @@ const handleClickTool = (tool:ToolObj)=>{
   //border-bottom: 1px solid rgb(239, 239, 245);
   //margin-bottom: 10px;
   > .tools-wrapper {
-    padding: 10px 4px;
+    //padding: 10px 4px;
     width: 25%;
     text-align: center;
     align-items: center;
