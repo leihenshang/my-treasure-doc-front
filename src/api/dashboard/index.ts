@@ -52,3 +52,17 @@ export const $_getDashboardDetails:(params: { id:string })=>Promise<Note> = (par
         }
     })
 }
+export const $_deleteNote:(params:{ id:string })=>Promise<{ id:string }> = (params)=>{
+    return new Promise<{ id:string }>((resolve,reject)=>{
+        {
+            myHttp.post<{ id:string }>({
+                url: '/api/note/delete', data: params
+            }).then(res => {
+                if (res?.code) {
+                    reject(res?.msg)
+                }
+                resolve(res?.data as { id:string })
+            })
+        }
+    })
+}

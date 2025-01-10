@@ -29,6 +29,7 @@
         </div>
       </div>
     </div>
+    <n-dialog-provider></n-dialog-provider>
     <DashboardCardDialog ref="DashboardCardDialogRef" :id="selectedDashboardId"
                          @updateDashboard="updateDashboard"></DashboardCardDialog>
   </div>
@@ -38,10 +39,11 @@
 import {onMounted, ref} from "vue";
 import * as fluent from "@vicons/fluent";
 import * as ionicons from "@vicons/ionicons5";
-import {$_getDashboardList} from "@/api/dashboard";
+import {$_getDashboardList,$_deleteNote} from "@/api/dashboard";
 import DashBoardCard from "@/components/dashboard/DashBoardCard.vue";
 import type {Note} from "@/resource";
 import DashboardCardDialog from "@/components/dashboard/DashboardCardDialog.vue";
+import { useDialog } from 'naive-ui'
 
 type DashboardListItem = {
   title:string,
@@ -54,6 +56,7 @@ export default {
   components:{DashBoardCard,DashboardCardDialog},
 
   setup(){
+    const dialog = useDialog()
     const dashboardList = ref<DashboardListItem[]>([])
     const selectedClassify = ref('byType')
     const DashboardCardDialogRef = ref()
@@ -66,12 +69,30 @@ export default {
     const toggleClassify = (type:string)=>{
       selectedClassify.value=type
     }
+    //删除确认弹窗
+    const handleButtonClick = (noteType='') =>{
+      dialog.success({
+        title: '删除',
+        content: '是否确认删除',
+        positiveText: '确定',
+        negativeText: '不确定',
+        maskClosable: false,
+        showIcon:false,
+        onPositiveClick: () => {
+          $_deleteNote({id:selectedDashboardId.value}).then(() => {
+            updateDashboard({noteType})
+          })
+        }
+      })
+    }
     //点击卡片右下角的更多操作
     const handleClickTool = ({handleType='',noteType='',id=''})=>{
       console.log(handleType,noteType);
+      selectedDashboardId.value = id
       if (handleType === 'edit'){
-        selectedDashboardId.value = id
         DashboardCardDialogRef.value.showDialog()
+      }else if (handleType === 'delete'){
+        handleButtonClick(noteType)
       }
     }
     //新增一个仪表盘
