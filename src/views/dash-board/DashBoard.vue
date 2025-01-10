@@ -30,7 +30,7 @@
       </div>
     </div>
     <n-dialog-provider></n-dialog-provider>
-    <DashboardCardDialog ref="DashboardCardDialogRef" :id="selectedDashboardId"
+    <DashboardCardDialog ref="DashboardCardDialogRef" :id="selectedDashboardId" :dialog-type="dialogType"
                          @updateDashboard="updateDashboard"></DashboardCardDialog>
   </div>
 </template>
@@ -44,6 +44,7 @@ import DashBoardCard from "@/components/dashboard/DashBoardCard.vue";
 import type {Note} from "@/resource";
 import DashboardCardDialog from "@/components/dashboard/DashboardCardDialog.vue";
 import { useDialog } from 'naive-ui'
+import {TreasureResponseList} from "@/treasure_response";
 
 type DashboardListItem = {
   title:string,
@@ -61,6 +62,7 @@ export default {
     const selectedClassify = ref('byType')
     const DashboardCardDialogRef = ref()
     const selectedDashboardId = ref('')
+    const dialogType = ref('')
 
     onMounted(()=>{
       getDashboardList()
@@ -90,32 +92,45 @@ export default {
       console.log(handleType,noteType);
       selectedDashboardId.value = id
       if (handleType === 'edit'){
+        dialogType.value='update'
         DashboardCardDialogRef.value.showDialog()
       }else if (handleType === 'delete'){
+        handleButtonClick(noteType)
+      } else if (handleType === 'top'){
         handleButtonClick(noteType)
       }
     }
     //新增一个仪表盘
     const addDashboardCard = ()=>{
+      dialogType.value='create'
       DashboardCardDialogRef.value.showDialog()
+    }
+    //更改原有分类的仪表盘
+    const updateClassifyContentList:(noteType:string,data:TreasureResponseList<Note>)=>number = (noteType,data)=>{
+      let updateIndex = -1
+      dashTypeBoardList.map((item ,index)=>{
+        if (item.type===noteType){
+          updateIndex = index
+          const dashboardListItem = {title:dashTypeBoardList[index].name,type:dashTypeBoardList[index].type,content:data.list}
+          dashboardList.value.splice(index,1,dashboardListItem)
+        }
+      })
+      return updateIndex
+    }
+    //添加新分类的仪表盘
+    const addNewClassify = (noteType:string,noteTypeName:string,updateIndex:number,data:TreasureResponseList<Note>) =>{
+      if (updateIndex<0){
+        dashTypeBoardList.push({name:noteTypeName,type:noteType})
+        const dashboardListItem = {title:noteTypeName,type:noteType,content:data.list}
+        dashboardList.value.push(dashboardListItem)
+      }
     }
     //更新也表盘数据
     const updateDashboard = async ({noteType='',noteTypeName=''})=>{
       await $_getDashboardList({page:1,pageSize:1000,orderBy:'createdAt_desc,id_asc',noteTypes:noteType})
           .then((data)=>{
-            let updateIndex = -1
-            dashTypeBoardList.map((item ,index)=>{
-              if (item.type===noteType){
-                updateIndex = index
-                const dashboardListItem = {title:dashTypeBoardList[index].name,type:dashTypeBoardList[index].type,content:data.list}
-                dashboardList.value.splice(index,1,dashboardListItem)
-              }
-            })
-            if (updateIndex<0){
-              dashTypeBoardList.push({name:noteTypeName,type:noteType})
-              const dashboardListItem = {title:noteTypeName,type:noteType,content:data.list}
-              dashboardList.value.push(dashboardListItem)
-            }
+            const updateIndex = updateClassifyContentList(noteType,data)
+            addNewClassify(noteType,noteTypeName,updateIndex,data)
           })
     }
     //获取仪表盘列表
@@ -129,7 +144,7 @@ export default {
       }
     }
     return{fluent, ionicons,dashboardList,selectedClassify,toggleClassify
-      ,handleClickTool,addDashboardCard,DashboardCardDialogRef,updateDashboard,selectedDashboardId}
+      ,handleClickTool,addDashboardCard,DashboardCardDialogRef,updateDashboard,selectedDashboardId,dialogType}
   }
 }
 

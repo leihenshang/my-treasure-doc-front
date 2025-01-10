@@ -38,6 +38,20 @@ export const $_createNote:(params:Note)=>Promise<Note> = (params)=>{
         }
     })
 }
+export const $_updateNote:(params:Note)=>Promise<Note> = (params)=>{
+    return new Promise<Note>((resolve,reject)=>{
+        {
+            myHttp.post<Note>({
+                url: '/api/note/update', data: params
+            }).then(res => {
+                if (res?.code) {
+                    reject(res?.msg)
+                }
+                resolve(res?.data as Note)
+            })
+        }
+    })
+}
 export const $_getDashboardDetails:(params: { id:string })=>Promise<Note> = (params)=>{
     return new Promise<Note>((resolve,reject)=>{
         {

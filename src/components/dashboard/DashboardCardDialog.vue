@@ -33,13 +33,14 @@
 import {ref,nextTick} from "vue";
 import type {FormInst} from 'naive-ui'
 import type {Note} from "@/resource";
-import {$_createNote,$_getDashboardDetails} from "@/api/dashboard";
+import {$_createNote,$_getDashboardDetails,$_updateNote} from "@/api/dashboard";
 import customFormRules from "@/utils/form/form-rules"
 
 export default {
   name: "DashboardCardDialog",
   props:{
     id: {type:String,required:true,default:""},
+    dialogType: {type:String,required:true,default:"create"},
   },
   setup(props,context) {
     const showModal = ref(false)
@@ -53,23 +54,39 @@ export default {
         getFormValue()
       })
     }
+    //创建
+    const createNote = ()=>{
+      $_createNote(formValue.value).then(() => {
+
+      })
+    }
+    //更新
+    const updateNote = ()=>{
+      $_updateNote(formValue.value).then(() => {
+        handleSuccess()
+      })
+    }
+    //创建成功之后
+   const handleSuccess = ()=>{
+     let noteTypeName
+     const noteType = formValue.value.noteType
+     noteTypes.forEach((item) => {
+       if (item.type === noteType) noteTypeName = item.name
+     })
+     context.emit('updateDashboard', {noteType,noteTypeName})
+     showModal.value = false
+    }
     //点击确认按钮
     const handleConfirm = () => {
       formRef.value?.validate((errors) => {
         if (errors) {return}
       })
-      $_createNote(formValue.value).then(() => {
-        let noteTypeName
-        const noteType = formValue.value.noteType
-        noteTypes.forEach((item) => {
-          if (item.type === noteType) noteTypeName = item.name
-        })
-        context.emit('updateDashboard', {noteType,noteTypeName})
-        showModal.value = false
-      })
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      props.dialogType==='create'?createNote():updateNote()
     }
     //获取详情
     const getFormValue = ()=>{
+      if (props.dialogType!=='update') return
       $_getDashboardDetails({id:props.id}).then(data => {
         formValue.value = data
       })
