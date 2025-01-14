@@ -106,12 +106,12 @@ export default {
       })
     }
     //点击卡片右下角的更多操作
-    const handleClickTool = ({handleType='',noteType='',id=''})=>{
+    const handleClickTool = ({handleType='',noteType='',id='',docId=''})=>{
       console.log(handleType,noteType);
       selectedDashboardId.value = id
       if (handleType === 'edit'){
         if (noteType==='doc'){
-          router.push({path: `/Editor/${id}`})
+          router.push({path: `/Editor/${docId}`})
           return
         }
         dialogType.value='update'
@@ -179,6 +179,7 @@ export default {
   background: #f7f9fa;
   width: 100%;
   height: 100%;
+  overflow: auto;
   //display: flex;
   //justify-content: center;
   .dashboard-wrapper{

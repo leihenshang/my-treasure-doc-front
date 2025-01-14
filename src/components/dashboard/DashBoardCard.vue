@@ -70,7 +70,7 @@ export default {
     ]
     //点击卡片右下角的更多操作
    const handleClickMoreIcon = (handleType:string)=>{
-     context.emit("handleClickTool", {handleType,noteType:props.dashboardNote.noteType,id:props.dashboardNote.id})
+     context.emit("handleClickTool", {handleType,noteType:props.dashboardNote.noteType,id:props.dashboardNote.id,docId:props.dashboardNote.docId})
    }
     return{antd,fluent,ionicons,toolMenuList,handleClickMoreIcon,hasNoTitle}
   }
@@ -84,7 +84,7 @@ export default {
   padding: 20px 10px 10px;
   border: 1px solid #e7e9e8;
   border-radius: 8px;
-  width: 260px;
+  width: 255px;
   height: 130px;
   position: relative;
   display: flex;
