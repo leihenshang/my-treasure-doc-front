@@ -38,9 +38,9 @@ body {
   // 答案见 https://github.com/zenozeng/fonts.css/
   font-family: helper.$font-zh;
 }
-div,p,span,h1, h2, h3, h4, h5, h6,header{
-  color: rgba(0, 0, 0, 0.85);
-}
+//div,p,span,h1, h2, h3, h4, h5, h6,header{
+//  color: rgba(0, 0, 0, 0.85);
+//}
 
 //以下几行为了消除按钮按下时有阴影和border
 button:focus { //电脑端
