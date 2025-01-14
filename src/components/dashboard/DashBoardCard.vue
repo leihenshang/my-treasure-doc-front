@@ -1,15 +1,19 @@
 <template>
-  <div class="dashboard-card-wrapper">
-    <div class="top-icon">
+  <div class="dashboard-card-wrapper" :class="{'no-title-dashboard-card-wrapper':hasNoTitle}">
+    <div class="top-icon-wrapper">
       <n-icon :component="antd.LinkOutlined" size="18" :depth="1" v-if="dashboardNote.noteType==='bookmark'"/>
       <n-icon :component="ionicons.DocumentTextOutline" size="18" :depth="1" v-else-if="dashboardNote.noteType==='note'"/>
       <n-icon :component="ionicons.FolderOpenOutline" size="18" :depth="1" v-else-if="dashboardNote.noteType==='doc'"/>
       <n-icon :component="ionicons.TimeOutline" size="18" :depth="1" v-else-if="dashboardNote.noteType==='task'"/>
     </div>
     <div class="content-wrapper">
-      <h4 v-if="dashboardNote.noteType === 'doc'">{{dashboardNote.title}}</h4>
-      <a v-else-if="dashboardNote.noteType === 'bookmark'" :href="dashboardNote.content">{{dashboardNote.content}}</a>
-      <p v-else-if="dashboardNote.noteType==='note'">{{dashboardNote.content}}</p>
+      <h4 v-if="dashboardNote.noteType === 'doc' || dashboardNote.noteType === 'bookmark'">{{dashboardNote.title}}</h4>
+      <div class="content" :class="{'no-title-content':hasNoTitle}">
+        <a v-if="dashboardNote.noteType === 'bookmark'" :href="dashboardNote.content" target="_blank">
+          {{dashboardNote.content}}
+        </a>
+        <p v-else-if="dashboardNote.noteType==='note'">{{dashboardNote.content}}</p>
+      </div>
     </div>
     <footer>
       <div class="footer-icons">
@@ -24,7 +28,7 @@ import * as antd from "@vicons/antd";
 import * as ionicons from "@vicons/ionicons5";
 import * as fluent from "@vicons/fluent";
 import type {Note} from "@/resource";
-import type { PropType } from "vue"
+import {computed, PropType} from "vue"
 import HeaderToolList from "@/components/home_page/nav/HeaderToolList.vue";
 import type {ToolObj} from "@/home-page/nav-type";
 
@@ -36,6 +40,9 @@ export default {
   },
 
   setup(props,context) {
+    const hasNoTitle = computed(()=>{
+     return props.dashboardNote.noteType === 'note'
+    })
     const toolMenuList: ToolObj[] = [
       {
         type: 'icon', iconOrTextName: 'MenuSharp', props: 'more',
@@ -64,7 +71,7 @@ export default {
    const handleClickMoreIcon = (handleType:string)=>{
      context.emit("handleClickTool", {handleType,noteType:props.dashboardNote.noteType,id:props.dashboardNote.id})
    }
-    return{antd,fluent,ionicons,toolMenuList,handleClickMoreIcon}
+    return{antd,fluent,ionicons,toolMenuList,handleClickMoreIcon,hasNoTitle}
   }
 }
 
@@ -73,18 +80,21 @@ export default {
 <style scoped lang="scss">
 @import "/src/assets/style/common.scss";
 .dashboard-card-wrapper{
-  padding: 30px 10px 10px;
+  padding: 20px 10px 10px;
   border: 1px solid #e7e9e8;
   border-radius: 8px;
   width: 260px;
-  height: 120px;
+  height: 130px;
   position: relative;
   display: flex;
   flex-direction: column;
   background: #ffffff;
   box-shadow: $n-box-shadow;
-
-  >.top-icon{
+  &.no-title-dashboard-card-wrapper{
+    padding-top: 30px;
+    height: 140px;
+  }
+  >.top-icon-wrapper{
     position: absolute;
     top: 8px;
     left: 8px;
@@ -93,6 +103,29 @@ export default {
   >.content-wrapper{
     padding: 0 8px;
     flex-grow: 1;
+    overflow: hidden;
+    >h4{
+      text-align: center;
+      font-size: 16px;
+    }
+    >.content{
+      display: flex;
+      align-items: center;
+      text-overflow: ellipsis;
+      >*{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        cursor: pointer;
+      }
+      &.no-title-content{
+        >*{
+          -webkit-line-clamp: 3;
+        }
+      }
+    }
   }
   >footer{
     display: flex;
