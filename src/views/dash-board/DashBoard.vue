@@ -39,7 +39,7 @@
 import {onMounted, ref} from "vue";
 import * as fluent from "@vicons/fluent";
 import * as ionicons from "@vicons/ionicons5";
-import {$_getDashboardList,$_deleteNote} from "@/api/dashboard";
+import {$_getDashboardList,$_deleteNote,$_updateNote} from "@/api/dashboard";
 import DashBoardCard from "@/components/dashboard/DashBoardCard.vue";
 import type {Note} from "@/resource";
 import DashboardCardDialog from "@/components/dashboard/DashboardCardDialog.vue";
@@ -72,16 +72,32 @@ export default {
       selectedClassify.value=type
     }
     //删除确认弹窗
-    const handleButtonClick = (noteType='') =>{
+    const handleDeleteButtonClick = (noteType='') =>{
       dialog.success({
         title: '删除',
         content: '是否确认删除',
         positiveText: '确定',
-        negativeText: '不确定',
+        negativeText: '取消',
         maskClosable: false,
         showIcon:false,
         onPositiveClick: () => {
           $_deleteNote({id:selectedDashboardId.value}).then(() => {
+            updateDashboard({noteType})
+          })
+        }
+      })
+    }
+    //置顶确认弹窗
+    const handleTopButtonClick = (noteType='') =>{
+      dialog.success({
+        title: '置顶',
+        content: '是否确认置顶',
+        positiveText: '确定',
+        negativeText: '取消',
+        maskClosable: false,
+        showIcon:false,
+        onPositiveClick: () => {
+          $_updateNote({id:selectedDashboardId.value,isTop:1}).then(() => {
             updateDashboard({noteType})
           })
         }
@@ -95,9 +111,9 @@ export default {
         dialogType.value='update'
         DashboardCardDialogRef.value.showDialog()
       }else if (handleType === 'delete'){
-        handleButtonClick(noteType)
+        handleDeleteButtonClick(noteType)
       } else if (handleType === 'top'){
-        handleButtonClick(noteType)
+        handleTopButtonClick(noteType)
       }
     }
     //新增一个仪表盘

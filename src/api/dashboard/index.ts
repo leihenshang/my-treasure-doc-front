@@ -1,6 +1,8 @@
 import myHttp from "@/api/treasure_axios"
 import {TreasureResponse, TreasureResponseList} from "@/treasure_response";
-import {Note} from "@/resource";
+import type {Note,PartialByKeys,Simplity} from "@/resource";
+
+type updateNote = Simplity<PartialByKeys<Note, 'title'|'content' | 'noteType' | 'docId'>>
 
 type GetDashboardListParams = {
     page: number,
@@ -38,7 +40,7 @@ export const $_createNote:(params:Note)=>Promise<Note> = (params)=>{
         }
     })
 }
-export const $_updateNote:(params:Note)=>Promise<Note> = (params)=>{
+export const $_updateNote:(params:updateNote)=>Promise<Note> = (params)=>{
     return new Promise<Note>((resolve,reject)=>{
         {
             myHttp.post<Note>({
@@ -80,3 +82,4 @@ export const $_deleteNote:(params:{ id:string })=>Promise<{ id:string }> = (para
         }
     })
 }
+
