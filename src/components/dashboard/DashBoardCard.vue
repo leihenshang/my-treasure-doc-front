@@ -7,12 +7,13 @@
       <n-icon :component="ionicons.TimeOutline" size="18" :depth="1" v-else-if="dashboardNote.noteType==='task'"/>
     </div>
     <div class="content-wrapper">
-      <h4 v-if="dashboardNote.noteType === 'doc' || dashboardNote.noteType === 'bookmark'">{{dashboardNote.title}}</h4>
+      <h4 v-if="!hasNoTitle">{{dashboardNote.title}}</h4>
       <div class="content" :class="{'no-title-content':hasNoTitle}">
         <a v-if="dashboardNote.noteType === 'bookmark'" :href="dashboardNote.content" target="_blank">
           {{dashboardNote.content}}
         </a>
-        <p v-else-if="dashboardNote.noteType==='note'" :title="dashboardNote.content">{{dashboardNote.content}}</p>
+        <p v-else-if="dashboardNote.noteType==='note' || dashboardNote.noteType === 'doc'"
+           :title="dashboardNote.noteType==='note'?dashboardNote.content:''">{{dashboardNote.content}}</p>
       </div>
     </div>
     <footer>
@@ -104,6 +105,9 @@ export default {
     padding: 0 8px;
     flex-grow: 1;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     >h4{
       text-align: center;
       font-size: 16px;

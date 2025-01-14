@@ -2,7 +2,7 @@
   <div class="wrapper">
     <div class="dashboard-wrapper">
       <header>
-        <span>试图：</span>
+        <span>视图：</span>
         <ul class="classify-wrapper">
           <li :class="{'selectedClassify':selectedClassify==='byType'}" @click="toggleClassify('byType')">分组</li>
           <li :class="{'selectedClassify':selectedClassify==='byFree'}" @click="toggleClassify('byFree')">自由</li>
@@ -45,6 +45,7 @@ import type {Note} from "@/resource";
 import DashboardCardDialog from "@/components/dashboard/DashboardCardDialog.vue";
 import { useDialog } from 'naive-ui'
 import {TreasureResponseList} from "@/treasure_response";
+import {useRouter} from "vue-router";
 
 type DashboardListItem = {
   title:string,
@@ -57,6 +58,7 @@ export default {
   components:{DashBoardCard,DashboardCardDialog},
 
   setup(){
+    const router = useRouter();
     const dialog = useDialog()
     const dashboardList = ref<DashboardListItem[]>([])
     const selectedClassify = ref('byType')
@@ -108,6 +110,10 @@ export default {
       console.log(handleType,noteType);
       selectedDashboardId.value = id
       if (handleType === 'edit'){
+        if (noteType==='doc'){
+          router.push({path: `/Editor/${id}`})
+          return
+        }
         dialogType.value='update'
         DashboardCardDialogRef.value.showDialog()
       }else if (handleType === 'delete'){

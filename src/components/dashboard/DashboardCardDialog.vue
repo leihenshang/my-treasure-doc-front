@@ -4,7 +4,7 @@
 <!--    <template #header>-->
 <!--      <div>创建备忘</div>-->
 <!--    </template>-->
-    <n-form ref="formRef" :label-width="50" :model="formValue" label-placement="left">
+    <n-form ref="formRef" :label-width="55" :model="formValue" label-placement="left">
       <n-form-item label="类型" path="noteType" :rule="customFormRules.getRequireRule('请选择类型')">
         <n-radio-group v-model:value="formValue.noteType" name="radiogroup">
           <n-radio v-for="item in noteTypes" :value="item.type" :key="item.type">
