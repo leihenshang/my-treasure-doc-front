@@ -12,7 +12,7 @@
         <a v-if="dashboardNote.noteType === 'bookmark'" :href="dashboardNote.content" target="_blank">
           {{dashboardNote.content}}
         </a>
-        <p v-else-if="dashboardNote.noteType==='note'">{{dashboardNote.content}}</p>
+        <p v-else-if="dashboardNote.noteType==='note'" :title="dashboardNote.content">{{dashboardNote.content}}</p>
       </div>
     </div>
     <footer>
