@@ -83,7 +83,7 @@ export default {
 <style scoped lang="scss">
 @import "/src/assets/style/common.scss";
 .dashboard-card-wrapper{
-  padding: 20px 10px 10px;
+  padding: 0 10px 10px;
   border: 1px solid var(--theme-border-color);
   border-radius: 8px;
   width: 255px;
@@ -94,13 +94,12 @@ export default {
   background:  var(--theme-background);
   box-shadow: var(--theme-box-shadow);
   &.no-title-dashboard-card-wrapper{
-    padding-top: 30px;
+    padding-top: 10px;
     height: 140px;
   }
   >.top-icon-wrapper{
-    position: absolute;
-    top: 8px;
-    left: 8px;
+    cursor: pointer;
+    padding-top: 8px;
   }
 
   >.content-wrapper{
