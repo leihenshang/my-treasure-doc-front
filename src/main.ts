@@ -3,6 +3,7 @@ import 'vfonts/Lato.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import './index.scss'
+import './assets/style/theme.scss'
 import { router } from './router/router'
 
 const pinia = createPinia()

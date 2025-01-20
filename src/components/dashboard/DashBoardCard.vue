@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-card-wrapper" :class="{'no-title-dashboard-card-wrapper':hasNoTitle}">
+  <div class="dashboard-card-wrapper" :class="{'no-title-dashboard-card-wrapper':hasNoTitle,'dark':globalStore.theme==='dark'}">
     <div class="top-icon-wrapper">
       <n-icon :component="antd.LinkOutlined" size="18" :depth="1" v-if="dashboardNote.noteType==='bookmark'"/>
       <n-icon :component="ionicons.DocumentTextOutline" size="18" :depth="1" v-else-if="dashboardNote.noteType==='note'"/>
@@ -32,6 +32,7 @@ import type {Note} from "@/resource";
 import {computed, PropType} from "vue"
 import HeaderToolList from "@/components/home_page/nav/HeaderToolList.vue";
 import type {ToolObj} from "@/home-page/nav-type";
+import {useGlobalStore} from "@/stores/global";
 
 export default {
   name: 'DashboardCard',
@@ -41,6 +42,7 @@ export default {
   },
 
   setup(props,context) {
+    const globalStore = useGlobalStore()
     const hasNoTitle = computed(()=>{
      return props.dashboardNote.noteType === 'note'
     })
@@ -72,7 +74,7 @@ export default {
    const handleClickMoreIcon = (handleType:string)=>{
      context.emit("handleClickTool", {handleType,noteType:props.dashboardNote.noteType,id:props.dashboardNote.id,docId:props.dashboardNote.docId})
    }
-    return{antd,fluent,ionicons,toolMenuList,handleClickMoreIcon,hasNoTitle}
+    return{antd,fluent,ionicons,toolMenuList,handleClickMoreIcon,hasNoTitle,globalStore}
   }
 }
 
@@ -82,15 +84,15 @@ export default {
 @import "/src/assets/style/common.scss";
 .dashboard-card-wrapper{
   padding: 20px 10px 10px;
-  border: 1px solid #e7e9e8;
+  border: 1px solid var(--theme-border-color);
   border-radius: 8px;
   width: 255px;
   height: 130px;
   position: relative;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
-  box-shadow: $n-box-shadow;
+  background:  var(--theme-background);
+  box-shadow: var(--theme-box-shadow);
   &.no-title-dashboard-card-wrapper{
     padding-top: 30px;
     height: 140px;

@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" :class="{'dark':globalStore.theme==='dark'}">
     <div class="dashboard-wrapper">
       <header>
         <span>视图：</span>
@@ -46,6 +46,7 @@ import DashboardCardDialog from "@/components/dashboard/DashboardCardDialog.vue"
 import { useDialog } from 'naive-ui'
 import {TreasureResponseList} from "@/treasure_response";
 import {useRouter} from "vue-router";
+import {useGlobalStore} from "@/stores/global";
 
 type DashboardListItem = {
   title:string,
@@ -58,6 +59,7 @@ export default {
   components:{DashBoardCard,DashboardCardDialog},
 
   setup(){
+    const globalStore = useGlobalStore()
     const router = useRouter();
     const dialog = useDialog()
     const dashboardList = ref<DashboardListItem[]>([])
@@ -165,7 +167,7 @@ export default {
             })
       }
     }
-    return{fluent, ionicons,dashboardList,selectedClassify,toggleClassify
+    return{fluent, ionicons,dashboardList,selectedClassify,toggleClassify,globalStore
       ,handleClickTool,addDashboardCard,DashboardCardDialogRef,updateDashboard,selectedDashboardId,dialogType}
   }
 }
@@ -176,7 +178,7 @@ export default {
 @import "/src/assets/style/common.scss";
 .wrapper{
   padding: 24px;
-  background: #f7f9fa;
+  background:  var(--theme-background);
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -199,12 +201,11 @@ export default {
           padding-bottom: 2px;
           &:hover{
             cursor: pointer;
-            color:$color-active;
+            color:var(--theme-color-active);
           }
           &.selectedClassify{
-            color:$color-active;
+            color:var(--theme-color-active);
             position: relative;
-            //border-bottom: 2px solid $color-active;
             &:after{
               content:"";
               display: block;
@@ -229,7 +230,7 @@ export default {
       >header{
         display: flex;
         align-items: center;
-        color:$font-color-1;
+        color:var(--theme-color);
         margin-bottom: 8px;
         >h4{
           font-size: 20px;

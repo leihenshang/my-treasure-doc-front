@@ -1,0 +1,15 @@
+:root {
+  --theme-color: #262626;
+  --theme-color-active: #18a058;
+  --theme-background: #f7f9fa;
+  --theme-border-color: #e7e9e8;
+  --theme-box-shadow:0 3px 6px -4px rgba(0, 0, 0, .12), 0 3px 28px 0 rgba(0, 0, 0, .08), 0 3px 28px 8px rgba(0, 0, 0, .05);
+}
+/* 更改dark类名下变量的取值 */
+.dark{
+  --theme-color: rgba(255,255,255,0.82);
+  --theme-color-active: #63e2b7;
+  --theme-background: #18181c;
+  --theme-border-color:rgba(255, 255, 255, 0.09);
+  --theme-box-shadow:0 3px 6px -4px rgba(0, 0, 0, .24), 0 6px 12px 0 rgba(0, 0, 0, .16), 0 9px 18px 8px rgba(0, 0, 0, .10);;
+}
