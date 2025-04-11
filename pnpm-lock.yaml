@@ -21,8 +21,8 @@ importers:
         specifier: ^6.13.0
         version: 6.13.0
       vditor:
-        specifier: ^3.10.8
-        version: 3.10.8
+        specifier: ^3.11.0
+        version: 3.11.0
       vue:
         specifier: ^3.5.12
         version: 3.5.12(typescript@4.9.5)
@@ -2017,8 +2017,8 @@ packages:
     peerDependencies:
       vue: ^3.0.11
 
-  vditor@3.10.8:
-    resolution: {integrity: sha512-u9npjvMuGJVk0QGbpqiGAmvgiR4QvMVpNQYrvFYZ/yWDtTFLZrHmLxuUbtswotR6KY10u5kVuaoSEoBGGWQGjQ==}
+  vditor@3.11.0:
+    resolution: {integrity: sha512-UfucKF2wstR6w92RG8BOMjbfbE241qP9qIb5i5J64vHTVdWzkWhv6DFNsKe6THBiD+RKQdeQMorCW1uDgoHaMw==}
 
   vfonts@0.0.3:
     resolution: {integrity: sha512-nguyw8L6Un8eelg1vQ31vIU2ESxqid7EYmy8V+MDeMaHBqaRSkg3dTBToC1PR00D89UzS/SLkfYPnx0Wf23IQQ==}
@@ -4157,7 +4157,7 @@ snapshots:
       evtd: 0.2.4
       vue: 3.5.12(typescript@4.9.5)
 
-  vditor@3.10.8:
+  vditor@3.11.0:
     dependencies:
       diff-match-patch: 1.0.5
 
