@@ -142,10 +142,7 @@ const request = (option: AxiosConfig) => {
 }
 
 
-
-
 export default {
-  service,
   get: <T = unknown>(option: AxiosConfig) => {
     return request({ method: 'get', ...option }) as Promise<T>
   },
