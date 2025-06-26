@@ -22,60 +22,28 @@ export function getUserInfoList(
 }
 
 export function getUserInfo(id: number | string = 0): Promise<TreasureResponse<UserInfo>> {
-    return new Promise<TreasureResponse<UserInfo>>((resolve, reject) => {
-        myHttp.get<TreasureResponse<UserInfo>>({
-            url: '/api/user-manage/detail', params: {
-                id
-            }
-        }).then((response: TreasureResponse<UserInfo>) => {
-            if (response?.code) {
-                reject(response?.msg)
-            }
-            resolve(response)
-        })
+    return myHttp.get<TreasureResponse<UserInfo>>({
+        url: '/api/user-manage/detail', params: {
+            id
+        }
     })
 }
 
 export function createUserInfo(userInfo: UserInfo): Promise<TreasureResponse<UserInfo>> {
-    return new Promise<TreasureResponse<UserInfo>>((resolve, reject) => {
-        myHttp.post<TreasureResponse<UserInfo>>({
-            url: '/api/user-manage/create', data: userInfo
-        }).then((response) => {
-            if (response?.code) {
-                reject(response)
-            }
-            const resp: TreasureResponse<UserInfo> = new TreasureResponse()
-            resp.data = response?.data
-            resp.msg = response?.msg
-            resp.code = response?.code
-            resolve(resp)
-        })
+    return myHttp.post<TreasureResponse<UserInfo>>({
+        url: '/api/user-manage/create', data: userInfo
     })
 }
 
 export function updateUserInfo(userInfo: UserInfo): Promise<TreasureResponse<UserInfo>> {
-    return new Promise<TreasureResponse<UserInfo>>((resolve, reject) => {
-        myHttp.post<TreasureResponse<UserInfo>>({
-            url: '/api/user-manage/update', data: userInfo
-        }).then((response) => {
-            if (response?.code) {
-                reject(response)
-            }
-            resolve(response)
-        })
+    return myHttp.post<TreasureResponse<UserInfo>>({
+        url: '/api/user-manage/update', data: userInfo
     })
 }
 
 export function resetPwd(user: LoginUser): Promise<TreasureResponse<UserInfo>> {
-    return new Promise<TreasureResponse<UserInfo>>((resolve, reject) => {
-        myHttp.post<TreasureResponse<UserInfo>>({
-            url: '/api/user-manage/reset-pwd', data: user
-        }).then((response) => {
-            if (response?.code) {
-                reject(response)
-            }
-            resolve(response)
-        })
+    return myHttp.post<TreasureResponse<UserInfo>>({
+        url: '/api/user-manage/reset-pwd', data: user
     })
 }
 

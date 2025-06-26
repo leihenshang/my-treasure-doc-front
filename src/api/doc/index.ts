@@ -56,7 +56,7 @@ export function createDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
         if (response?.code) {
             return Promise.reject(response?.msg)
         }
-        // 如果需要返回 TreasureResponse<Doc> 实例，可按需处理，否则直接 return response
+
         return response
     })
 }

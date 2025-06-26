@@ -21,68 +21,28 @@ export function getNoteList(pagination: PaginationWithSort = new PaginationWithS
 }
 
 export function getNote(id: number | string = 0): Promise<TreasureResponse<Note>> {
-    return new Promise<TreasureResponse<Note>>((resolve, reject) => {
-        myHttp.get<TreasureResponse<Note>>({
-            url: '/api/note/detail', params: {
-                id
-            }
-        }).then((response) => {
-            if (response?.code) {
-                reject(response?.msg)
-            }
-            resolve(response)
-        })
+    return myHttp.get<TreasureResponse<Note>>({
+        url: '/api/note/detail', params: {
+            id
+        }
     })
 }
 
 export function createNote(note: Note): Promise<TreasureResponse<Note>> {
-    return new Promise<TreasureResponse<Note>>((resolve, reject) => {
-        myHttp.post<TreasureResponse<Note>>({
-            url: '/api/note/create', data: note
-        }).then((response) => {
-            if (response?.code) {
-                reject(response?.msg)
-            }
-            const resp: TreasureResponse<Note> = new TreasureResponse()
-            resp.data = response?.data
-            resp.msg = response?.msg
-            resp.code = response?.code
-            resolve(resp)
-        })
+    return myHttp.post<TreasureResponse<Note>>({
+        url: '/api/note/create', data: note
     })
 }
 
 export function updateNote(note: Note): Promise<TreasureResponse<Note>> {
-    return new Promise<TreasureResponse<Note>>((resolve, reject) => {
-        myHttp.post<TreasureResponse<Note>>({
-            url: '/api/note/update', data: note
-        }).then((response) => {
-            if (response?.code) {
-                reject(response?.msg)
-            }
-            const resp: TreasureResponse<Note> = new TreasureResponse()
-            resp.data = response?.data
-            resp.msg = response?.msg
-            resp.code = response?.code
-            resolve(resp)
-        })
+    return myHttp.post<TreasureResponse<Note>>({
+        url: '/api/note/update', data: note
     })
 }
 
 export function deleteNote(note: Note): Promise<TreasureResponse<Note>> {
-    return new Promise<TreasureResponse<Note>>((resolve, reject) => {
-        myHttp.post<TreasureResponse<Note>>({
-            url: '/api/note/delete', data: note
-        }).then((response) => {
-            if (response?.code) {
-                reject(response?.msg)
-            }
-            const resp: TreasureResponse<Note> = new TreasureResponse()
-            resp.data = response?.data
-            resp.msg = response?.msg
-            resp.code = response?.code
-            resolve(resp)
-        })
+    return myHttp.post<TreasureResponse<Note>>({
+        url: '/api/note/delete', data: note
     })
 }
 

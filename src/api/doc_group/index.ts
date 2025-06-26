@@ -23,94 +23,38 @@ export function getGroupList(pagination: PaginationWithSort = new PaginationWith
 }
 
 export function getDocGroupTree(pid: string = 'root', withDoc: boolean = false): Promise<TreasureResponse<DocGroup>> {
-    return new Promise<TreasureResponse<DocGroup>>((resolve, reject) => {
-        myHttp.get<TreasureResponse<DocGroup>>({
-            url: '/api/doc-group/tree', params: {
-                pid, withDoc: withDoc
-            }
-        }).then((response) => {
-            if (response?.code) {
-                reject(response?.msg)
-            }
-
-            const resp: TreasureResponse<DocGroup> = new TreasureResponse()
-            resp.data = response?.data
-            resolve(resp)
-        })
-
+    return myHttp.get<TreasureResponse<DocGroup>>({
+        url: '/api/doc-group/tree', params: {
+            pid, withDoc: withDoc
+        }
     })
 }
 //根据文件夹名称获取路径
-export const getGroupRoad = (id:string)=>{
-    return new Promise<TreasureResponse<DocGroup>>((resolve, reject) => {
-        myHttp.get<TreasureResponse<DocGroup>>({
-            url: '/api/doc-group/detail', params: {
-                id,
-            }
-        }).then((response) => {
-            if (response?.code) {
-                reject(response?.msg)
-            }
-
-            const resp: TreasureResponse<DocGroup> = new TreasureResponse()
-            resp.data = response?.data
-            resolve(resp)
-        })
-
+export const getGroupRoad = (id: string) => {
+    return myHttp.get<TreasureResponse<DocGroup>>({
+        url: '/api/doc-group/detail', params: {
+            id,
+        }
     })
 }
 
-
 export async function deleteGroup(groupObj: DocGroup) {
-    return new Promise<TreasureResponse<DocGroup>>((resolve, reject) => {
-        myHttp.post<TreasureResponse<DocGroup>>({
-            url: '/api/doc-group/delete', data: groupObj
-        }).then((response) => {
-            if (response?.code) {
-                reject(response?.msg)
-            }
-
-            const resp: TreasureResponse<DocGroup> = new TreasureResponse()
-            resp.data = response.data
-            resolve(resp)
-        })
-
+    return myHttp.post<TreasureResponse<DocGroup>>({
+        url: '/api/doc-group/delete', data: groupObj
     })
 }
 
 export async function createGroup(groupObj: DocGroup) {
-    return new Promise<TreasureResponse<DocGroup>>((resolve, reject) => {
-        if (!groupObj.pid) {
-            groupObj.pid = ROOT_GROUP
-        }
-        myHttp.post<TreasureResponse<DocGroup>>({
-            url: '/api/doc-group/create', data: groupObj
-        }).then((response) => {
-            if (response?.code) {
-                reject(response?.msg)
-            }
-
-            const resp: TreasureResponse<DocGroup> = new TreasureResponse()
-            resp.data = response?.data
-            resolve(resp)
-        })
-
+    if (!groupObj.pid) {
+        groupObj.pid = ROOT_GROUP
+    }
+    return myHttp.post<TreasureResponse<DocGroup>>({
+        url: '/api/doc-group/create', data: groupObj
     })
 }
 
 export async function updateGroup(groupObj: DocGroup) {
-    return new Promise<TreasureResponse<DocGroup>>((resolve, reject) => {
-        myHttp.post<TreasureResponse<DocGroup>>({
-            url: '/api/doc-group/update', data: groupObj
-        }).then((response) => {
-            if (response?.code) {
-                reject(response?.msg)
-            }
-
-            const resp: TreasureResponse<DocGroup> = new TreasureResponse()
-            resp.data = response?.data
-            resolve(resp)
-        })
-
+    return myHttp.post<TreasureResponse<DocGroup>>({
+        url: '/api/doc-group/update', data: groupObj
     })
 }

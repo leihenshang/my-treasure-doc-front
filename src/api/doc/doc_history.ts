@@ -25,35 +25,17 @@ export function getDocHistoryList(
 }
 
 export function getDocHistory(id: number | string = 0): Promise<TreasureResponse<DocHistory>> {
-    return new Promise<TreasureResponse<DocHistory>>((resolve, reject) => {
-        myHttp.get<TreasureResponse<DocHistory>>({
-            url: '/api/doc-history/detail', params: {
-                id
-            }
-        }).then((response) => {
-            if (response?.code) {
-                reject(response?.msg)
-            }
-            resolve(response)
-        })
+    return myHttp.get<TreasureResponse<DocHistory>>({
+        url: '/api/doc-history/detail', params: {
+            id
+        }
     })
 }
 
 
 export function recoveryDoc(id: string): Promise<TreasureResponse<DocHistory>> {
-    return new Promise<TreasureResponse<DocHistory>>((resolve, reject) => {
-        myHttp.post<TreasureResponse<DocHistory>>({
-            url: '/api/doc-history/recover', data: { id }
-        }).then((response) => {
-            if (response?.code) {
-                reject(response?.msg)
-            }
-            const resp: TreasureResponse<DocHistory> = new TreasureResponse()
-            resp.data = response?.data as unknown as DocHistory
-            resp.msg = response?.msg
-            resp.code = response?.code
-            resolve(resp)
-        })
+    return myHttp.post<TreasureResponse<DocHistory>>({
+        url: '/api/doc-history/recover', data: { id }
     })
 }
 
