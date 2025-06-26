@@ -10,7 +10,7 @@ import { vditorCustomerTheme } from '@/types/editor'
 import { Doc } from "@/types/resource"
 import eventBus from '@/utils/event_bus'
 import { useMessage } from "naive-ui"
-import Vditor from 'vditor'
+import { default as IOptions, default as Vditor } from 'vditor'
 import "vditor/dist/index.css"
 import { onMounted, reactive, ref, watch } from "vue"
 
@@ -156,7 +156,7 @@ onMounted(() => {
         },
     }
 
-    vditorContainer.value = new Vditor("vditor-container", vditorConf as IOptions)
+    vditorContainer.value = new Vditor("vditor-container", vditorConf as unknown as IOptions)
 })
 
 function getMarkdownH1Text(markdownContent: string): string {
