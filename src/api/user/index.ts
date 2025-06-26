@@ -1,4 +1,4 @@
-import myHttp from "@/api/treasure_axios";
+import myHttp from "@/api/service";
 import { UserInfo } from "@/types/resource";
 import { TreasureResponse } from "@/types/treasure_response";
 

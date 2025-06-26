@@ -1,4 +1,4 @@
-import myHttp from "@/api/treasure_axios"
+import myHttp from "@/api/service"
 import { LoginUser, UserInfo } from "@/types/resource"
 import { PaginationWithSort, TreasureResponse, TreasureResponseList } from "@/types/treasure_response"
 

@@ -1,4 +1,4 @@
-import myHttp from "@/api/treasure_axios"
+import myHttp from "@/api/service"
 import { ROOT_GROUP } from "@/constants"
 import { DocGroup } from "@/types/resource"
 import { PaginationWithSort, TreasureResponse, TreasureResponseList } from "@/types/treasure_response"
