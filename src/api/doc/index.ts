@@ -44,7 +44,7 @@ export function getDoc(id: number | string = 0): Promise<TreasureResponse<Doc>> 
         })
     })
 }
-export const getGroupRoad:(id:string | number)=>Promise<TreasureResponse<Doc>> = (id) => {
+export const getGroupRoad: (id: string | number) => Promise<TreasureResponse<Doc>> = (id) => {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
         myHttp.get<TreasureResponse<Doc>>({
             url: '/api/doc-group/detail', params: {
@@ -61,7 +61,7 @@ export const getGroupRoad:(id:string | number)=>Promise<TreasureResponse<Doc>> =
 
 export function createDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
-        myHttp.post<Doc>({
+        myHttp.post<TreasureResponse<Doc>>({
             url: '/api/doc/create', data: doc
         }).then((response) => {
             if (response?.code) {
@@ -78,7 +78,7 @@ export function createDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
 
 export function updateDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
-        myHttp.post<Doc>({
+        myHttp.post<TreasureResponse<Doc>>({
             url: '/api/doc/update', data: doc
         }).then((response) => {
             if (response?.code) {
@@ -91,7 +91,7 @@ export function updateDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
 
 export function deleteDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
-        myHttp.post<Doc>({
+        myHttp.post<TreasureResponse<Doc>>({
             url: '/api/doc/delete', data: doc
         }).then((response) => {
             if (response?.code) {
@@ -104,7 +104,7 @@ export function deleteDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
 
 export function recoverDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return new Promise<TreasureResponse<Doc>>((resolve, reject) => {
-        myHttp.post<Doc>({
+        myHttp.post<TreasureResponse<Doc>>({
             url: '/api/doc/recover', data: doc
         }).then((response) => {
             if (response?.code) {
