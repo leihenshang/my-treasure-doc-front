@@ -1,8 +1,16 @@
 import { REQUEST_TIMEOUT, TRANSFORM_REQUEST_DATA } from '@/constants'
 import { router } from '@/router/router'
 import { useUserInfoStore } from '@/stores/user/user_info'
-import { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig, RequestConfig } from '@/types/treasure_request'
-import axios, { AxiosError } from 'axios'
+import { RequestConfig } from '@/types/treasure_request'
+
+import type {
+  AxiosError,
+  AxiosInstance,
+  AxiosResponse,
+  InternalAxiosRequestConfig
+} from 'axios'
+
+import axios from 'axios'
 import qs from 'qs'
 
 // reference https://cn.vitejs.dev/guide/env-and-mode
@@ -51,6 +59,7 @@ axiosInstance.interceptors.response.use(
 const defaultRequestInterceptors = (config: InternalAxiosRequestConfig) => {
   if (
     config.method === 'post' &&
+    config.headers &&
     config.headers['Content-Type'] === 'application/x-www-form-urlencoded'
   ) {
     config.data = qs.stringify(config.data)
@@ -82,7 +91,6 @@ const defaultResponseInterceptors = (response: AxiosResponse) => {
     return response
   }
   if (response?.config?.responseType === 'blob') {
-    // 如果是文件流，直接过
     return response
   } else if (response.status >= 100 && response.status < 300) {
     return response.data
@@ -95,16 +103,7 @@ axiosInstance.interceptors.response.use(defaultResponseInterceptors)
 
 const service = {
   request: (config: RequestConfig) => {
-    return new Promise((resolve, reject) => {
-      if (config.interceptors?.requestInterceptors) {
-        config = config.interceptors.requestInterceptors(config as any)
-      }
-      axiosInstance.request(config).then((res) => {
-        resolve(res)
-      }).catch((err: any) => {
-        reject(err)
-      })
-    })
+    return axiosInstance.request(config)
   },
   cancelRequest: (url: string | string[]) => {
     const urlList = Array.isArray(url) ? url : [url]
@@ -114,7 +113,7 @@ const service = {
     }
   },
   cancelAllRequest() {
-    for (const [_, controller] of abortControllerMap) {
+    for (const controller of abortControllerMap.values()) {
       controller.abort()
     }
     abortControllerMap.clear()

@@ -1,8 +1,5 @@
 import type {
-  AxiosError,
-  AxiosInstance,
   AxiosRequestConfig,
-  AxiosRequestHeaders,
   AxiosResponse,
   InternalAxiosRequestConfig,
   RawAxiosRequestHeaders
@@ -35,6 +32,6 @@ type AxiosResponseType = 'arraybuffer' | 'blob' | 'document' | 'json' | 'text' |
 
 
 export {
-  AxiosConfig, AxiosError, AxiosInstance, AxiosRequestHeaders, AxiosResponse, InternalAxiosRequestConfig, RequestConfig, RequestInterceptors
+  AxiosConfig, RequestConfig, RequestInterceptors
 }
 
