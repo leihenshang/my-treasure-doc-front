@@ -35,7 +35,7 @@
     </n-layout>
   </div>
   <CreateGroup v-model:show="showModal" v-model:update-group="updateGroup" v-model:action-name="createGroupAction"
-    @updated="(updateData: TreeOption | DocGroup, prePid: string) => handleCreateGroup(updateData, prePid)">
+    @updated="(updateData: TreeOption | DocGroup, prePid: string | undefined) => handleCreateGroup(updateData, prePid ?? '')">
   </CreateGroup>
   <SearchBox v-model:show="showSearchBox"></SearchBox>
   <DocRecycleBin v-model:show="showRecycleBinModal" v-on:refresh-doc=" refreshTopDocList(); refreshTree();">
@@ -53,6 +53,7 @@ import SearchBox from "@/components/home_page/SearchBox.vue";
 import { ROOT_GROUP } from "@/constants";
 import { ToolObj } from "@/home-page/nav-type";
 import { useGlobalStore } from '@/stores/global';
+import { useUserInfoStore } from '@/stores/user/user_info';
 import { Doc, DocGroup } from '@/types/resource';
 import { buildTreeItem } from '@/utils/common';
 import eventBus from '@/utils/event_bus';
@@ -69,7 +70,6 @@ import {
 import { NButton, NButtonGroup, NDropdown, NIcon, NLayout, NTree, TreeDropInfo, TreeOption, useMessage } from 'naive-ui';
 import { h, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useUserInfoStore } from '@/stores/user/user_info';
 
 const globalStore = useGlobalStore()
 const router = useRouter();
@@ -513,6 +513,7 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
 }
 
 function handleCreateGroup(updateData: TreeOption | DocGroup, prePid: string): void {
+  prePid = prePid ?? '';
   if (createGroupAction.value == 'update') {
     recursionUpdateTreeNodeTitle(treeData.value, updateData.id as string, updateData.title as string)
   } else if (createGroupAction.value == 'create') {
