@@ -15,11 +15,7 @@ export function getNoteList(pagination: PaginationWithSort = new PaginationWithS
             if (response?.code) {
                 reject(response?.msg)
             }
-
-            const resp: TreasureResponseList<Note> = new TreasureResponseList()
-            resp.list = response?.data?.list
-            resp.pagination = response?.data?.pagination
-            resolve(resp)
+            resolve(response?.data as TreasureResponseList<Note>)
         })
     })
 }

@@ -36,7 +36,7 @@ export function getDoc(id: number | string = 0): Promise<TreasureResponse<Doc>> 
             url: '/api/doc/detail', params: {
                 id
             }
-        }).then((response: TreasureResponse<Doc>) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }
@@ -50,7 +50,7 @@ export const getGroupRoad: (id: string | number) => Promise<TreasureResponse<Doc
             url: '/api/doc-group/detail', params: {
                 id
             }
-        }).then((response: TreasureResponse<Doc>) => {
+        }).then((response) => {
             if (response?.code) {
                 reject(response?.msg)
             }

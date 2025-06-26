@@ -7,7 +7,7 @@ const userInfoStore = useUserInfoStore()
 
 export async function logOut() {
     return new Promise<TreasureResponse<UserInfo> | void>((resolve, reject) => {
-        myHttp.post<UserInfo>({
+        myHttp.post<TreasureResponse<UserInfo>>({
             url: '/api/user/logout', data: {}
         }).then((response) => {
             if (response?.code) {
@@ -24,7 +24,7 @@ export async function logOut() {
 
 export async function logIn(userInfo: UserInfo) {
     return new Promise<TreasureResponse<UserInfo>>((resolve, reject) => {
-        myHttp.post<UserInfo>({
+        myHttp.post<TreasureResponse<UserInfo>>({
             url: '/api/user/login', data: { ...userInfo }
         }).then((response) => {
             if (response?.code) {

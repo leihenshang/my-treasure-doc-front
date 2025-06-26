@@ -63,7 +63,7 @@ export const getGroupRoad = (id:string)=>{
 
 export async function deleteGroup(groupObj: DocGroup) {
     return new Promise<TreasureResponse<DocGroup>>((resolve, reject) => {
-        myHttp.post<DocGroup>({
+        myHttp.post<TreasureResponse<DocGroup>>({
             url: '/api/doc-group/delete', data: groupObj
         }).then((response) => {
             if (response?.code) {
@@ -83,7 +83,7 @@ export async function createGroup(groupObj: DocGroup) {
         if (!groupObj.pid) {
             groupObj.pid = ROOT_GROUP
         }
-        myHttp.post<DocGroup>({
+        myHttp.post<TreasureResponse<DocGroup>>({
             url: '/api/doc-group/create', data: groupObj
         }).then((response) => {
             if (response?.code) {
@@ -100,7 +100,7 @@ export async function createGroup(groupObj: DocGroup) {
 
 export async function updateGroup(groupObj: DocGroup) {
     return new Promise<TreasureResponse<DocGroup>>((resolve, reject) => {
-        myHttp.post<DocGroup>({
+        myHttp.post<TreasureResponse<DocGroup>>({
             url: '/api/doc-group/update', data: groupObj
         }).then((response) => {
             if (response?.code) {

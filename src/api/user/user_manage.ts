@@ -38,7 +38,7 @@ export function getUserInfo(id: number | string = 0): Promise<TreasureResponse<U
 
 export function createUserInfo(userInfo: UserInfo): Promise<TreasureResponse<UserInfo>> {
     return new Promise<TreasureResponse<UserInfo>>((resolve, reject) => {
-        myHttp.post<UserInfo>({
+        myHttp.post<TreasureResponse<UserInfo>>({
             url: '/api/user-manage/create', data: userInfo
         }).then((response) => {
             if (response?.code) {
@@ -55,7 +55,7 @@ export function createUserInfo(userInfo: UserInfo): Promise<TreasureResponse<Use
 
 export function updateUserInfo(userInfo: UserInfo): Promise<TreasureResponse<UserInfo>> {
     return new Promise<TreasureResponse<UserInfo>>((resolve, reject) => {
-        myHttp.post<UserInfo>({
+        myHttp.post<TreasureResponse<UserInfo>>({
             url: '/api/user-manage/update', data: userInfo
         }).then((response) => {
             if (response?.code) {
@@ -68,7 +68,7 @@ export function updateUserInfo(userInfo: UserInfo): Promise<TreasureResponse<Use
 
 export function resetPwd(user: LoginUser): Promise<TreasureResponse<UserInfo>> {
     return new Promise<TreasureResponse<UserInfo>>((resolve, reject) => {
-        myHttp.post<UserInfo>({
+        myHttp.post<TreasureResponse<UserInfo>>({
             url: '/api/user-manage/reset-pwd', data: user
         }).then((response) => {
             if (response?.code) {
