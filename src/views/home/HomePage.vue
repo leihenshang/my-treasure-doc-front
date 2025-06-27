@@ -84,7 +84,7 @@ const updateGroup = ref<DocGroup>();
 const expandedKeys = ref<Array<string>>([])
 const selectedKeys = ref<Array<string>>([])
 const showRecycleBinModal = ref(false)
-const selectedMenuId = ref()
+const mouseOverSelectedMenuId = ref()
 // let handleMouseOverFn: ReturnType<typeof setTimeout>
 const isHoverThemeButton = ref(false)
 
@@ -336,7 +336,7 @@ function handleLoad(node: TreeOption) {
 function nodeProps({ option }: { option: TreeOption }) {
   return {
     onClick() {
-      selectedMenuId.value = option.id
+
       selectedKeys.value = []
       selectedKeys.value.push(option.key as string)
       if (option.groupType == "doc") {
@@ -344,6 +344,7 @@ function nodeProps({ option }: { option: TreeOption }) {
       }
     },
     onMouseover(e) {
+      mouseOverSelectedMenuId.value = option.id
       if (e.target.className === 'n-tree-node-content__text') {
         const { clientWidth, scrollWidth, innerHTML } = e.target
         if (clientWidth < scrollWidth) e.target.title = innerHTML
@@ -353,7 +354,7 @@ function nodeProps({ option }: { option: TreeOption }) {
 }
 
 const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: boolean }) => {
-  if (selectedMenuId.value !== info.option.id) return
+  if (mouseOverSelectedMenuId.value !== info.option.id) return
   return h(NButtonGroup, {
     size: "tiny",
   }, () => [
