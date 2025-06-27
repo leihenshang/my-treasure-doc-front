@@ -639,7 +639,7 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: string, title
 </script>
 
 <style scoped lang='scss'>
-@use "/src/assets/style/helper.scss";
+@use "/src/assets/style/helper.scss" as *;
 
 .menu-layout {
   height: 100%;

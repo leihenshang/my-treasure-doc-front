@@ -1,5 +1,5 @@
-@use "/src/assets/style/helper.scss";
-@import "/src/assets/style/common.scss";
+@use "/src/assets/style/helper.scss" as *;
+@use "/src/assets/style/common.scss" as *;
 
 * {
   margin: 0;
@@ -36,7 +36,7 @@ body {
   color: rgba(0, 0, 0, 0.85);
   // 为什么这样写 font-family
   // 答案见 https://github.com/zenozeng/fonts.css/
-  font-family: helper.$font-zh;
+  font-family: $font-zh;
 }
 //div,p,span,h1, h2, h3, h4, h5, h6,header{
 //  color: rgba(0, 0, 0, 0.85);
