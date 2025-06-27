@@ -53,9 +53,14 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('userInfo')
       userInfoStore.$reset()
-      router.push('/LogIn')
+      return router.push('/LogIn')
     }
-    return Promise.reject(error.response?.data || error.message || '请求失败')
+    console.log(error)
+    const msg =
+      error.response?.data && typeof error.response.data === 'object' && 'msg' in error.response.data
+        ? (error.response.data as { msg?: string }).msg
+        : undefined
+    return Promise.reject(error.message || msg || '请求失败')
   }
 )
 
