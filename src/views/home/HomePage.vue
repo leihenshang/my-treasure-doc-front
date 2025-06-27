@@ -93,7 +93,7 @@ const toolMenuList: ToolObj[] = [
   { type: 'icon', iconOrTextName: 'Search', props: 'search' },
   { type: 'icon', iconOrTextName: 'FolderOutline', props: 'addFolder' },
   { type: 'icon', iconOrTextName: 'PencilOutline', props: 'addNote' },
-  { type: 'icon', iconOrTextName: 'Search', props: 'addNote' },
+  { type: 'icon', iconOrTextName: 'Home', props: 'dashboard', },
   {
     type: 'icon', iconOrTextName: 'EllipsisHorizontalCircleOutline', props: 'more',
     HandleSelectList: [{
