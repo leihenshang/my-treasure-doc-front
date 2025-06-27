@@ -333,10 +333,11 @@ function handleLoad(node: TreeOption) {
   })
 }
 
+let mouseLeaveTimer: ReturnType<typeof setTimeout> | null = null
+
 function nodeProps({ option }: { option: TreeOption }) {
   return {
     onClick() {
-
       selectedKeys.value = []
       selectedKeys.value.push(option.key as string)
       if (option.groupType == "doc") {
@@ -344,12 +345,21 @@ function nodeProps({ option }: { option: TreeOption }) {
       }
     },
     onMouseover(e) {
+      if (mouseLeaveTimer) {
+        clearTimeout(mouseLeaveTimer)
+        mouseLeaveTimer = null
+      }
       mouseOverSelectedMenuId.value = option.id
       if (e.target.className === 'n-tree-node-content__text') {
         const { clientWidth, scrollWidth, innerHTML } = e.target
         if (clientWidth < scrollWidth) e.target.title = innerHTML
       }
     },
+    onMouseleave(e) {
+      mouseLeaveTimer = setTimeout(() => {
+        mouseOverSelectedMenuId.value = undefined
+      }, 500) // 200ms延迟，可根据体验调整
+    }
   }
 }
 
@@ -361,6 +371,18 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
     h(
       NDropdown,
       {
+        onMouseenter: () => {
+          if (mouseLeaveTimer) {
+            clearTimeout(mouseLeaveTimer)
+            mouseLeaveTimer = null
+          }
+          mouseOverSelectedMenuId.value = info.option.id
+        },
+        onMouseleave: () => {
+          mouseLeaveTimer = setTimeout(() => {
+            mouseOverSelectedMenuId.value = undefined
+          }, 500)
+        },
         options: [
           {
             icon: () => {
