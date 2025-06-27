@@ -1,8 +1,8 @@
-import myHttp from "@/api/service"
+import myHttp from "@/api"
 import { Doc } from "@/types/resource"
 import { PaginationWithSort, TreasureResponse, TreasureResponseList } from "@/types/treasure_response"
 
-export function getDocList(
+export async function getDocList(
     groupId: string,
     isTop: number = 0,
     recycleBin: boolean = false,
@@ -29,14 +29,19 @@ export function getDocList(
     })
 }
 
-export function getDoc(id: number | string = 0): Promise<TreasureResponse<Doc>> {
+export async function getDoc(id: number | string = 0): Promise<TreasureResponse<Doc>> {
     return myHttp.get<TreasureResponse<Doc>>({
         url: '/api/doc/detail',
         params: { id }
+    }).then(response => {
+        if (response?.code) {
+            return Promise.reject(response?.msg)
+        }
+        return response
     })
 }
 
-export function getGroupRoad(id: string | number): Promise<TreasureResponse<Doc>> {
+export async function getGroupRoad(id: string | number): Promise<TreasureResponse<Doc>> {
     return myHttp.get<TreasureResponse<Doc>>({
         url: '/api/doc-group/detail',
         params: { id }
@@ -48,7 +53,7 @@ export function getGroupRoad(id: string | number): Promise<TreasureResponse<Doc>
     })
 }
 
-export function createDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
+export async function createDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return myHttp.post<TreasureResponse<Doc>>({
         url: '/api/doc/create',
         data: doc
@@ -60,7 +65,7 @@ export function createDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     })
 }
 
-export function updateDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
+export async function updateDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return myHttp.post<TreasureResponse<Doc>>({
         url: '/api/doc/update',
         data: doc
@@ -72,7 +77,7 @@ export function updateDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     })
 }
 
-export function deleteDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
+export async function deleteDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return myHttp.post<TreasureResponse<Doc>>({
         url: '/api/doc/delete',
         data: doc
@@ -84,7 +89,7 @@ export function deleteDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     })
 }
 
-export function recoverDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
+export async function recoverDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return myHttp.post<TreasureResponse<Doc>>({
         url: '/api/doc/recover',
         data: doc

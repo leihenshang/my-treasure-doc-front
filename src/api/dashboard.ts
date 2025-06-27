@@ -1,4 +1,4 @@
-import myHttp from "@/api/service";
+import myHttp from "@/api";
 import type { Note, PartialByKeys, Simplity } from "@/resource";
 import { TreasureResponse, TreasureResponseList } from "@/treasure_response";
 

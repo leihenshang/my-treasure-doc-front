@@ -2,7 +2,7 @@
     <div id="vditor-container"></div>
 </template>
 <script lang="ts" setup>
-import { PATH_URL } from '@/api/service'
+import { PATH_URL } from '@/api'
 import { darkTheme, lightTheme } from '@/constants'
 import { useGlobalStore } from "@/stores/global"
 import { useUserInfoStore } from "@/stores/user/user_info"
