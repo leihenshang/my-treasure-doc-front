@@ -55,7 +55,7 @@ axiosInstance.interceptors.response.use(
       userInfoStore.$reset()
       router.push('/LogIn')
     }
-    return Promise.reject(error)
+    return Promise.reject(error.response?.data || error.message || '请求失败')
   }
 )
 

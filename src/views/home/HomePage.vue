@@ -287,9 +287,9 @@ function refreshTree() {
     (response.data as Array<DocGroup>).map((val) => {
       treeData.value.push(buildTreeItem(val))
     })
-  }).catch((resp) => {
-    console.log(resp)
-    message.error(resp.response?.data?.msg || resp.message || '获取文档目录失败')
+  }).catch((err) => {
+    console.log(err)
+    message.error(err)
   })
 }
 
