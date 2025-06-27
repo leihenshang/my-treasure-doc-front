@@ -224,6 +224,7 @@ export default {
 @use "/src/assets/style/common.scss" as *;
 
 .wrapper {
+  margin: 0 5px;
   padding: 24px;
   background: var(--theme-background);
   width: 100%;
