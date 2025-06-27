@@ -18,8 +18,8 @@
         :key="dashboardContent.type">
         <header>
           <h4>{{ dashboardContent.title }}</h4>
-          <n-icon :component="ionicons.ArrowUpCircleOutline" size="18" :depth="1" :class="{ 'disabled-icon': index === 0 }"
-            @click="moveTypeList(dashboardContent.type, 'up')" />
+          <n-icon :component="ionicons.ArrowUpCircleOutline" size="18" :depth="1"
+            :class="{ 'disabled-icon': index === 0 }" @click="moveTypeList(dashboardContent.type, 'up')" />
           <n-icon :component="ionicons.ArrowDownCircleOutline" size="18" :depth="1"
             :class="{ 'disabled-icon': index === dashboardList.length - 1 }"
             @click="moveTypeList(dashboardContent.type, 'down')" />

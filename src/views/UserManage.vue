@@ -32,7 +32,7 @@
   <CreateUser v-model:show-modal="showModal" :mode="modalMode" :user="currentUser"></CreateUser>
 </template>
 <script setup lang="ts">
-import { getUserInfoList, updateUserInfo } from '@/api/user/user_manage';
+import { getUserInfoList, updateUserInfo } from '@/api/user_manage';
 import CreateUser from '@/components/user_manage/CreateUser.vue';
 import { UserInfo } from '@/types/resource';
 import { PaginationWithSort } from '@/types/treasure_response';

@@ -27,7 +27,7 @@
     </n-modal>
 </template>
 <script lang="ts" setup>
-import { getDocHistory, getDocHistoryList, recoveryDoc } from '@/api/doc/doc_history';
+import { getDocHistory, getDocHistoryList, recoveryDoc } from '@/api/doc_history';
 import { darkTheme, lightTheme } from '@/constants';
 import { useGlobalStore } from "@/stores/global";
 import { vditorCustomerTheme } from '@/types/editor';

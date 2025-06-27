@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { createUserInfo, resetPwd } from "@/api/user/user_manage";
+import { createUserInfo, resetPwd } from "@/api/user_manage";
 import { LoginUser, UserInfo } from '@/types/resource';
 import { FormInst, NInput, useMessage } from 'naive-ui';
 import { ref } from 'vue';

@@ -369,7 +369,7 @@ function nodeProps({ option }: { option: TreeOption }) {
   }
 }
 
-const treeNodeSuffix =  (info: { option: TreeOption, checked: boolean, selected: boolean }) => {
+const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: boolean }) => {
   if (mouseOverSelectedMenuId.value !== info.option.id) return
   return h(NButtonGroup, {
     size: "tiny",
