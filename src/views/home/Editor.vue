@@ -12,7 +12,7 @@
             历史
           </n-button>
           <n-switch :disabled="currentDoc.deletedAt !== null" v-model:value="isTop" size="small"
-                    @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, true)">
+            @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, true)">
             <template #icon>
               {{ isTop ? '😄' : '🤔' }}
             </template>
@@ -24,7 +24,7 @@
             </template>
           </n-switch>
           <n-switch :disabled="currentDoc.deletedAt !== null" v-model:value="isPin" size="small"
-                    @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, false)">
+            @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, false)">
             <template #icon>
               {{ isPin ? '😄' : '🥲' }}
             </template>
@@ -36,7 +36,7 @@
             </template>
           </n-switch>
           <n-switch :disabled="currentDoc.deletedAt !== null" v-model:value="readOnly" size="small"
-                    @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, false, true)">
+            @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, false, true)">
             <template #icon>
               {{ readOnly ? '🥲' : '😄' }}
             </template>
@@ -58,7 +58,7 @@
         </n-space>
       </div>
       <div class="edit-content">
-        <Vditor :doc="currentDoc" @update-doc="contentUpdate"/>
+        <Vditor :doc="currentDoc" @update-doc="contentUpdate" />
       </div>
     </template>
     <div v-else class="empty-doc">
@@ -72,25 +72,25 @@
     </div>
   </div>
   <DocHistory v-model:show="showHistoryModal" v-model:doc-id="currentDoc.id"
-              v-on:refresh-doc="getSetCurrentDoc(props.id)">
+    v-on:refresh-doc="getSetCurrentDoc(props.id)">
   </DocHistory>
 </template>
 <script lang="ts" setup>
-import {createDoc, getDoc, updateDoc} from "@/api/doc";
+import { createDoc, getDoc, updateDoc } from "@/api/doc";
 import DocHistory from '@/components/doc/DocHistory.vue';
 import Vditor from '@/components/editor/Vditor.vue';
-import {Doc, DocGroup} from "@/types/resource";
+import { Doc, DocGroup } from "@/types/resource";
 import eventBus from '@/utils/event_bus';
-import {History16Filled} from "@vicons/fluent";
-import {NIcon, useMessage} from 'naive-ui';
-import {nextTick, onBeforeUnmount, onMounted, ref, watch} from 'vue';
-import {useRouter} from "vue-router";
+import { History16Filled } from "@vicons/fluent";
+import { NIcon, useMessage } from 'naive-ui';
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useRouter } from "vue-router";
 
 
 const props = defineProps<{
   id: string,
 }>()
-const currentDoc = ref<Doc>({title: ''} as Doc)
+const currentDoc = ref<Doc>({ title: '' } as Doc)
 const message = useMessage()
 const isTop = ref(false)
 const isPin = ref(false)
@@ -125,7 +125,7 @@ function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false, isReadOnly: b
     })
   } else if (docUpdate.title != '') {
     createDoc(docUpdate).then(res => {
-      currentDoc.value.id = res.getData().id
+      currentDoc.value.id = (res.data as Doc).id
       if (isTop.value) {
         eventBus.emit('updateTopDoc')
       }
@@ -150,7 +150,7 @@ onMounted(async () => {
   eventBus.on('deleteDocGroup', (id: string) => {
     currentDoc.value.groupPath?.some((val) => {
       if (val.id === id) {
-        router.push({path: `/Editor`})
+        router.push({ path: `/Editor` })
         eventBus.emit('updateTopDoc')
         return true
       }
@@ -175,7 +175,7 @@ function getSetCurrentDoc(docId: string) {
   const msg = message.loading('获取文档...')
   getDoc(docId).then(resp => {
     const doc = resp.data as Doc
-    currentDoc.value = {...doc}
+    currentDoc.value = { ...doc }
     isTop.value = doc.isTop as number == 1
     isPin.value = doc.isPin as number == 1
     readOnly.value = doc.readOnly as number == 1

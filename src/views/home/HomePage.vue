@@ -222,7 +222,7 @@ function topMenuAction(key: string): void {
       title: title,
       groupId: ROOT_GROUP
     } as Doc).then(res => {
-      const doc = res.getData()
+      const doc = res.data as Doc
       router.push({ path: `/Editor/${doc.id}` })
       const option = buildTreeItem({
         id: doc.id,
@@ -233,7 +233,12 @@ function topMenuAction(key: string): void {
       selectedKeys.value = []
       selectedKeys.value.push(option.key as string)
     }).catch(err => {
-      message.error(err)
+      console.log(err)
+      if (typeof err === "string") {
+        message.error(err)
+      } else {
+        console.log(err)
+      }
     })
   } else if (key === 'logOut') {
     logOut().then(() => {
@@ -344,18 +349,19 @@ function nodeProps({ option }: { option: TreeOption }) {
         router.push({ path: `/Editor/${option.id}` })
       }
     },
-    onMouseover(e) {
+    onMouseover(e: MouseEvent) {
       if (mouseLeaveTimer) {
         clearTimeout(mouseLeaveTimer)
         mouseLeaveTimer = null
       }
       mouseOverSelectedMenuId.value = option.id
-      if (e.target.className === 'n-tree-node-content__text') {
-        const { clientWidth, scrollWidth, innerHTML } = e.target
-        if (clientWidth < scrollWidth) e.target.title = innerHTML
+      const target = e.target as HTMLElement
+      if (target.className === 'n-tree-node-content__text') {
+        const { clientWidth, scrollWidth, innerHTML } = target
+        if (clientWidth < scrollWidth) target.title = innerHTML
       }
     },
-    onMouseleave(e) {
+    onMouseleave() {
       mouseLeaveTimer = setTimeout(() => {
         mouseOverSelectedMenuId.value = undefined
       }, 500) // 200ms延迟，可根据体验调整
@@ -363,7 +369,7 @@ function nodeProps({ option }: { option: TreeOption }) {
   }
 }
 
-const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: boolean }) => {
+const treeNodeSuffix =  (info: { option: TreeOption, checked: boolean, selected: boolean }) => {
   if (mouseOverSelectedMenuId.value !== info.option.id) return
   return h(NButtonGroup, {
     size: "tiny",
@@ -476,7 +482,7 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
             groupId: info.option.id as unknown as string
           }
           createDoc(newDoc).then(res => {
-            const doc = res.getData()
+            const doc = res.data as Doc
             const op = buildTreeItem({
               id: doc.id,
               title: doc.title,

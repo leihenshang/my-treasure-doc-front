@@ -52,12 +52,6 @@ export function createDoc(doc: Doc): Promise<TreasureResponse<Doc>> {
     return myHttp.post<TreasureResponse<Doc>>({
         url: '/api/doc/create',
         data: doc
-    }).then(response => {
-        if (response?.code) {
-            return Promise.reject(response?.msg)
-        }
-
-        return response
     })
 }
 
