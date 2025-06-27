@@ -67,10 +67,11 @@ import {
   Pencil as Pen,
   SunnySharp,
 } from '@vicons/ionicons5';
-import { NButton, NButtonGroup, NDropdown, NIcon, NLayout, NTree, TreeDropInfo, TreeOption, useMessage } from 'naive-ui';
+import { NButton, NButtonGroup, NDropdown, NIcon, NLayout, NTree, TreeDropInfo, TreeOption, useDialog, useMessage } from 'naive-ui';
 import { h, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
+const dialog = useDialog()
 const globalStore = useGlobalStore()
 const router = useRouter();
 const route = useRoute()
@@ -424,7 +425,16 @@ const treeNodeSuffix = (info: { option: TreeOption, checked: boolean, selected: 
         ],
         onSelect: (key: string) => {
           if (key === 'delete') {
-            recursionDeleteTreeNode(treeData.value, info.option.id as number)
+            dialog.warning({
+              title: '小心!',
+              content: '你确定？',
+              positiveText: '确定',
+              negativeText: '取消',
+              closeOnEsc: true,
+              onPositiveClick: () => {
+                recursionDeleteTreeNode(treeData.value, info.option.id as number)
+              }
+            })
           }
           if (key === 'createFolder') {
             changeModal('create', {
@@ -517,22 +527,20 @@ function recursionDeleteTreeNode(arr: Array<TreeOption>, key: number) {
       const id = arr[i]?.id
       if ((arr[i].groupType as string) === 'doc') {
         deleteDoc({ id } as Doc).then(() => {
-          message.success('删除成功');
           refreshTopDocList();
           arr.splice(i, 1)
           if (route.params.id === id) {
             router.push({ path: `/Editor` })
           }
         }).catch(err => {
-          console.log(err)
+          message.error(err)
         })
       } else {
         deleteGroup({ id } as DocGroup).then(() => {
-          message.success('删除成功')
           arr.splice(i, 1)
           eventBus.emit('deleteDocGroup', key)
         }).catch(err => {
-          console.log(err)
+          message.error(err)
         })
       }
       break
