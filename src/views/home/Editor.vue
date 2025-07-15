@@ -12,7 +12,7 @@
             历史
           </n-button>
           <n-switch :disabled="currentDoc.deletedAt !== null" v-model:value="isTop" size="small"
-            @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, true)">
+            @click=" currentDoc.deletedAt === null && contentUpdateV1(currentDoc, true)">
             <template #icon>
               {{ isTop ? '😄' : '🤔' }}
             </template>
@@ -24,7 +24,7 @@
             </template>
           </n-switch>
           <n-switch :disabled="currentDoc.deletedAt !== null" v-model:value="isPin" size="small"
-            @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, false)">
+            @click=" currentDoc.deletedAt === null && contentUpdateV1(currentDoc, false)">
             <template #icon>
               {{ isPin ? '😄' : '🥲' }}
             </template>
@@ -36,7 +36,7 @@
             </template>
           </n-switch>
           <n-switch :disabled="currentDoc.deletedAt !== null" v-model:value="readOnly" size="small"
-            @click=" currentDoc.deletedAt === null && contentUpdate(currentDoc, false, true)">
+            @click=" currentDoc.deletedAt === null && contentUpdateV1(currentDoc, false, true)">
             <template #icon>
               {{ readOnly ? '🥲' : '😄' }}
             </template>
@@ -58,7 +58,7 @@
         </n-space>
       </div>
       <div class="edit-content">
-        <Vditor :doc="currentDoc" @update-doc="contentUpdate" />
+        <Vditor :doc="currentDoc" @update-doc="contentUpdateV1" />
       </div>
     </template>
     <div v-else class="empty-doc">
@@ -80,6 +80,7 @@ import { createDoc, getDoc, updateDoc } from "@/api/doc";
 import DocHistory from '@/components/doc/DocHistory.vue';
 import Vditor from '@/components/editor/Vditor.vue';
 import { Doc, DocGroup } from "@/types/resource";
+import { debounce } from "@/utils/debounce";
 import eventBus from '@/utils/event_bus';
 import { History16Filled } from "@vicons/fluent";
 import { NIcon, useMessage } from 'naive-ui';
@@ -98,7 +99,14 @@ const readOnly = ref(false)
 const showHistoryModal = ref(false)
 const router = useRouter()
 
-function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false, isReadOnly: boolean = false) {
+const contentUpdateV1 = debounce(
+  ((docUpdate: Doc, onlyIsTop: boolean = false, isReadOnly: boolean = false) => {
+    contentUpdate(docUpdate, onlyIsTop, isReadOnly)
+  }) as (...args: unknown[]) => unknown,
+  400
+)
+
+async function contentUpdate(docUpdate: Doc, onlyIsTop: boolean = false, isReadOnly: boolean = false) {
   currentDoc.value.title = docUpdate.title || ''
   docUpdate.isTop = isTop.value ? 1 : 2
   docUpdate.isPin = isPin.value ? 1 : 2
