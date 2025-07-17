@@ -16,6 +16,11 @@
           </n-button>
         </div>
         <HeaderToolList :tool-list="toolMenuList" @handleClickTool="topMenuAction"></HeaderToolList>
+        <div class="room-title">
+          <n-divider />
+          <div class="room-tile-font">我的空间</div>
+          <n-divider />
+        </div>
         <n-collapse :default-expanded-names="['1', '2']" style="padding: 0 10px 0 0;">
           <n-collapse-item title="置顶文档" name="1">
             <n-tree v-show="topDocList.length > 0" block-line :data="topDocList" :node-props="nodeProps"
@@ -719,5 +724,18 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: string, title
       text-overflow: ellipsis;
     }
   }
+}
+
+.room-title {
+  .room-tile-font {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin: 10px 0;
+  }
+
+
+
 }
 </style>
