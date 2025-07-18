@@ -16,10 +16,17 @@
           </n-button>
         </div>
         <HeaderToolList :tool-list="toolMenuList" @handleClickTool="topMenuAction"></HeaderToolList>
+
         <div class="room-title">
-          <n-divider />
-          <div class="room-tile-font">我的空间</div>
-          <n-divider />
+          <n-dropdown trigger="click" :options="roomOptions" @select="handleRoomSelect">
+            <n-button icon-placement="right">
+              <template #icon>
+                <NIcon>
+                  <MenuSharp />
+                </NIcon>
+              </template>
+              {{ currentRoom }}</n-button>
+          </n-dropdown>
         </div>
         <n-collapse :default-expanded-names="['1', '2']" style="padding: 0 10px 0 0;">
           <n-collapse-item title="置顶文档" name="1">
@@ -68,14 +75,14 @@ import {
   AddCircleOutline,
   ChevronForward,
   MenuOutline,
+  MenuSharp,
   MoonSharp,
   Pencil as Pen,
-  SunnySharp,
+  SunnySharp
 } from '@vicons/ionicons5';
 import { NButton, NButtonGroup, NDropdown, NIcon, NLayout, NTree, TreeDropInfo, TreeOption, useDialog, useMessage } from 'naive-ui';
 import { h, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-
 const dialog = useDialog()
 const globalStore = useGlobalStore()
 const router = useRouter();
@@ -127,6 +134,28 @@ const toolMenuList: ToolObj[] = [
     ]
   },
 ]
+
+const currentRoom = ref("默认空间")
+const roomOptions = [
+  {
+    label: '默认空间',
+    key: 'mySpace',
+    icon: () => h(NIcon, null, { default: () => h(MoonSharp) }),
+  },
+  {
+    label: '设置',
+    key: 'settings',
+    icon: () => h(NIcon, null, { default: () => h(SunnySharp) }),
+  },
+]
+
+const handleRoomSelect = (key: string) => {
+  if (key === 'mySpace') {
+    message.info('这是我的空间')
+  } else if (key === 'settings') {
+    message.info('这是我的settings')
+  }
+}
 
 
 onMounted(() => {
@@ -727,15 +756,10 @@ function recursionUpdateTreeNodeTitle(arr: Array<TreeOption>, key: string, title
 }
 
 .room-title {
-  .room-tile-font {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    margin: 10px 0;
-  }
-
-
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  margin: 10px 0;
 }
 </style>
