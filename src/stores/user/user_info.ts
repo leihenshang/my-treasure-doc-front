@@ -18,6 +18,7 @@ export const useUserInfoStore = defineStore('userinfo', {
     },
     getters: {
         userId: (state) => state.userInfo.id,
-        token: (state) => state.userInfo.token
+        token: (state) => state.userInfo.token,
+        currentRoomId: (state) => state.userInfo.currentRoomId
     }
 })

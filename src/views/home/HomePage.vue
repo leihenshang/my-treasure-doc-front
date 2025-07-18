@@ -85,6 +85,8 @@ import { NButton, NButtonGroup, NDropdown, NIcon, NLayout, NTree, TreeDropInfo, 
 import { DropdownMixedOption } from "naive-ui/es/dropdown/src/interface";
 import { h, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+
+const storeUserInfo = useUserInfoStore()
 const dialog = useDialog()
 const globalStore = useGlobalStore()
 const router = useRouter();
@@ -164,12 +166,21 @@ onMounted(() => {
       icon: () => h(NIcon, null, { default: () => h(MoonSharp) }),
     }))
 
+    let defaultRoom: Room | undefined = undefined
     for (const room of response.list) {
-      if (room.isDefault) {
+      if (userInfoStore.currentRoomId && userInfoStore.currentRoomId === room.id) {
         currentRoom.value = room
         break
       }
+      if (room.isDefault) {
+        defaultRoom = room
+      }
     }
+
+    if (currentRoom.value === undefined && defaultRoom) {
+      currentRoom.value = defaultRoom
+    }
+
     return response.list
   }).then((res) => {
     console.log('获取空间列表成功', res);
