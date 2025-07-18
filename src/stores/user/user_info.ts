@@ -14,6 +14,9 @@ export const useUserInfoStore = defineStore('userinfo', {
     actions: {
         updateUserInfo(newUserinfo: UserInfo) {
             this.userInfo = newUserinfo
+        },
+        updateCurrentRoomId(currentRoomId: string) {
+            this.userInfo.currentRoomId = currentRoomId
         }
     },
     getters: {

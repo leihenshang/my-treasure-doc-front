@@ -58,7 +58,7 @@
 import { createDoc, deleteDoc, getDocList } from "@/api/doc";
 import { deleteGroup, getDocGroupTree } from "@/api/doc_group";
 import { getRoomList } from "@/api/room";
-import { logOut } from '@/api/user';
+import { logOut, updateProfile } from "@/api/user";
 import DocRecycleBin from '@/components/doc/DocRecycleBin.vue';
 import CreateGroup from "@/components/home_page/CreateGroup.vue";
 import HeaderToolList from "@/components/home_page/nav/HeaderToolList.vue";
@@ -147,6 +147,21 @@ const handleRoomSelect = (key: string) => {
     if (room.id === key) {
       currentRoom.value = room
       refreshTree(currentRoom.value?.id || '');
+
+      updateProfile({
+        id: storeUserInfo.userInfo.id,
+        account: storeUserInfo.userInfo.account,
+        currentRoomId: currentRoom.value?.id || '',
+      }).then(() => {
+        message.success('切换空间成功');
+      }).then(() => {
+        storeUserInfo.updateCurrentRoomId(currentRoom.value?.id || '');
+      }).catch(err => {
+        console.error(err);
+        message.error('切换空间失败');
+      });
+
+
       break
     }
   }
