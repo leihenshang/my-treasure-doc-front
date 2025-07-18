@@ -32,8 +32,8 @@ class PaginationWithSort {
     constructor(
         public page: number = DefaultPageNum,
         public pageSize: number = DefaultPageSize,
-        public total: number = 0,
-        public orderBy: string = "",
+        public total?: number,
+        public orderBy?: string,
     ) {
         this.orderBy = `${FilterCreatedAt}_${OrderBySortDesc}`
     }

@@ -1,11 +1,11 @@
-export interface BaseResource {
+export interface Base {
     id: string,
     createdAt?: string,
     updatedAt?: string,
     deletedAt?: string,
 }
 
-export interface Doc extends BaseResource {
+export interface Doc extends Base {
     title: string,
     content: string,
     version?: number,
@@ -18,13 +18,20 @@ export interface Doc extends BaseResource {
     readOnly?: number,
 }
 
-export interface DocHistory extends BaseResource {
+export interface Room extends Base {
+    name: string,
+    userId: string,
+    status: string,
+    isDefault: number,
+}
+
+export interface DocHistory extends Base {
     title: string,
     content: string,
     docId: number,
 }
 
-export interface DocGroup extends BaseResource {
+export interface DocGroup extends Base {
     title: string,
     groupType: string,
     pid?: string,
@@ -32,7 +39,7 @@ export interface DocGroup extends BaseResource {
     isLeaf?: boolean,
 }
 
-export interface LoginUser extends BaseResource {
+export interface LoginUser extends Base {
     account: string
     email: string
     password: string
@@ -40,7 +47,7 @@ export interface LoginUser extends BaseResource {
     verifyCode: string
 }
 
-export interface Note extends BaseResource {
+export interface Note extends Base {
     title: string,
     content: string,
     noteType: string,
@@ -51,7 +58,7 @@ export interface Note extends BaseResource {
     icon?: string
 }
 
-export interface UserInfo extends BaseResource {
+export interface UserInfo extends Base {
     nickname?: string,
     account: string,
     email?: string,

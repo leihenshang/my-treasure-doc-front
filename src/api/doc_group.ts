@@ -22,10 +22,10 @@ export async function getGroupList(pagination: PaginationWithSort = new Paginati
     })
 }
 
-export async function getDocGroupTree(pid: string = 'root', withDoc: boolean = false): Promise<TreasureResponse<DocGroup>> {
+export async function getDocGroupTree(pid: string = 'root', withDoc: boolean = false, roomId: string): Promise<TreasureResponse<DocGroup>> {
     return myHttp.get<TreasureResponse<DocGroup>>({
         url: '/api/doc-group/tree', params: {
-            pid, withDoc: withDoc
+            pid, withDoc, roomId
         }
     }).then(response => {
         if (response?.code) {

@@ -25,7 +25,7 @@
                   <MenuSharp />
                 </NIcon>
               </template>
-              {{ currentRoom }}</n-button>
+              {{ currentRoom?.name }}</n-button>
           </n-dropdown>
         </div>
         <n-collapse :default-expanded-names="['1', '2']" style="padding: 0 10px 0 0;">
@@ -50,13 +50,14 @@
     @updated="(updateData: TreeOption | DocGroup, prePid: string | undefined) => handleCreateGroup(updateData, prePid ?? '')">
   </CreateGroup>
   <SearchBox v-model:show="showSearchBox"></SearchBox>
-  <DocRecycleBin v-model:show="showRecycleBinModal" v-on:refresh-doc=" refreshTopDocList(); refreshTree();">
+  <DocRecycleBin v-model:show="showRecycleBinModal" v-on:refresh-doc=" refreshTopDocList(); refreshTree('');">
   </DocRecycleBin>
 </template>
 
 <script lang="ts" setup>
 import { createDoc, deleteDoc, getDocList } from "@/api/doc";
 import { deleteGroup, getDocGroupTree } from "@/api/doc_group";
+import { getRoomList } from "@/api/room";
 import { logOut } from '@/api/user';
 import DocRecycleBin from '@/components/doc/DocRecycleBin.vue';
 import CreateGroup from "@/components/home_page/CreateGroup.vue";
@@ -66,7 +67,7 @@ import { ROOT_GROUP } from "@/constants";
 import { ToolObj } from "@/home-page/nav-type";
 import { useGlobalStore } from '@/stores/global';
 import { useUserInfoStore } from '@/stores/user/user_info';
-import { Doc, DocGroup } from '@/types/resource';
+import { Doc, DocGroup, Room } from '@/types/resource';
 import { buildTreeItem } from '@/utils/common';
 import eventBus from '@/utils/event_bus';
 import { FolderAddOutlined } from '@vicons/antd';
@@ -81,6 +82,7 @@ import {
   SunnySharp
 } from '@vicons/ionicons5';
 import { NButton, NButtonGroup, NDropdown, NIcon, NLayout, NTree, TreeDropInfo, TreeOption, useDialog, useMessage } from 'naive-ui';
+import { DropdownMixedOption } from "naive-ui/es/dropdown/src/interface";
 import { h, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 const dialog = useDialog()
@@ -135,33 +137,52 @@ const toolMenuList: ToolObj[] = [
   },
 ]
 
-const currentRoom = ref("默认空间")
-const roomOptions = [
-  {
-    label: '默认空间',
-    key: 'mySpace',
-    icon: () => h(NIcon, null, { default: () => h(MoonSharp) }),
-  },
-  {
-    label: '设置',
-    key: 'settings',
-    icon: () => h(NIcon, null, { default: () => h(SunnySharp) }),
-  },
-]
+const currentRoom = ref<Room>()
+const roomOptions = ref<Array<DropdownMixedOption>>([])
 
 const handleRoomSelect = (key: string) => {
-  if (key === 'mySpace') {
-    message.info('这是我的空间')
-  } else if (key === 'settings') {
-    message.info('这是我的settings')
+  for (const room of rooms.value) {
+    if (room.id === key) {
+      currentRoom.value = room
+      refreshTree(currentRoom.value?.id || '');
+      break
+    }
   }
 }
 
+const rooms = ref<Array<Room>>([])
 
 onMounted(() => {
-  refreshTree();
-  refreshTopDocList();
+  getRoomList({
+    page: 1,
+    pageSize: 1000,
+  }).then((response) => {
+    rooms.value = response.list
+    roomOptions.value = response.list.map((room: Room) => ({
+      label: room.name,
+      key: room.id,
+      icon: () => h(NIcon, null, { default: () => h(MoonSharp) }),
+    }))
+
+    for (const room of response.list) {
+      if (room.isDefault) {
+        currentRoom.value = room
+        break
+      }
+    }
+    return response.list
+  }).then((res) => {
+    console.log('获取空间列表成功', res);
+    refreshTree(currentRoom.value?.id || '');
+    refreshTopDocList();
+  }).catch(err => {
+    console.error(err);
+    message.error('获取空间列表失败');
+  });
+
+
 })
+
 
 eventBus.on('updateDocTitle', (data: Doc) => {
   recursionUpdateTreeNodeTitle(treeData.value, data.id, data.title)
@@ -319,9 +340,9 @@ function genDocTitle(suffix: string = "-新") {
     today.getSeconds().toString().padStart(2, '0')) + suffix
 }
 
-function refreshTree() {
+function refreshTree(roomId: string) {
   treeData.value = []
-  getDocGroupTree('root', true).then((response) => {
+  getDocGroupTree('root', true, roomId).then((response) => {
     if (!response.data) {
       return
     }
@@ -351,7 +372,7 @@ function refreshTopDocList() {
 
 function handleLoad(node: TreeOption) {
   return new Promise<void>((resolve, reject) => {
-    getDocGroupTree(node.id as string, true).then((response) => {
+    getDocGroupTree(node.id as string, true, currentRoom.value?.id || '').then((response) => {
       if (!response.data) {
         reject()
         return
