@@ -69,6 +69,7 @@ export interface UserInfo extends Base {
     avatar?: string,
     bio?: string,
     token?: string,
+    currentRoomId?: string,
 }
 
 //实现可选属性
