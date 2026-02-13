@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: .
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      - treasure-doc-network
+
+  backend:
+    image: treasure-doc-backend:latest
+    ports:
+      - "2021:2021"
+    volumes:
+      - ./config.toml:/app/config.toml
+      - ./files:/app/files
+    networks:
+      - treasure-doc-network
+
+networks:
+  treasure-doc-network:
+    driver: bridge
