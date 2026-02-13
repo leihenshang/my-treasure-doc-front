@@ -21,6 +21,12 @@ const MainLayout: React.FC = () => {
 
   const menuItems: MenuProps['items'] = [
     {
+      key: '/',
+      icon: <FileTextOutlined />,
+      label: '首页',
+      onClick: () => navigate('/'),
+    },
+    {
       key: '/documents',
       icon: <FileTextOutlined />,
       label: '文档列表',
